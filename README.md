@@ -1,1 +1,0 @@
-# coffida_client
