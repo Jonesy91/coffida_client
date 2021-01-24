@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Image } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import StarRating from 'react-native-star-rating';
 
 class ShopCard extends Component{
     render(){
@@ -15,7 +16,7 @@ class ShopCard extends Component{
                         </Body>
                     </Left>
                     <Right>
-                        <IonIcons name='md-bookmark-outline'/>
+                        <IonIcons name='md-bookmark-outline'size={20}/>
                     </Right>
                 </CardItem>
                 <CardItem cardBody>
@@ -23,7 +24,17 @@ class ShopCard extends Component{
                 </CardItem>
                 <CardItem>
                     <Left>
-                        <Text>{this.props.location.avg_overall_rating}</Text>
+                        <StarRating
+                            disabled={false}
+                            maxStars={5}
+                            rating={this.props.location.avg_overall_rating}
+                            emptyStar={'ios-star-outline'}
+                            fullStar={'ios-star'}
+                            halfStar={'ios-star-half'}
+                            iconSet={'Ionicons'}
+                            fullStarColor={'gold'}
+                            starSize={20}
+                        />
                     </Left>
                 </CardItem>
             </Card>
