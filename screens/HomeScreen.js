@@ -64,7 +64,6 @@ class HomeScreen extends Component{
     }
 
     render(){
-        const Stack = createStackNavigator();
         return(
             <View>
                 <FlatList
