@@ -47,7 +47,7 @@ class HomeScreen extends Component{
     
     getAuthKey = async () => {
         try{
-            const token = await AsyncStorage.getItem('@userKey')
+            const token = await AsyncStorage.getItem('@userKey');
             if(token !== null){
                 this.setState({authKey: token})
             }

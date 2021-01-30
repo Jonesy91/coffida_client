@@ -13,6 +13,25 @@ class LogInScreen extends Component{
             password:'',
         }
     }
+
+
+    componentDidMount(){
+       this.unsubscribe = this.props.navigation.addListener('focus', () => {
+           this.checkLoggedIn();
+       })
+    }
+
+    checkLoggedIn = async () => {
+        try{
+            const token = await AsyncStorage.getItem('@userKey');
+            if(token !== null){
+                this.props.navigation.navigate('home');
+            }            
+        } catch (e){
+
+        }
+    }
+    
     
     requestLogIn = async () => {
         let data = {email:this.state.email, password:this.state.password};
