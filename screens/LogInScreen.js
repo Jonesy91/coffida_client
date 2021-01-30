@@ -46,17 +46,18 @@ class LogInScreen extends Component{
         await this.storeResponse(json);
     }
 
-    logIn = () => {
+    logIn = async () => {
         this.setState({isLoading: true});
-        this.requestLogIn();
+        await this.requestLogIn();
         this.setState({isLoading: false});
         this.props.navigation.navigate('home');
     }
 
     storeResponse = async  (value) => {
         try{
+            const id = value.id.toString();
             await AsyncStorage.setItem('@userKey', value.token)
-            await AsyncStorage.setItem('@userId',value.id.stringify)
+            await AsyncStorage.setItem('@userId',id)
         }catch(e){
 
         }
