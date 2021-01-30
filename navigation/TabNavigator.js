@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { Container } from 'native-base';
-import HomeScreen from '../screens/HomeScreen';
-import FavouriteScreen from '../screens/FavouriteScreen';
 import AccountScreen from '../screens/AccountScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import IonIcons from 'react-native-vector-icons/Ionicons';
+import ShopNavigator from './ShopNavigator';
+import FavouriteNavigator from './FavouriteNavigator';
 
-class MainNavigator extends Component{
+class TabNavigator extends Component{
     render(){
         const Tab = createBottomTabNavigator();
         return(
@@ -31,8 +31,8 @@ class MainNavigator extends Component{
                         inactiveTintColor: 'gray',
                     }}
                 >
-                    <Tab.Screen name="Home" component={HomeScreen}/>
-                    <Tab.Screen name="Favourites" component={FavouriteScreen}/>
+                    <Tab.Screen name="Home" component={ShopNavigator}/>
+                    <Tab.Screen name="Favourites" component={FavouriteNavigator}/>
                     <Tab.Screen name="Account" component={AccountScreen}/>
                 </Tab.Navigator>
             </Container>
@@ -40,4 +40,4 @@ class MainNavigator extends Component{
     }
 }
 
-export default MainNavigator;
+export default TabNavigator;

@@ -8,14 +8,15 @@ class LogInScreen extends Component{
     constructor(props){
         super(props);
         this.state={
+            isLoading: false,
             email:'',
             password:'',
         }
     }
     
-    logIn = async () => {
+    requestLogIn = async () => {
         let data = {email:this.state.email, password:this.state.password};
-        const ressponse =await fetch('http://192.168.0.77:3333/api/1.0.0/user/login',{
+        const ressponse = await fetch('http://10.0.2.2:3333/api/1.0.0/user/login',{
             method: 'POST',
             headers: {
                'Content-Type': 'application/json'
@@ -24,6 +25,12 @@ class LogInScreen extends Component{
         });
         const json = await ressponse.json();
         await this.storeResponse(json);
+    }
+
+    logIn = () => {
+        this.setState({isLoading: true});
+        this.requestLogIn();
+        this.setState({isLoading: false});
         this.props.navigation.navigate('home');
     }
 

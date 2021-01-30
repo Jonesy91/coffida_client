@@ -3,6 +3,7 @@ import { Image } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right } from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class ShopCard extends Component{
     render(){
