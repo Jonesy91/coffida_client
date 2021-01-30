@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Container } from 'native-base';
 import LogInScreen from '../screens/LogInScreen';
-import MainNavigator from './MainNavigator';
+import TabNavigator from './TabNavigator';
 import RegistrationScreen from '../screens/RegistrationScreen';
 
 class EntryNavigator extends Component{
@@ -25,7 +25,7 @@ class EntryNavigator extends Component{
                     />
                     <Stack.Screen 
                         name="home" 
-                        component={MainNavigator}
+                        component={TabNavigator}
                         options={{
                             headerShown: false
                         }}

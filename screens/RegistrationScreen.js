@@ -32,7 +32,7 @@ class RegistrationScreen extends Component{
 
     logIn = async () => {
         let data = {email:this.state.email, password:this.state.password};
-        const ressponse =await fetch('http://192.168.0.77:3333/api/1.0.0/user/login',{
+        const ressponse =await fetch('http://10.0.2.2:3333/api/1.0.0/user/login',{
             method: 'POST',
             headers: {
                'Content-Type': 'application/json'

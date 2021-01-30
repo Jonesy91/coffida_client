@@ -1,18 +1,50 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import ShopCard from '../components/ShopCard';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { createStackNavigator } from '@react-navigation/stack';
+
+
 
 class HomeScreen extends Component{
     constructor(props){
         super(props);
         this.state={
+            isLoading: true,
             locations:[],
             authKey: ''
         }
     }
+    
+    componentDidMount = () => {
+        this.findShops();
+    }
 
+    findShops = () => {
+        this.getAuthKey().then(
+            response => {
+                const token = this.state.authKey;
+                fetch('http://10.0.2.2:3333/api/1.0.0/find',{
+                headers:{
+                        'X-Authorization': token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const locationResp = data.map((item) => {
+                        item.id=item.location_id.toString();
+                        return item;
+                    })
+                    this.setState({
+                        isLoading: false,    
+                        locations: locationResp
+                    });
+                });
+            }
+        )
+    }
+    
     getAuthKey = async () => {
         try{
             const token = await AsyncStorage.getItem('@userKey')
@@ -25,32 +57,19 @@ class HomeScreen extends Component{
         } catch (e) {
             console.log(e);
         }
-        
-        
     }
-    
-    componentDidMount = () => {
-        this.getAuthKey().then(
-            response => {
-                const token = this.state.authKey;
-                fetch('http://192.168.0.77:3333/api/1.0.0/find',{
-                headers:{
-                        'X-Authorization': token
-                }
-            })
-            .then(response => response.json())
-            .then(data => this.setState({locations: data}))
-            }
-        )
-             
+
+    openShop = (data) => {
+        this.props.navigation.navigate('shopScreen', {data:data})
     }
 
     render(){
+        const Stack = createStackNavigator();
         return(
             <View>
                 <FlatList
                     data={this.state.locations}
-                    renderItem={({item}) => <ShopCard location={item}/>}
+                    renderItem={({item}) => <TouchableOpacity onPress={() => this.openShop(item)}><ShopCard location={item}/></TouchableOpacity>}
                 />
             </View>
         );
