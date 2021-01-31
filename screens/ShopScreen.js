@@ -5,6 +5,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
 import Ratings from '../components/Ratings';
 import ReviewCard from '../components/ReviewCard';
+import Reviews from '../components/Reviews';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -15,17 +16,15 @@ class ShopScreen extends Component{
     }
 
     componentDidMount(){
-        const overall = this.props.route.params.data.avg_overall_rating;
-        const price = this.props.route.params.data.avg_price_rating;
-        const quality = this.props.route.params.data.avg_quality_rating;
-        const clenliness = this.props.route.params.data.avg_clenliness_rating;
-        this.setState({ratings:
-            {overall:overall, price:price, quality:quality, clenliness:clenliness}
+        this.setState({ratings:{
+            overall:this.props.route.params.data.avg_overall_rating, 
+            price:this.props.route.params.data.avg_price_rating, 
+            quality:this.props.route.params.data.avg_quality_rating,
+            clenliness:this.props.route.params.data.avg_clenliness_rating}
         });
     }
 
     render(){
-        let reviews = this.props.route.params.data.location_reviews;
         return(
             <Content>
                 <Image source={{uri:this.props.route.params.data.photo_path}} style={{height: 250, width: null, flex: 1}}/>
@@ -33,10 +32,7 @@ class ShopScreen extends Component{
                 <Text note>{this.props.route.params.data.location_town}</Text>
                 <Text>Ratings</Text>
                 <Ratings ratings={this.state.ratings}/> 
-                <Text>Reviews</Text>     
-                {reviews.map((review) => (
-                    <ReviewCard key={review.review_id} review={review}/>
-                ))}
+                <Reviews reviews={this.props.route.params.data.location_reviews} locationId={this.props.route.params.data.location_id} navigation={this.props.navigation}/>
             </Content>
         )
     };

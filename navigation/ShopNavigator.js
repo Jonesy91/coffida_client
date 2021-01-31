@@ -4,6 +4,7 @@ import { Container, Title } from 'native-base';
 import ShopScreen from '../screens/ShopScreen';
 import { Text } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
+import WriteReviewScreen from '../screens/WriteReviewScreen';
 
 class ShopNavigator extends Component {
     render(){
@@ -19,6 +20,10 @@ class ShopNavigator extends Component {
                     <Stack.Screen
                         name="shopScreen"
                         component={ShopScreen}
+                    />
+                    <Stack.Screen
+                        name="writeReview"
+                        component={WriteReviewScreen}
                     />
                 </Stack.Navigator>
             </Container>
