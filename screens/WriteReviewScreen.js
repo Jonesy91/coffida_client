@@ -28,10 +28,10 @@ class WriteReviewScreen extends Component{
     }
     submitReview = () => {
         const body = {
-            overall_rating:this.state.overallRating,
-            price_rating:this.state.priceRating,
-            quality_rating:this.state.qualityRating,
-            clenliness_rating:this.state.clenlinessRating,
+            overall_rating:parseInt(this.state.overallRating),
+            price_rating:parseInt(this.state.priceRating),
+            quality_rating:parseInt(this.state.qualityRating),
+            clenliness_rating:parseInt(this.state.clenlinessRating),
             review_body:this.state.comments
         }
         this.getAuthKey().then( response => {

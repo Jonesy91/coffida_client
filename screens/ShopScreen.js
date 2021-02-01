@@ -8,24 +8,31 @@ import ReviewCard from '../components/ReviewCard';
 import Reviews from '../components/Reviews';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from '@react-navigation/native';
 
 class ShopScreen extends Component{
     constructor(props){
         super(props)
         this.state={
-            ratings:[],
+            ratings:{
+                overall:this.props.route.params.data.avg_overall_rating, 
+                price:this.props.route.params.data.avg_price_rating, 
+                quality:this.props.route.params.data.avg_quality_rating,
+                clenliness:this.props.route.params.data.avg_clenliness_rating
+            },
             locationId:this.props.route.params.data.location_id,
+            reviews: this.props.route.params.data.location_reviews,
             isFavourite: false
         }
     }
-
     componentDidMount(){
-        this.setState({ratings:{
-            overall:this.props.route.params.data.avg_overall_rating, 
-            price:this.props.route.params.data.avg_price_rating, 
-            quality:this.props.route.params.data.avg_quality_rating,
-            clenliness:this.props.route.params.data.avg_clenliness_rating}
+        this.focusListener = this.props.navigation.addListener('focus', () => {
+            this.getShopData();
         });
+    }
+
+    componentWillUnmount(){
+        this.focusListener;
     }
 
     openWriteReview = () => {
@@ -72,6 +79,31 @@ class ShopScreen extends Component{
         })
     }
 
+    getShopData = () => {
+        this.getAuthKey().then(
+            response => {
+                const token = this.state.authKey;
+                fetch('http://10.0.2.2:3333/api/1.0.0/location/'+this.state.locationId,{
+                headers:{
+                        'X-Authorization': token
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.setState({
+                        reviews: data.location_reviews,
+                        ratings:{
+                            overall:data.avg_overall_rating, 
+                            price:data.avg_price_rating, 
+                            quality:data.avg_quality_rating,
+                            clenliness:data.avg_clenliness_rating
+                        }
+                    });
+                });
+            }
+        )
+    }
+
     getAuthKey = async () => {
         try{
             const token = await AsyncStorage.getItem('@userKey');
@@ -84,7 +116,7 @@ class ShopScreen extends Component{
         } catch (e) {
             console.log(e);
         }
-    }
+    }   
 
     render(){
         return(
@@ -123,7 +155,7 @@ class ShopScreen extends Component{
                     </Right>
                     </Row>
                     <Row>
-                        <Reviews reviews={this.props.route.params.data.location_reviews} locationId={this.state.locationId} navigation={this.props.navigation}/>
+                        <Reviews reviews={this.state.reviews} locationId={this.state.locationId} navigation={this.props.navigation}/>
                     </Row>
                 </Grid>
             </Content>

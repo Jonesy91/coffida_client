@@ -21,7 +21,7 @@ class FavouriteScreen extends Component{
     getFavourites = () => {
         this.getUserData().then(
             userData => {
-                fetch('http://10.0.2.2:3333/api/1.0.0/user/1',{
+                fetch('http://10.0.2.2:3333/api/1.0.0/find?search_in=favourite',{
                 headers:{
                         method: 'GET',
                         'X-Authorization': userData.token
@@ -29,19 +29,20 @@ class FavouriteScreen extends Component{
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const favourites = data.favourite_locations.map((favourite) =>  {
+                    const favourites = data.map((favourite) =>  {
                         favourite.id=favourite.location_id.toString();
                         return favourite
                     })
                     this.setState({
                         isLoading:false,
-                        favourites:data.favourite_locations
+                        favourites:favourites
                     })
                 })
                 console.log(this.state.favourites)
             }
         )
     }   
+
 
     getUserData = async () => {
         const id = await AsyncStorage.getItem('@userId');
@@ -59,7 +60,7 @@ class FavouriteScreen extends Component{
             <View>
                 <FlatList
                     data={this.state.favourites}
-                    renderItem={({item}) => <TouchableOpacity onPress={() => this.openShop(item)}><ShopCard location={item}/></TouchableOpacity>}
+                    renderItem={({item}) => <TouchableOpacity onPress={() => this.openShop(item)}><ShopCard location={item} favourite={true}/></TouchableOpacity>}
                 />
             </View>
        );

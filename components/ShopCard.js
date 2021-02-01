@@ -7,6 +7,10 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class ShopCard extends Component{
     render(){
+        let bookmarkType ='md-bookmark-outline';
+        if(this.props.favourite === true){
+            bookmarkType='md-bookmark'                                
+        }
         return(
             <Card>
                 <CardItem>
@@ -17,7 +21,7 @@ class ShopCard extends Component{
                         </Body>
                     </Left>
                     <Right>
-                        <IonIcons name='md-bookmark-outline'size={20}/>    
+                        <IonIcons name={bookmarkType} size={20}/>   
                     </Right>
                 </CardItem>
                 <CardItem cardBody>
