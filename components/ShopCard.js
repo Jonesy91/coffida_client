@@ -17,7 +17,7 @@ class ShopCard extends Component{
                         </Body>
                     </Left>
                     <Right>
-                        <IonIcons name='md-bookmark-outline'size={20}/>
+                        <IonIcons name='md-bookmark-outline'size={20}/>    
                     </Right>
                 </CardItem>
                 <CardItem cardBody>

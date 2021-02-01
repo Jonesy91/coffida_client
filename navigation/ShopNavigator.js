@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { Container, Title } from 'native-base';
+import { Container, Button } from 'native-base';
 import ShopScreen from '../screens/ShopScreen';
-import { Text } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import WriteReviewScreen from '../screens/WriteReviewScreen';
 
