@@ -10,7 +10,7 @@ class Reviews extends Component {
         return(
             <Content>
                 {this.props.reviews.map((review) => (
-                    <ReviewCard key={review.review_id} review={review}/>
+                    <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId}/>
                 ))}
             </Content>
         )
