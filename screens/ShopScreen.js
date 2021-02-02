@@ -22,7 +22,7 @@ class ShopScreen extends Component{
             },
             locationId:this.props.route.params.data.location_id,
             reviews: this.props.route.params.data.location_reviews,
-            isFavourite: false
+            isFavourite: this.props.route.params.favourite
         }
     }
     componentDidMount(){

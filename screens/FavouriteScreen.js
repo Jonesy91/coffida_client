@@ -38,7 +38,6 @@ class FavouriteScreen extends Component{
                         favourites:favourites
                     })
                 })
-                console.log(this.state.favourites)
             }
         )
     }   
@@ -52,7 +51,8 @@ class FavouriteScreen extends Component{
     }
 
     openShop = (data) => {
-        this.props.navigation.navigate('shopScreen', {data:data})
+        const favourite = true;
+        this.props.navigation.navigate('shopScreen', {data:data, favourite:favourite})
     }
 
     render(){

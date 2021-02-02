@@ -6,8 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createStackNavigator } from '@react-navigation/stack';
 import { Content } from 'native-base';
 
-
-
 class HomeScreen extends Component{
     constructor(props){
         super(props);
@@ -90,8 +88,8 @@ class HomeScreen extends Component{
         }
     }
 
-    openShop = (data) => {
-        this.props.navigation.navigate('shopScreen', {data:data})
+    openShop = (data, favourite) => {
+        this.props.navigation.navigate('shopScreen', {data:data, favourite:favourite})
     }
 
     render(){
@@ -102,7 +100,7 @@ class HomeScreen extends Component{
                     if(this.state.favLocations.includes(location.location_id)){
                         favourite=true;
                     }
-                     return <TouchableOpacity onPress={() => this.openShop(location)}><ShopCard location={location} favourite={favourite}/></TouchableOpacity> 
+                     return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                 )}  
             </Content>  

@@ -1,6 +1,6 @@
-import { View, Item, Input, Button } from 'native-base';
+/* eslint-disable react/jsx-filename-extension */
+import { Text, Item, Input, Button } from 'native-base';
 import React, { Component} from 'react';
-import { Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class RegistrationScreen extends Component{
@@ -14,12 +14,12 @@ class RegistrationScreen extends Component{
         }
     }
 
-    goToMainScreen = () => {
+    goToMainScreen() {
         this.props.navigation.navigate('home')
     }
 
-    register = async () => {
-        let data = {first_name:this.state.firstName, last_name:this.state.surname, email:this.state.email, password:this.state.password};
+    async register() {
+        const data = {first_name:this.state.firstName, last_name:this.state.surname, email:this.state.email, password:this.state.password};
         const response =await fetch('http://192.168.0.77:3333/api/1.0.0/user',{
             method: 'POST',
             headers: {
@@ -30,8 +30,8 @@ class RegistrationScreen extends Component{
         this.logIn();
     }
 
-    logIn = async () => {
-        let data = {email:this.state.email, password:this.state.password};
+    async logIn() {
+        const data = {email:this.state.email, password:this.state.password};
         const ressponse =await fetch('http://10.0.2.2:3333/api/1.0.0/user/login',{
             method: 'POST',
             headers: {
@@ -44,7 +44,7 @@ class RegistrationScreen extends Component{
         this.props.navigation.navigate('home');
     }
 
-    storeResponse = async  (value) => {
+    async storeResponse(value) {
         try{
             await AsyncStorage.setItem('@userKey', value.token)
             await AsyncStorage.setItem('@userId',value.id.stringify)
@@ -59,26 +59,26 @@ class RegistrationScreen extends Component{
                 <Item rounded>
                     <Input 
                         placeholder='First Name' 
-                        onChangeText={(firstName) =>this.setState({firstName: firstName})}
+                        onChangeText={(firstName) =>this.setState({firstName})}
                     />
                 </Item>
                 <Item rounded>
                     <Input 
                         placeholder='Surname' 
-                        onChangeText={(surname) =>this.setState({surname: surname})}
+                        onChangeText={(surname) =>this.setState({surname})}
                     />                
                 </Item>
                 <Item rounded>
                     <Input 
                         placeholder='Email' 
-                        onChangeText={(email) =>this.setState({email: email})}
+                        onChangeText={(email) =>this.setState({email})}
                     />                
                 </Item>
                 <Item rounded>
                     <Input 
                         secureTextEntry
                         placeholder='Password' 
-                        onChangeText={(password) =>this.setState({password: password})}
+                        onChangeText={(password) =>this.setState({password})}
                     />                
                 </Item>
                 <Button rounded primary onPress={this.register}>

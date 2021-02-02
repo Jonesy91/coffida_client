@@ -1,8 +1,8 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import { Item, Input, Button, Text, Body, View } from 'native-base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import RegistrationScreen from './RegistrationScreen';
 
 class LogInScreen extends Component{
     constructor(props){
@@ -14,14 +14,13 @@ class LogInScreen extends Component{
         }
     }
 
-
     componentDidMount(){
        this.unsubscribe = this.props.navigation.addListener('focus', () => {
            this.checkLoggedIn();
        })
     }
 
-    checkLoggedIn = async () => {
+    async checkLoggedIn() {
         try{
             const token = await AsyncStorage.getItem('@userKey');
             if(token !== null){
@@ -33,8 +32,8 @@ class LogInScreen extends Component{
     }
     
     
-    requestLogIn = async () => {
-        let data = {email:this.state.email, password:this.state.password};
+    async requestLogIn() {
+        const data = {email:this.state.email, password:this.state.password};
         const ressponse = await fetch('http://10.0.2.2:3333/api/1.0.0/user/login',{
             method: 'POST',
             headers: {
@@ -46,14 +45,14 @@ class LogInScreen extends Component{
         await this.storeResponse(json);
     }
 
-    logIn = async () => {
+    async logIn() {
         this.setState({isLoading: true});
         await this.requestLogIn();
         this.setState({isLoading: false});
         this.props.navigation.navigate('home');
     }
 
-    storeResponse = async  (value) => {
+    async storeResponse(value) {
         try{
             const id = value.id.toString();
             await AsyncStorage.setItem('@userKey', value.token)
@@ -63,7 +62,7 @@ class LogInScreen extends Component{
         }
     }
 
-    openRegistration = () => {
+    openRegistration() {
         this.props.navigation.navigate('registration');
     }
     
@@ -73,21 +72,21 @@ class LogInScreen extends Component{
             <Item rounded>
                 <Input 
                     placeholder='Email' 
-                    onChangeText={(email) =>this.setState({email: email})}
+                    onChangeText={(email) =>this.setState({email})}
                 />
             </Item>
             <Item rounded>
                 <Input 
                     secureTextEntry
                     placeholder='Password' 
-                    onChangeText={(password) =>this.setState({password: password})}/>                
+                    onChangeText={(password) =>this.setState({password})}/>                
             </Item>
-            <Button rounded primary onPress={this.logIn}>
+            <Button rounded primary onPress={() => {this.logIn()}}>
                 <Text>Log In</Text>
             </Button>
             <View style={{flex:1, flexDirection: 'row'}}>
                 <Text>Don't have an accout?</Text>
-                <TouchableOpacity onPress={this.openRegistration}><Text style={{color: 'red'}}>Register</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => {this.openRegistration()}}><Text style={{color: 'red'}}>Register</Text></TouchableOpacity>
             </View>
             </>
         );
