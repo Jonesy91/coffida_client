@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { RecyclerViewBackedScrollView, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Content } from 'native-base';
 import ShopCard from '../components/ShopCard';
+import HeaderMenu from '../components/HeaderMenu';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -16,6 +17,7 @@ class HomeScreen extends Component{
             likedReviews: []
         }
     }
+
     
     componentDidMount() {
         this.findShops();
@@ -116,6 +118,7 @@ class HomeScreen extends Component{
         const likedReviews = this.state.likedReviews;
         return(
             <Content>
+                <HeaderMenu />
                 {this.state.locations.map((location) => {
                     let favourite = false;
                     let likes = null;
