@@ -18,7 +18,7 @@ class ReviewCard extends Component {
         quality: this.props.review.review_qualityrating,
         clenliness: this.props.review.review_clenlinessrating,
       },
-      isLiked: false,
+      isLiked: this.props.liked,
       reviewId: this.props.review.review_id,
       locationId: this.props.locationId,
     };

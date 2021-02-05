@@ -1,14 +1,12 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Text, Content, Left, Row, Grid, Col, Right, H1, H2 } from 'native-base';
-import { Image, View } from 'react-native';
+import { Text, Content, Row, Grid, Col, Right, H1, H2 } from 'native-base';
+import { Image } from 'react-native';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import StarRating from 'react-native-star-rating';
-import Ratings from '../components/Ratings';
-import ReviewCard from '../components/ReviewCard';
-import Reviews from '../components/Reviews';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from '@react-navigation/native';
+import Ratings from '../components/Ratings';
+import Reviews from '../components/Reviews';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -22,24 +20,26 @@ class ShopScreen extends Component{
             },
             locationId:this.props.route.params.data.location_id,
             reviews: this.props.route.params.data.location_reviews,
-            isFavourite: this.props.route.params.favourite
+            isFavourite: this.props.route.params.favourite,
+            likes: this.props.route.params.likes
         }
     }
-    componentDidMount(){
+
+    componentDidMount() {
         this.focusListener = this.props.navigation.addListener('focus', () => {
             this.getShopData();
         });
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.focusListener;
     }
 
-    openWriteReview = () => {
+    openWriteReview() {
         this.props.navigation.navigate('writeReview', {locationId:this.state.locationId});
     }
 
-    isFavourite = () => {
+    isFavourite() {
         let iconName;
         if(this.state.isFavourite === true){
             iconName='md-bookmark'
@@ -49,7 +49,7 @@ class ShopScreen extends Component{
         return iconName
     }
 
-    favouriteLocation = () => {
+    favouriteLocation() {
         this.getAuthKey().then(authKey => {
             if(this.state.isFavourite === false){
                 fetch('http://10.0.2.2:3333/api/1.0.0/location/'+this.state.locationId+'/favourite',{
@@ -79,7 +79,7 @@ class ShopScreen extends Component{
         })
     }
 
-    getShopData = () => {
+    getShopData() {
         this.getAuthKey().then(
             response => {
                 const token = this.state.authKey;
@@ -104,7 +104,7 @@ class ShopScreen extends Component{
         )
     }
 
-    getAuthKey = async () => {
+    async getAuthKey() {
         try{
             const token = await AsyncStorage.getItem('@userKey');
             if(token !== null){
@@ -131,7 +131,7 @@ class ShopScreen extends Component{
                             </Col>
                             <Col>
                                 <Right>
-                                    <TouchableOpacity onPress={this.favouriteLocation}>
+                                    <TouchableOpacity onPress={() => {this.favouriteLocation()}}>
                                         <IonIcons 
                                             name={this.isFavourite()}
                                             size={30}/>
@@ -149,13 +149,13 @@ class ShopScreen extends Component{
                     <Row>
                     <H2>Reviews</H2>
                     <Right>
-                        <TouchableOpacity onPress={this.openWriteReview}>
+                        <TouchableOpacity onPress={() => this.openWriteReview()}>
                             <IonIcons name='md-add' size={30} color='black'/>     
                         </TouchableOpacity>
                     </Right>
                     </Row>
                     <Row>
-                        <Reviews reviews={this.state.reviews} locationId={this.state.locationId} navigation={this.props.navigation}/>
+                        <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likes} navigation={this.props.navigation}/>
                     </Row>
                 </Grid>
             </Content>

@@ -1,10 +1,9 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import ShopCard from '../components/ShopCard';
+import { RecyclerViewBackedScrollView, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { createStackNavigator } from '@react-navigation/stack';
 import { Content } from 'native-base';
+import ShopCard from '../components/ShopCard';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -13,37 +12,79 @@ class HomeScreen extends Component{
             isLoading: true,
             locations:[],
             authKey: '',
-            favLocations:[]
+            favLocations:[],
+            likedReviews: []
         }
     }
     
-    componentDidMount = () => {
+    componentDidMount() {
         this.findShops();
         this.getUser();
     }
+    
+    async getUserData() {
+        const id = await AsyncStorage.getItem('@userId');
+        const token = await AsyncStorage.getItem('@userKey');
+        const data = {id,token};
+        return data;
+    }
 
-    getUser = () => {
+    async getAuthKey() {
+        try{
+            const token = await AsyncStorage.getItem('@userKey');
+            if(token !== null){
+                this.setState({authKey: token})
+            }
+            else{
+                throw error('null object');
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    getUser() {
         this.getUserData().then(
             userData => {
-                const token = userData.token;
+                const {token} = userData;
                 const userId = userData.id;
-                fetch('http://10.0.2.2:3333/api/1.0.0/user/'+userId,{
+                fetch(`http://10.0.2.2:3333/api/1.0.0/user/${userId}`,{
                 headers:{
                         'X-Authorization': token
                     }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const favlocations = data.favourite_locations.map(favourite => {
-                        return favourite.location_id;
-                    });
+                    const favlocations = data.favourite_locations.map(favourite => favourite.location_id);
                     this.setState({favLocations:favlocations});
-                });
+                    const likedReviews = data.liked_reviews;
+                    this.setState({likedReviews});
+                })
+                .then(() => {
+                    const likes = this.state.locations.map(location => {
+                        const locationId = location.location_id;
+                        const likedReviews = this.state.likedReviews.map(review => {
+                            let reviewId = null;
+                            if(locationId === review.location.location_id){
+                                reviewId = review.review.review_id;
+                            }
+                            return reviewId
+                        })
+                        return {location:locationId,reviewIds:likedReviews}
+                    })
+                    const likedReviews = likes.filter(like => {
+                        if(!like.reviewIds.includes(null)){
+                            return like;
+                        }
+                    })
+                    this.setState({likedReviews})
+                })
             }
         )
+        
     }
 
-    findShops = () => {
+    findShops() {
         this.getAuthKey().then(
             response => {
                 const token = this.state.authKey;
@@ -66,41 +107,27 @@ class HomeScreen extends Component{
             }
         )
     }
-    
-    getUserData = async () => {
-        const id = await AsyncStorage.getItem('@userId');
-        const token = await AsyncStorage.getItem('@userKey');
-        const data = {id:id,token:token};
-        return data;
-    }
 
-    getAuthKey = async () => {
-        try{
-            const token = await AsyncStorage.getItem('@userKey');
-            if(token !== null){
-                this.setState({authKey: token})
-            }
-            else{
-                throw error('null object');
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    openShop = (data, favourite) => {
-        this.props.navigation.navigate('shopScreen', {data:data, favourite:favourite})
+    openShop(data, favourite, likes) {
+        this.props.navigation.navigate('shopScreen', {data, favourite, likes})
     }
 
     render(){
+        const likedReviews = this.state.likedReviews;
         return(
             <Content>
                 {this.state.locations.map((location) => {
                     let favourite = false;
+                    let likes = null;
                     if(this.state.favLocations.includes(location.location_id)){
                         favourite=true;
                     }
-                     return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                    this.state.likedReviews.forEach(like => {
+                        if(like.location === location.location_id){
+                            likes = like;
+                        }
+                    })
+                     return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                 )}  
             </Content>  
