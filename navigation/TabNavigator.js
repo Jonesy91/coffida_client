@@ -3,9 +3,8 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Container } from 'native-base';
+import { Container, Icon } from 'native-base';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import IonIcons from 'react-native-vector-icons/Ionicons';
 import AccountScreen from '../screens/AccountScreen';
 import ShopNavigator from './ShopNavigator';
 import FavouriteNavigator from './FavouriteNavigator';
@@ -25,7 +24,7 @@ export default function TabNavigator() {
             } else if (route.name === 'Account') {
               iconName = focused ? 'md-person' : 'md-person-outline';
             }
-            return <IonIcons name={iconName} size={size} color={color} />;
+            return <Icon name={iconName} style={{fontSize:size, color:color}} />;
           },
         })}
         tabBarOptions={{

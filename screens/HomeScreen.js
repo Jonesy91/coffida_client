@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Content } from 'native-base';
+import { Container, Content } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 
@@ -117,8 +117,9 @@ class HomeScreen extends Component{
     render(){
         const likedReviews = this.state.likedReviews;
         return(
-            <Content>
-                <HeaderMenu />
+                <Container>
+                    <HeaderMenu />
+                <Content>
                 {this.state.locations.map((location) => {
                     let favourite = false;
                     let likes = null;
@@ -133,7 +134,8 @@ class HomeScreen extends Component{
                      return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                 )}  
-            </Content>  
+            </Content> 
+            </Container> 
         );
     }
 }

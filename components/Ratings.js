@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
-import { Text, Grid, Row } from 'native-base';
+import { Text, Grid, Row, Col } from 'native-base';
 import StarRating from 'react-native-star-rating';
 
 export default function Ratings({ratings}) {
@@ -8,7 +8,9 @@ export default function Ratings({ratings}) {
     <Grid>
       <Grid>
         <Row>
+          <Col style={{width:150}}>
           <Text>Overall</Text>
+          </Col>
           <StarRating
             disabled={false}
             maxStars={5}
@@ -22,7 +24,9 @@ export default function Ratings({ratings}) {
           />
         </Row>
         <Row>
+          <Col style={{width:150}}>
           <Text>Price</Text>
+          </Col>
           <StarRating
             disabled={false}
             maxStars={5}
@@ -34,9 +38,12 @@ export default function Ratings({ratings}) {
             fullStarColor="gold"
             starSize={20}
           />
+          
         </Row>
         <Row>
+          <Col style={{width:150}}>
           <Text>Quality</Text>
+          </Col>
           <StarRating
             disabled={false}
             maxStars={5}
@@ -50,7 +57,9 @@ export default function Ratings({ratings}) {
           />
         </Row>
         <Row>
+          <Col style={{width:150}}>
           <Text>Clenliness</Text>
+          </Col>
           <StarRating
             disabled={false}
             maxStars={5}

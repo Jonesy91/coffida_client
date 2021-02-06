@@ -11,7 +11,7 @@ import RegistrationScreen from '../screens/RegistrationScreen';
 export default function EntryNavigator() {
   const Stack = createStackNavigator();
   return (
-    <Container>
+      <Container>
       <Stack.Navigator>
         <Stack.Screen
           name="login"

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Item, Input, Button, Text, Body, View } from 'native-base';
+import { Item, Input, Button, Text, View } from 'native-base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 

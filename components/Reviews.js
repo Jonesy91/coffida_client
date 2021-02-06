@@ -4,10 +4,12 @@ import { Content } from 'native-base';
 import ReviewCard from './ReviewCard';
 
 class Reviews extends Component {
-  isLiked(likes, reviewId){
+  isLiked(reviewId){
     let liked = false;
-    if(likes.includes(reviewId)){
-      liked = true;
+    if(this.props.likes !== null){
+      if(this.props.likes.reviewIds.includes(reviewId)){
+        liked = true;
+      }
     }
     return liked;
   }
@@ -16,7 +18,7 @@ class Reviews extends Component {
     return (
       <Content>
         {this.props.reviews.map((review) => {
-          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(this.props.likes.reviewIds, review.review_id)}/>
+          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)}/>
           }
         )}
       </Content>

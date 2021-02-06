@@ -2,7 +2,7 @@
 import React from 'react';
 import { Image } from 'react-native';
 import {
-  Card, CardItem, Text, Left, Body, Right,
+  Card, CardItem, Text, Left, Body, Right, Icon
 } from 'native-base';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
@@ -22,7 +22,7 @@ export default function ShopCard({location, favourite}) {
           </Body>
         </Left>
         <Right>
-          <IonIcons name={bookmarkType} size={20} />
+          <Icon name={bookmarkType} style={{fontSize:20, color:'black'}} />
         </Right>
       </CardItem>
       <CardItem cardBody>
