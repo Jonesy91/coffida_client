@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
@@ -9,10 +10,9 @@ import AccountScreen from '../screens/AccountScreen';
 import ShopNavigator from './ShopNavigator';
 import FavouriteNavigator from './FavouriteNavigator';
 
-export default function TabNavigator() {
-  const Tab = createBottomTabNavigator();
-  return (
-    <Container>
+const Tab = createBottomTabNavigator();
+
+const TabNavigator = () => (
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -32,10 +32,10 @@ export default function TabNavigator() {
           inactiveTintColor: 'gray',
         }}
       >
-        <Tab.Screen name="Home" component={ShopNavigator} />
+        <Tab.Screen name="Home" component={ShopNavigator}/>
         <Tab.Screen name="Favourites" component={FavouriteNavigator} />
         <Tab.Screen name="Account" component={AccountScreen} />
       </Tab.Navigator>
-    </Container>
-  );
-}
+)
+
+export default TabNavigator;

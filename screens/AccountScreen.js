@@ -1,81 +1,53 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
   Text, Item, Label, Input, Content, Form, Button,
 } from 'native-base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuthDispatch } from '../navigation/AuthContext';
+import { signOut } from '../navigation/AuthService';
 
-class AccountScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      firstName: '',
-      surname: '',
-      email: '',
-      newFirstName: null,
-      newSurname: null,
-      newEmail: null,
-      newPassword: null,
-    };
-  }
+export default function AccountScreen(){
+  const dispatch = useAuthDispatch();
+  const [firstName, setFirstName] = React.useState('');
+  const [surname, setSurname] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [newFirstName, setNewirstName] = React.useState('');
+  const [newSurname, setNewSurname] = React.useState('');
+  const [newEmail, setNewEmail] = React.useState('');
+  const [newPassword, setNewPassword] = React.useState('');
+  const [loading, setLoading] = useState(false);
 
-  componentDidMount() {
-    this.requestAccount();
-  }
-
-  async getUserData() {
+  const getUserData = async () => {
     const id = await AsyncStorage.getItem('@userId');
     const token = await AsyncStorage.getItem('@userKey');
     const data = { id, token };
     return data;
   }
 
-  requestAccount() {
-    this.getUserData().then((userData) => {
+  const requestAccount = async () => {
+    getUserData().then((userData) => {
       const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
       fetch(url, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
           'X-Authorization': userData.token,
         },
       })
         .then((response) => response.json())
         .then((data) => {
-          this.setState({
-            firstName: data.first_name,
-            surname: data.last_name,
-            email: data.email,
-          });
+          setFirstName(data.first_name);
+          setSurname(data.last_name);
+          setEmail(data.email);
         });
     });
   }
 
-  logOut() {
-    this.getUserData().then((userData) => {
-      const url = 'http://10.0.2.2:3333/api/1.0.0/user/logout';
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': userData.token,
-        },
-      })
-        .then(() => {
-          this.clearUserStorage();
-        });
-    });
-  }
-
-  async clearUserStorage() {
-    const keys = ['@userId', '@userKey'];
-    await AsyncStorage.multiRemove(keys, (err) => {});
-  }
-
-  async changePassword() {
-    const { body } = { password: this.state.password };
-    this.getUserData().then((userData) => {
+  const changePassword = async () => {
+    const { body } = { password:password };
+    getUserData().then((userData) => {
       const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
       fetch(url, {
         method: 'PATCH',
@@ -86,21 +58,21 @@ class AccountScreen extends Component {
         body: JSON.stringify(body),
       })
         .then(() => {
-          this.setState({ password: '' });
+          setPassword('');
         });
     });
   }
 
-  changeDetails() {
+  const changeDetails = () => {
     const body = {};
-    if (this.state.newFirstName !== null) {
-      body.first_name = this.state.newFirstName;
-    } else if (this.state.newSurName !== null) {
-      body.last_name = this.state.newSurname;
-    } else if (this.state.newEmail !== null) {
-      body.email = this.state.email;
+    if (newFirstName !== null) {
+      body.first_name = newFirstName;
+    } else if (newSurname !== null) {
+      body.last_name = newSurname;
+    } else if (newEmail !== null) {
+      body.email = newEmail;
     }
-    this.getUserData().then((userData) => {
+    getUserData().then((userData) => {
       const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
       fetch(url, {
         method: 'PATCH',
@@ -111,51 +83,58 @@ class AccountScreen extends Component {
         body: JSON.stringify(body),
       })
         .then(() => {
-          this.setState({ newFirstName: null, newSurname: null, newEmail: null });
+          setNewirstName(null);
+          setNewSurname(null);
+          setNewEmail(null);
         });
     });
   }
 
-  render() {
-    return (
-      <Content>
-        <Text>Account</Text>
-        <Form>
-          <Label>First Name</Label>
-          <Item rounded>
-            <Input
-              defaultValue={this.state.firstName}
-              onChangeText={(firstName) => this.setState({ newFirstName: firstName })}
-            />
-          </Item>
-          <Label>Surname</Label>
-          <Item rounded>
-            <Input
-              defaultValue={this.state.surname}
-              onChangeText={(surname) => this.setState({ newSurname: surname })}
-            />
-          </Item>
-          <Label>Email</Label>
-          <Item rounded>
-            <Input
-              defaultValue={this.state.email}
-              onChangeText={(email) => this.setState({ newEmail: email })}
-            />
-          </Item>
-        </Form>
-        <Button rounded onPress={() => {this.changeDetails()}}><Text>Update Details</Text></Button>
-        <Label>Change Password</Label>
+  React.useEffect(() => {
+    requestAccount();
+  });
+
+  const logOut = async () => {
+    await signOut();
+    dispatch({ type: 'SIGN_OUT' });
+  }
+
+  return (
+    <Content>
+      <Text>Account</Text>
+      <Form>
+        <Label>First Name</Label>
         <Item rounded>
           <Input
-            defaultValue={this.state.newPassword}
-            onChangeText={(password) => this.setState({ newPassword: password })}
+            defaultValue={firstName}
+            onChangeText={(inFirstName) => setNewirstName(inFirstName)}
           />
         </Item>
-        <Button rounded onPress={() => {this.changePassword()}}><Text>Change Password</Text></Button>
-        <Button rounded onPress={() => {this.logOut()}}><Text>Log Out</Text></Button>
-      </Content>
-    );
-  }
+        <Label>Surname</Label>
+        <Item rounded>
+          <Input
+            defaultValue={surname}
+            onChangeText={(inSurname) => setNewSurname(inSurname)}
+          />
+        </Item>
+        <Label>Email</Label>
+        <Item rounded>
+          <Input
+            defaultValue={email}
+            onChangeText={(inEmail) => setNewEmail(inEmail)}
+          />
+        </Item>
+      </Form>
+      <Button rounded onPress={() => {changeDetails()}}><Text>Update Details</Text></Button>
+      <Label>Change Password</Label>
+      <Item rounded>
+        <Input
+          defaultValue={newPassword}
+          onChangeText={(inPassword) => setNewPassword(inPassword)}
+        />
+      </Item>
+      <Button rounded onPress={() => {changePassword()}}><Text>Change Password</Text></Button>
+      <Button rounded onPress={() => {logOut()}}><Text>Log Out</Text></Button>
+    </Content>
+  );
 }
-
-export default AccountScreen;
