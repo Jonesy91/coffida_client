@@ -7,6 +7,7 @@ import { Container } from 'native-base';
 import ShopScreen from '../screens/ShopScreen';
 import FavouriteScreen from '../screens/FavouriteScreen';
 import WriteReviewScreen from '../screens/WriteReviewScreen';
+import HeaderMenu from '../components/HeaderMenu';
 
 export default function FavouriteNavigator() {
   const Stack = createStackNavigator();
@@ -21,6 +22,9 @@ export default function FavouriteNavigator() {
         <Stack.Screen
           name="shopScreen"
           component={ShopScreen}
+          options={{
+            headerTransparent: true
+          }}
         />
         <Stack.Screen
           name="writeReview"

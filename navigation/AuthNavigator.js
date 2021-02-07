@@ -19,6 +19,7 @@ const AuthNavigator = ({ isSignout }) => (
       name="SignUp"
       component={RegistrationScreen}
       options={{
+        title: 'Sign Up'
       }}
     />
   </Stack.Navigator>

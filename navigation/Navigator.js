@@ -34,7 +34,7 @@ export default function Navigator(){
     
     return (
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator headerMode="none">
             {isLoading && (
               <Stack.Screen name="splash" component={SplashScreen} />
             )}

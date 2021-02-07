@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content } from 'native-base';
 import ShopCard from '../components/ShopCard';
+import HeaderMenu from '../components/HeaderMenu';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -116,6 +117,7 @@ class HomeScreen extends Component{
         const likedReviews = this.state.likedReviews;
         return(
                 <Container>
+                    <HeaderMenu />
                 <Content>
                 {this.state.locations.map((location) => {
                     let favourite = false;

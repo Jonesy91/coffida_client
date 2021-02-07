@@ -22,6 +22,9 @@ export default function ShopNavigator() {
         <Stack.Screen
           name="shopScreen"
           component={ShopScreen}
+          options={{
+            headerTransparent: true
+          }}
         />
         <Stack.Screen
           name="writeReview"
