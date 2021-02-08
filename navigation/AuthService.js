@@ -1,18 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logIn, logOut, register } from '../Utilities/apiUtility';
 
 const signIn = async (data) => {
     try {
-        const response = await fetch('http://10.0.2.2:3333/api/1.0.0/user/login',{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-            });
-        const json = await response.json();
-        await AsyncStorage.setItem('@userId', json.id.toString());
-        await AsyncStorage.setItem('@userKey', json.token);
-        return json;
+      return logIn(data).then( async (response) => {
+        await AsyncStorage.setItem('@userId', response.id.toString());
+        await AsyncStorage.setItem('@userKey', response.token);  
+        return response;
+      })    
     } catch (error) {
       throw new Error(error.message);
     }
@@ -21,14 +16,7 @@ const signIn = async (data) => {
   const signUp = async (firstName, surname, email, password) => {
     try {
         const data = {first_name:firstName, last_name:surname, email:email, password:password};
-        const response = await fetch('http://10.0.2.2:3333/api/1.0.0/user',{
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });        
-      return response;
+        return register(data);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -37,19 +25,10 @@ const signIn = async (data) => {
   const signOut = async () => {
     try {
       const token = await AsyncStorage.getItem('@userKey');
-      fetch('http://10.0.2.2:3333/api/1.0.0/user/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': token,
-        },
-      })
-      .then(async (response) => {
-        if(response.ok){
-          const keys = ['@userId', '@userKey'];
-          await AsyncStorage.multiRemove(keys, (err) => {});
-          return true;
-        }
+      logOut(token).then(async() => {
+        const keys = ['@userId', '@userKey'];
+        await AsyncStorage.multiRemove(keys, (err) => {});
+        return true;
       })
     } catch (error) {
       throw new Error(error.message);

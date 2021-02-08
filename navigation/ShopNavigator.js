@@ -23,6 +23,7 @@ export default function ShopNavigator() {
           name="shopScreen"
           component={ShopScreen}
           options={{
+            title:'',
             headerTransparent: true
           }}
         />

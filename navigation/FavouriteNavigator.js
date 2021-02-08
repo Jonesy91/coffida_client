@@ -23,6 +23,7 @@ export default function FavouriteNavigator() {
           name="shopScreen"
           component={ShopScreen}
           options={{
+            title:'',
             headerTransparent: true
           }}
         />

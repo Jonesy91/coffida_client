@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { FlatList } from 'react-native-gesture-handler';
-import ShopCard from '../components/ShopCard';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Container, Content, Spinner } from 'native-base';
+import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { Container, Content } from 'native-base';
+import { getFavourites, getUser } from '../Utilities/APIUtility';
+
 
 class FavouriteScreen extends Component{
     constructor(props){
@@ -23,28 +23,21 @@ class FavouriteScreen extends Component{
     }
  
     getFavourites() {
-        this.getUserData().then(
-            userData => {
-                fetch('http://10.0.2.2:3333/api/1.0.0/find?search_in=favourite',{
-                headers:{
-                        method: 'GET',
-                        'X-Authorization': userData.token
-                    }
+        this.setState({isLoading: true});
+        this.getUserData().then(userData => {
+            getFavourites(userData.token).then(data => {
+                console.log(data);
+                const favourites = data.map((favourite) =>  {
+                    favourite.id=favourite.location_id.toString();
+                    return favourite
                 })
-                .then(response => response.json())
-                .then(data => {
-                    const favourites = data.map((favourite) =>  {
-                        favourite.id=favourite.location_id.toString();
-                        return favourite
-                    })
-                    this.setState({
-                        isLoading:false,
-                        favourites:favourites
-                    })
+                this.setState({
+                    isLoading:false,
+                    favourites:favourites
                 })
-            }
-        )
-    }   
+            })
+        })
+    }
 
 
     async getUserData() {
@@ -55,17 +48,12 @@ class FavouriteScreen extends Component{
     }
 
     getUser() {
+        this.setState({isLoading: true});
         this.getUserData().then(
             userData => {
-                const {token} = userData;
+                const token = userData.token;
                 const userId = userData.id;
-                fetch(`http://10.0.2.2:3333/api/1.0.0/user/${userId}`,{
-                headers:{
-                        'X-Authorization': token
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
+                getUser(userId,token).then(data => {
                     const likedReviews = data.liked_reviews;
                     this.setState({likedReviews});
                 })
@@ -86,12 +74,10 @@ class FavouriteScreen extends Component{
                             return like;
                         }
                     })
-                    this.setState({likedReviews})
-                    console.log(this.state.likedReviews)
+                    this.setState({likedReviews, isLoading:false})
                 })
             }
         )
-        
     }
 
     openShop(data, likes) {
@@ -105,16 +91,20 @@ class FavouriteScreen extends Component{
             <Container>
                 <HeaderMenu />
                 <Content>
-                    {this.state.favourites.map((favourite) => {
+                {this.state.isLoading ? (
+                    <Spinner />
+                ) : 
+                    this.state.favourites.map((favourite) => {
                         let likes = null;
                         this.state.likedReviews.forEach(like => {
                             if(like.location === favourite.location_id){
                                 likes = like;
                             }
                         })
-                        return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite, likes)}><ShopCard location={favourite} favourite={true}/></TouchableOpacity>
-                        }
-                    )}
+                    return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite, likes)}><ShopCard location={favourite} favourite={true}/></TouchableOpacity>
+                    }
+                )
+                }
                 </Content>   
             </Container>
        );

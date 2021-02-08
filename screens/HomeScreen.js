@@ -2,9 +2,10 @@
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Container, Content } from 'native-base';
+import { Container, Content, Spinner } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
+import { getShops, getUser } from '../Utilities/apiUtility';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -12,14 +13,13 @@ class HomeScreen extends Component{
         this.state={
             isLoading: true,
             locations:[],
-            authKey: '',
             favLocations:[],
             likedReviews: []
         }
     }
 
     componentDidMount(){
-        this.getUser();
+        this.getUserInfo();
         this.findShops();
     }
     
@@ -30,35 +30,16 @@ class HomeScreen extends Component{
         return data;
     }
 
-    async getAuthKey() {
-        try{
-            const token = await AsyncStorage.getItem('@userKey');
-            if(token !== null){
-                this.setState({authKey: token})
-            }
-            else{
-                throw error('null object');
-            }
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    getUser() {
+    getUserInfo() {
+        this.setState({isLoading:true});
         this.getUserData().then(
             userData => {
-                const {token} = userData;
+                const token = userData.token;
                 const userId = userData.id;
-                fetch(`http://10.0.2.2:3333/api/1.0.0/user/${userId}`,{
-                headers:{
-                        'X-Authorization': token
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const favlocations = data.favourite_locations.map(favourite => favourite.location_id);
+                getUser(userId,token).then(userData => {
+                    const favlocations = userData.favourite_locations.map(favourite => favourite.location_id);
                     this.setState({favLocations:favlocations});
-                    const likedReviews = data.liked_reviews;
+                    const likedReviews = userData.liked_reviews;
                     this.setState({likedReviews});
                 })
                 .then(() => {
@@ -78,35 +59,22 @@ class HomeScreen extends Component{
                             return like;
                         }
                     })
-                    this.setState({likedReviews})
+                    this.setState({likedReviews, isLoading:false});
                 })
             }
         )
-        
     }
 
-    findShops() {
-        this.getAuthKey().then(
-            response => {
-                const token = this.state.authKey;
-                fetch('http://10.0.2.2:3333/api/1.0.0/find',{
-                headers:{
-                        'X-Authorization': token
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const locationResp = data.map((item) => {
-                        item.id=item.location_id.toString();
-                        return item;
-                    })
-                    this.setState({
-                        isLoading: false,    
-                        locations: locationResp
-                    });
-                });
-            }
-        )
+    async findShops() {
+        this.setState({isLoading: true});
+        const userData = await this.getUserData();
+        getShops(userData.token).then(getResponse => {
+            const data = getResponse.map((item) => {
+                item.id=item.location_id.toString();
+                return item;
+        })
+        this.setState({locations: data, isLoading:false});
+        })       
     }
 
     openShop(data, favourite, likes) {
@@ -114,12 +82,14 @@ class HomeScreen extends Component{
     }
 
     render(){
-        const likedReviews = this.state.likedReviews;
         return(
-                <Container>
-                    <HeaderMenu />
+            <Container>
+                <HeaderMenu />
                 <Content>
-                {this.state.locations.map((location) => {
+                    {this.state.isLoading ? (
+                        <Spinner />
+                    ) : 
+                    this.state.locations.map((location) => {
                     let favourite = false;
                     let likes = null;
                     if(this.state.favLocations.includes(location.location_id)){
@@ -130,10 +100,10 @@ class HomeScreen extends Component{
                             likes = like;
                         }
                     })
-                     return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
-                )}  
-            </Content> 
+                    )}  
+                </Content> 
             </Container> 
         );
     }

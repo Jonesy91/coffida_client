@@ -7,6 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ratings from '../components/Ratings';
 import Reviews from '../components/Reviews';
+import { getLocation, favourite, unFavourite } from '../Utilities/apiUtility';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -50,46 +51,21 @@ class ShopScreen extends Component{
     }
 
     favouriteLocation() {
-        this.getAuthKey().then(authKey => {
+        this.getAuthKey().then(token => {
             if(this.state.isFavourite === false){
-                fetch('http://10.0.2.2:3333/api/1.0.0/location/'+this.state.locationId+'/favourite',{
-                    method:'POST',
-                    headers:{
-                        'X-Authorization': authKey
-                    }
-                })
-                .then(response => {
-                    if(response.ok){
-                        this.setState({isFavourite:true});
-                    }
-                })
+                favourite(this.state.locationId, token)
+                    .then(this.setState({isFavourite:true}));
             } else{
-                fetch('http://10.0.2.2:3333/api/1.0.0/location/'+this.state.locationId+'/favourite',{
-                    method:'DELETE',
-                    headers:{
-                        'X-Authorization': authKey
-                    }
-                })
-                .then(response => {
-                    if(response.ok){
-                        this.setState({isFavourite:false});
-                    }
-                })
+                unFavourite(this.state.locationId, token)
+                    .then(this.setState({isFavourite:false}));
             }   
         })
     }
 
     getShopData() {
         this.getAuthKey().then(
-            response => {
-                const token = this.state.authKey;
-                fetch('http://10.0.2.2:3333/api/1.0.0/location/'+this.state.locationId,{
-                headers:{
-                        'X-Authorization': token
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
+            token => {
+                getLocation(this.state.locationId, token).then(data => {
                     this.setState({
                         reviews: data.location_reviews,
                         ratings:{
@@ -99,7 +75,7 @@ class ShopScreen extends Component{
                             clenliness:data.avg_clenliness_rating
                         }
                     });
-                });
+                })
             }
         )
     }

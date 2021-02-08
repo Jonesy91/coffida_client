@@ -2,11 +2,12 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react';
 import {
-  Text, Item, Label, Input, Content, Form, Button,
+  Text, Item, Label, Input, Content, Form, Button, Spinner
 } from 'native-base';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthDispatch } from '../navigation/AuthContext';
 import { signOut } from '../navigation/AuthService';
+import { getUser, patchUser } from '../Utilities/apiUtility';
 
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();
@@ -18,7 +19,7 @@ export default function AccountScreen(){
   const [newSurname, setNewSurname] = React.useState('');
   const [newEmail, setNewEmail] = React.useState('');
   const [newPassword, setNewPassword] = React.useState('');
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getUserData = async () => {
     const id = await AsyncStorage.getItem('@userId');
@@ -28,39 +29,25 @@ export default function AccountScreen(){
   }
 
   const requestAccount = async () => {
+    setIsLoading(true);
     getUserData().then((userData) => {
-      const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          'X-Authorization': userData.token,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setFirstName(data.first_name);
-          setSurname(data.last_name);
-          setEmail(data.email);
-        });
+      getUser(userData.id, userData.token).then(data => {
+        setFirstName(data.first_name);
+        setSurname(data.last_name);
+        setEmail(data.email);
+      });
     });
+    setIsLoading(false);
   }
 
   const changePassword = async () => {
-    const { body } = { password:password };
+    const { body } = { password:newPassword };
     getUserData().then((userData) => {
-      const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
-      fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': userData.token,
-        },
-        body: JSON.stringify(body),
-      })
-        .then(() => {
-          setPassword('');
-        });
-    });
+      patchUser(userData.id, userData.token, body).then(
+        setNewPassword(''),
+        setPassword('')
+      )
+    }); 
   }
 
   const changeDetails = () => {
@@ -73,20 +60,11 @@ export default function AccountScreen(){
       body.email = newEmail;
     }
     getUserData().then((userData) => {
-      const url = `http://10.0.2.2:3333/api/1.0.0/user/${userData.id}`;
-      fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Authorization': userData.token,
-        },
-        body: JSON.stringify(body),
-      })
-        .then(() => {
-          setNewirstName(null);
-          setNewSurname(null);
-          setNewEmail(null);
-        });
+      patchUser(userData.id, userData.token, body).then(() => {
+        setNewirstName(null);
+        setNewSurname(null);
+        setNewEmail(null);
+      });
     });
   }
 
@@ -101,7 +79,11 @@ export default function AccountScreen(){
 
   return (
     <Content>
-      <Text>Account</Text>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+        <Text>Account</Text>
       <Form>
         <Label>First Name</Label>
         <Item rounded>
@@ -129,12 +111,14 @@ export default function AccountScreen(){
       <Label>Change Password</Label>
       <Item rounded>
         <Input
-          defaultValue={newPassword}
+          defaultValue={password}
           onChangeText={(inPassword) => setNewPassword(inPassword)}
         />
       </Item>
       <Button rounded onPress={() => {changePassword()}}><Text>Change Password</Text></Button>
       <Button rounded onPress={() => {logOut()}}><Text>Log Out</Text></Button>
-    </Content>
+      </>
+      )}
+      </Content>  
   );
 }

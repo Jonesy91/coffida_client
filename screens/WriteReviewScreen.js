@@ -2,6 +2,7 @@ import { Content, Text, H3, Textarea, Grid, Row, Button } from 'native-base';
 import React, { Component } from 'react';
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { submitReview } from '../Utilities/apiUtility';
 
 class WriteReviewScreen extends Component{
     constructor(props){
@@ -34,18 +35,12 @@ class WriteReviewScreen extends Component{
             clenliness_rating:parseInt(this.state.clenlinessRating),
             review_body:this.state.comments
         }
-        this.getAuthKey().then( response => {
+        this.getAuthKey().then( token => {
             const id = this.props.route.params.locationId;
-            fetch('http://10.0.2.2:3333/api/1.0.0/location/'+id+'/review', {
-                method:'POST',
-                headers:{
-                    'Content-Type': 'application/json',
-                    'X-Authorization': response
-                },
-                body:JSON.stringify(body)
-            });
+            submitReview(id,token,body);
         });    
     }
+
     getAuthKey = async () => {
         try{
             const token = await AsyncStorage.getItem('@userKey');
@@ -53,7 +48,7 @@ class WriteReviewScreen extends Component{
                 return token;
             }
             else{
-                throw error('null object');
+                throw error('Could not retrieve user key');
             }
         } catch (e) {
             console.log(e);
