@@ -1,7 +1,9 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Container, Content, Spinner } from 'native-base';
+import { Container, Content, Spinner, Text } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getFavourites, getUser } from '../Utilities/APIUtility';
@@ -26,7 +28,6 @@ class FavouriteScreen extends Component{
         this.setState({isLoading: true});
         this.getUserData().then(userData => {
             getFavourites(userData.token).then(data => {
-                console.log(data);
                 const favourites = data.map((favourite) =>  {
                     favourite.id=favourite.location_id.toString();
                     return favourite
@@ -91,9 +92,10 @@ class FavouriteScreen extends Component{
             <Container>
                 <HeaderMenu />
                 <Content>
-                {this.state.isLoading ? (
-                    <Spinner />
-                ) : 
+                {this.state.isLoading && (<Spinner />)}
+                {!this.state.isLoading && this.state.favourites.length === 0 ? (
+                    <Text>No favourite locations</Text>
+                ) : (
                     this.state.favourites.map((favourite) => {
                         let likes = null;
                         this.state.likedReviews.forEach(like => {
@@ -101,10 +103,10 @@ class FavouriteScreen extends Component{
                                 likes = like;
                             }
                         })
-                    return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite, likes)}><ShopCard location={favourite} favourite={true}/></TouchableOpacity>
-                    }
-                )
-                }
+                        return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite, likes)}><ShopCard location={favourite} favourite/></TouchableOpacity>
+                        }
+                    )
+                )}
                 </Content>   
             </Container>
        );
@@ -112,9 +114,3 @@ class FavouriteScreen extends Component{
 }
 
 export default FavouriteScreen;
-
-
-{/* <FlatList
-                        data={this.state.favourites}
-                        renderItem={({item}) => <TouchableOpacity onPress={() => this.openShop(item)}><ShopCard location={item} favourite={true}/></TouchableOpacity>}
-                    /> */}
