@@ -81,13 +81,15 @@ class ReviewCard extends Component {
     const locationId = this.state.locationId;
     return (
       <Card>
-        <CardItem>
-          <Right>
-            <Button small transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})}>
-              <Icon name='md-ellipsis-horizontal' style={{fontSize:30 }} />
-            </Button>
-          </Right>
-        </CardItem>
+        {this.state.usersReview && (
+          <CardItem>
+            <Right>
+              <Button small transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})}>
+                <Icon name='md-ellipsis-horizontal' style={{fontSize:30 }} />
+              </Button>
+            </Right>
+          </CardItem>
+        )}
         <CardItem>
           <Body>
             <Text>{reviewBody}</Text>

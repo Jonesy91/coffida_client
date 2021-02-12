@@ -74,8 +74,10 @@ class HomeScreen extends Component{
                             }
                             return reviewId
                         })
+                        console.log(userReviews)
                         return {location:locationId,reviewIds:userReviews}
                     })
+                    console.log(reviews)
                     const userReviews = reviews.filter(review => {
                         if(!review.reviewIds.includes(null)){
                             return review;
