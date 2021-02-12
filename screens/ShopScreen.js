@@ -7,7 +7,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ratings from '../components/Ratings';
 import Reviews from '../components/Reviews';
-import { getLocation, favourite, unFavourite } from '../Utilities/apiUtility';
+import { getLocation, favourite, unFavourite } from '../Utilities/APIUtility';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -22,7 +22,8 @@ class ShopScreen extends Component{
             locationId:this.props.route.params.data.location_id,
             reviews: this.props.route.params.data.location_reviews,
             isFavourite: this.props.route.params.favourite,
-            likes: this.props.route.params.likes
+            likes: this.props.route.params.likes,
+            userReviews: this.props.route.params.reviews
         }
     }
 
@@ -131,7 +132,7 @@ class ShopScreen extends Component{
                     </Right>
                     </Row>
                     <Row>
-                        <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likes} navigation={this.props.navigation}/>
+                        <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likes} navigation={this.props.navigation} userReviews={this.state.userReviews} nav={this.props.navigation}/>
                     </Row>
                 </Grid>
             </Content>

@@ -13,12 +13,22 @@ class Reviews extends Component {
     }
     return liked;
   }
+
+  isUsersReview(reviewId){
+    let isUsers = false;
+    if(this.props.userReviews !== null){
+      if(this.props.userReviews.reviewIds.includes(reviewId)){
+        isUsers = true;
+      }
+    }
+    return isUsers;
+  }
   
   render(){
     return (
       <Content>
         {this.props.reviews.map((review) => {
-          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)}/>
+          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)} usersReview={this.isUsersReview(review.review_id)} nav={this.props.nav}/>
           }
         )}
       </Content>

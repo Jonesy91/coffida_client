@@ -7,7 +7,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthDispatch } from '../navigation/AuthContext';
 import { signOut } from '../navigation/AuthService';
-import { getUser, patchUser } from '../Utilities/apiUtility';
+import { getUser, patchUser } from '../Utilities/APIUtility';
 
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();

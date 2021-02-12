@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { logIn, logOut, register } from '../Utilities/apiUtility';
+import { logIn, logOut, register } from '../Utilities/APIUtility';
 
 const signIn = async (data) => {
     try {

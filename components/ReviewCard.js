@@ -1,6 +1,7 @@
+/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 import {
-  Card, CardItem, Body, Text, Button, Icon
+  Card, CardItem, Body, Text, Button, Icon, Right, Header
 } from 'native-base';
 import React, { Component } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,7 +12,7 @@ class ReviewCard extends Component {
     super(props);
     this.state = {
       ratings: {
-        overall: props.review.review_overallrating,
+        overall: this.props.review.review_overallrating,
         price: this.props.review.review_pricerating,
         quality: this.props.review.review_qualityrating,
         clenliness: this.props.review.review_clenlinessrating,
@@ -19,6 +20,7 @@ class ReviewCard extends Component {
       isLiked: this.props.liked,
       reviewId: this.props.review.review_id,
       locationId: this.props.locationId,
+      usersReview: this.props.usersReview
     };
   }
 
@@ -75,8 +77,17 @@ class ReviewCard extends Component {
 
   render() {
     const reviewBody = this.props.review.review_body;
+    const review = this.props.review;
+    const locationId = this.state.locationId;
     return (
       <Card>
+        <CardItem>
+          <Right>
+            <Button small transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})}>
+              <Icon name='md-ellipsis-horizontal' style={{fontSize:30 }} />
+            </Button>
+          </Right>
+        </CardItem>
         <CardItem>
           <Body>
             <Text>{reviewBody}</Text>
@@ -87,7 +98,7 @@ class ReviewCard extends Component {
         </CardItem>
         <CardItem>
           <Button transparent onPress={() => {this.likeReview()}}>
-            <Icon name={this.isLiked()} style={{size:20}} />
+            <Icon name={this.isLiked()} style={{fontSize:20}} />
           </Button>
           <Text>{this.props.review.likes}</Text>
         </CardItem>

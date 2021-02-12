@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content, Spinner } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getShops, getUser } from '../Utilities/apiUtility';
+import { getShops, getUser } from '../Utilities/APIUtility';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -14,7 +14,8 @@ class HomeScreen extends Component{
             isLoading: true,
             locations:[],
             favLocations:[],
-            likedReviews: []
+            likedReviews: [],
+            userReviews:[],
         }
     }
 
@@ -41,6 +42,8 @@ class HomeScreen extends Component{
                     this.setState({favLocations:favlocations});
                     const likedReviews = userData.liked_reviews;
                     this.setState({likedReviews});
+                    const userReviews = userData.reviews;
+                    this.setState({userReviews});
                 })
                 .then(() => {
                     const likes = this.state.locations.map(location => {
@@ -61,6 +64,25 @@ class HomeScreen extends Component{
                     })
                     this.setState({likedReviews, isLoading:false});
                 })
+                .then(() => {
+                    const reviews = this.state.locations.map(location => {
+                        const locationId = location.location_id;
+                        const userReviews = this.state.userReviews.map(review => {
+                            let reviewId = null;
+                            if(locationId === review.location.location_id){
+                                reviewId = review.review.review_id;
+                            }
+                            return reviewId
+                        })
+                        return {location:locationId,reviewIds:userReviews}
+                    })
+                    const userReviews = reviews.filter(review => {
+                        if(!review.reviewIds.includes(null)){
+                            return review;
+                        }
+                    })
+                    this.setState({userReviews, isLoading:false});
+                })
             }
         )
     }
@@ -77,8 +99,8 @@ class HomeScreen extends Component{
         })       
     }
 
-    openShop(data, favourite, likes) {
-        this.props.navigation.navigate('shopScreen', {data, favourite, likes})
+    openShop(data, favourite, likes, reviews) {
+        this.props.navigation.navigate('shopScreen', {data, favourite, likes, reviews})
     }
 
     render(){
@@ -92,6 +114,7 @@ class HomeScreen extends Component{
                     this.state.locations.map((location) => {
                     let favourite = false;
                     let likes = null;
+                    let reviews = null;
                     if(this.state.favLocations.includes(location.location_id)){
                         favourite=true;
                     }
@@ -100,7 +123,12 @@ class HomeScreen extends Component{
                             likes = like;
                         }
                     })
-                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                    this.state.userReviews.forEach(review => {
+                        if(review.location === location.location_id){
+                            reviews = review;
+                        }
+                    })
+                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes, reviews)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                     )}  
                 </Content> 

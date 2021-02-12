@@ -1,3 +1,4 @@
+import { getAuthToken } from './AsyncStorageUtil';
 
 const url = `http://10.0.2.2:3333/api/1.0.0`;
 
@@ -127,6 +128,37 @@ const submitReview = (locationId, userToken, body) =>
         }
     })
 
+    const updateReview = (locationId, userToken, body, reviewId) =>
+    fetch(`${url}/location/${locationId}/review/${reviewId}`, {
+        method:'PATCH',
+        headers:{
+            'Content-Type': 'application/json',
+            'X-Authorization': userToken
+        },
+        body:JSON.stringify(body)
+    })
+    .then((response) => {
+        if(!response.ok){
+            throw new Error(response);
+        }
+    })
+
+    const deleteReview = async (reviewId, locationId) => {
+        const token = await getAuthToken();
+        fetch(`${url}/location/${locationId}/review/${reviewId}`, {
+            method:'DELETE',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-Authorization': token
+            }
+        })
+        .then((response) => {
+            if(!response.ok){
+                throw new Error(response);
+            }
+        })
+    }
+
 const like = (locationId, reviewId, userToken) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/like`, {
         method: 'POST',
@@ -197,4 +229,4 @@ const register = (data) =>
         return response.json();
     })
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, getShops, patchUser};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser};

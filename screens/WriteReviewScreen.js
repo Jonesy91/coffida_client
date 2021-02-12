@@ -2,7 +2,7 @@ import { Content, Text, H3, Textarea, Grid, Row, Button } from 'native-base';
 import React, { Component } from 'react';
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { submitReview } from '../Utilities/apiUtility';
+import { submitReview } from '../Utilities/APIUtility';
 
 class WriteReviewScreen extends Component{
     constructor(props){
