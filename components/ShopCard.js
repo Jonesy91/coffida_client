@@ -1,10 +1,9 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import {
   Card, CardItem, Text, Left, Body, Right, Icon
 } from 'native-base';
-import IonIcons from 'react-native-vector-icons/Ionicons';
 import StarRating from 'react-native-star-rating';
 
 export default function ShopCard({location, favourite}) {
@@ -22,13 +21,13 @@ export default function ShopCard({location, favourite}) {
           </Body>
         </Left>
         <Right>
-          <Icon name={bookmarkType} style={{fontSize:20, color:'black'}} />
+          <Icon name={bookmarkType} style={styles.icon} />
         </Right>
       </CardItem>
       <CardItem cardBody>
         <Image
           source={{ uri: location.photo_path }}
-          style={{ height: 200, width: null, flex: 1 }}
+          style={styles.image}
         />
       </CardItem>
       <CardItem>
@@ -41,11 +40,28 @@ export default function ShopCard({location, favourite}) {
             fullStar="ios-star"
             halfStar="ios-star-half"
             iconSet="Ionicons"
-            fullStarColor="gold"
+            fullStarColor="#4391ab"
+            emptyStarColor="#4391ab"
             starSize={20}
           />
-        </Left>
+          <Text style={styles.text}>{location.avg_overall_rating}/5</Text>
+        </Left>        
       </CardItem>
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  image: {
+    height: 200,
+    width: null,
+    flex: 1,
+  },
+  icon: {
+    fontSize: 25,
+    color: '#4391ab'
+  },
+  text:{
+    color: '#4391ab'
+  }
+});

@@ -15,6 +15,8 @@ import { useAuthDispatch, useAuthState } from './AuthContext';
 import AuthNavigator from './AuthNavigator';
 import ReviewModal from '../screens/ReviewModal';
 import UpdateReviewScreen from '../screens/UpdateReviewScreen';
+import CameraScreen from '../screens/CameraScreen';
+import { floor } from 'react-native-reanimated';
 
 export default function Navigator(){
   const Stack = createStackNavigator();  
@@ -37,7 +39,6 @@ export default function Navigator(){
     return (
         <NavigationContainer>
           <Stack.Navigator 
-            headerMode="none" 
             mode="modal" 
             screenOptions={{
               cardOverlayEnabled: true,
@@ -59,15 +60,16 @@ export default function Navigator(){
             }}  
           >
             {isLoading && (
-              <Stack.Screen name="splash" component={SplashScreen} />
+              <Stack.Screen name="splash" component={SplashScreen} options={{headerShown: false}} />
             )}
             {!isLoading && userToken == null ? (
               <Stack.Screen  isSignout={isSignOut} name="Auth" component={AuthNavigator} options={{ headerShown: false }} />
             ) : (
                 <>
-                  <Stack.Screen name="main" component={TabNavigator} options={{}} />
-                  <Stack.Screen name="modal" component={ReviewModal} options={{cardStyle:{backgroundColor: 'transparent', opacity: 2}}} />
-                  <Stack.Screen name="updateReview" component={UpdateReviewScreen} />
+                  <Stack.Screen name="main" component={TabNavigator} options={{headerShown:false}} />
+                  <Stack.Screen name="modal" component={ReviewModal} options={{cardStyle:{backgroundColor: 'transparent', opacity: 2, headerShown: false}}} />
+                  <Stack.Screen name="updateReview" component={UpdateReviewScreen} options={{headerShown: true, headerTitle:'Update Review'}}/>
+                  <Stack.Screen name="camera" component={CameraScreen} mode='card' />
                 </>
             )}
           </Stack.Navigator>

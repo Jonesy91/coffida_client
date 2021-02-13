@@ -24,12 +24,16 @@ export default function ShopNavigator() {
           component={ShopScreen}
           options={{
             title:'',
-            headerTransparent: true
+            headerTransparent: true,
+            headerTintColor: 'white',
           }}
         />
         <Stack.Screen
           name="writeReview"
           component={WriteReviewScreen}
+          options={{
+            title:'Leave a review'
+          }}
         />
       </Stack.Navigator>
     </Container>

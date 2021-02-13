@@ -2,8 +2,9 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react';
 import {
-  Text, Item, Label, Input, Content, Form, Button, Spinner
+  Text, Item, Label, Input, Content, Form, Button, Spinner, H1
 } from 'native-base';
+import { StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuthDispatch } from '../navigation/AuthContext';
 import { signOut } from '../navigation/AuthService';
@@ -78,47 +79,64 @@ export default function AccountScreen(){
   }
 
   return (
-    <Content>
+    <Content style={Styles.content}>
       {isLoading ? (
         <Spinner />
       ) : (
         <>
-        <Text>Account</Text>
+        <H1>Account</H1>
       <Form>
-        <Label>First Name</Label>
-        <Item rounded>
+        <Label style={Styles.label}>First Name</Label>
+        <Item>
           <Input
             defaultValue={firstName}
             onChangeText={(inFirstName) => setNewirstName(inFirstName)}
           />
         </Item>
-        <Label>Surname</Label>
-        <Item rounded>
+        <Label style={Styles.label}>Surname</Label>
+        <Item >
           <Input
             defaultValue={surname}
             onChangeText={(inSurname) => setNewSurname(inSurname)}
           />
         </Item>
-        <Label>Email</Label>
-        <Item rounded>
+        <Label style={Styles.label}>Email</Label>
+        <Item >
           <Input
             defaultValue={email}
             onChangeText={(inEmail) => setNewEmail(inEmail)}
           />
         </Item>
       </Form>
-      <Button rounded onPress={() => {changeDetails()}}><Text>Update Details</Text></Button>
-      <Label>Change Password</Label>
-      <Item rounded>
+      <Button block onPress={() => {changeDetails()}} style={Styles.button}><Text>Update Details</Text></Button>
+      <Label style={Styles.label}>Change Password</Label>
+      <Item>
         <Input
+          placeholder='Type password here'
           defaultValue={password}
           onChangeText={(inPassword) => setNewPassword(inPassword)}
         />
       </Item>
-      <Button rounded onPress={() => {changePassword()}}><Text>Change Password</Text></Button>
-      <Button rounded onPress={() => {logOut()}}><Text>Log Out</Text></Button>
+      <Button block onPress={() => {changePassword()}} style={Styles.button}><Text>Change Password</Text></Button>
+      <Button block onPress={() => {logOut()}} style={Styles.button}><Text>Log Out</Text></Button>
       </>
       )}
       </Content>  
   );
 }
+
+const Styles = StyleSheet.create({
+  content: {
+    padding: 20,
+    backgroundColor: 'white'
+  },
+  button:{
+    backgroundColor:'#4391ab',
+    margin: 20
+  },
+  label: {
+    color: 'black',
+    margin: 5,
+    marginTop: 10
+  }
+});

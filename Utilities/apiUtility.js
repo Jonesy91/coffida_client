@@ -228,5 +228,49 @@ const register = (data) =>
         }
         return response.json();
     })
+
+    const getPhoto = (locationId, reviewId) =>
+    fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then((response) => {
+        if(!response.ok){
+            throw new Error(response);
+        }
+        return response.json();
+    })
+
+    const addPhoto = (data) =>
+    fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then((response) => {
+        if(!response.ok){
+            throw new Error(response);
+        }
+        return response.json();
+    })
+
+    const deletePhoto = (data) =>
+    fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then((response) => {
+        if(!response.ok){
+            throw new Error(response);
+        }
+        return response.json();
+    })
   
 export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser};

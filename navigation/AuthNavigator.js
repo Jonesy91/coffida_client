@@ -11,6 +11,7 @@ const AuthNavigator = ({ isSignout }) => (
       name="SignIn"
       component={LogInScreen}
       options={{
+        headerShown: false,
         title: 'Sign in',
         animationTypeForReplace: isSignout ? 'pop' : 'push'
       }}
@@ -19,7 +20,8 @@ const AuthNavigator = ({ isSignout }) => (
       name="SignUp"
       component={RegistrationScreen}
       options={{
-        title: 'Sign Up'
+        title: 'Sign Up',
+        headerTransparent: true
       }}
     />
   </Stack.Navigator>

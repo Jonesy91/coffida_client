@@ -1,9 +1,9 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Container, Content, Spinner, Text } from 'native-base';
+import { Container, Content, Spinner, H3 } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getFavourites, getUser } from '../Utilities/APIUtility';
@@ -94,7 +94,7 @@ class FavouriteScreen extends Component{
                 <Content>
                 {this.state.isLoading && (<Spinner />)}
                 {!this.state.isLoading && this.state.favourites.length === 0 ? (
-                    <Text>No favourite locations</Text>
+                    <H3  style={styles.text}>No favourite locations</H3>
                 ) : (
                     this.state.favourites.map((favourite) => {
                         let likes = null;
@@ -112,5 +112,12 @@ class FavouriteScreen extends Component{
        );
     }
 }
+
+const styles = StyleSheet.create({
+    text: {
+        margin: 50,
+        textAlign: 'center',
+    }
+});
 
 export default FavouriteScreen;

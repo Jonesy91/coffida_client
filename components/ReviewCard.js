@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 import {
-  Card, CardItem, Body, Text, Button, Icon, Right, Header
+  Card, CardItem, Body, Text, Button, Icon, Right
 } from 'native-base';
 import React, { Component } from 'react';
+import { StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ratings from './Ratings';
 
@@ -82,10 +83,10 @@ class ReviewCard extends Component {
     return (
       <Card>
         {this.state.usersReview && (
-          <CardItem>
+          <CardItem style={styles.elipsesItem}>
             <Right>
-              <Button small transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})}>
-                <Icon name='md-ellipsis-horizontal' style={{fontSize:30 }} />
+              <Button transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})} style={styles.elipsesBtn}>
+                <Icon name='md-ellipsis-horizontal' style={styles.icon} />
               </Button>
             </Right>
           </CardItem>
@@ -100,7 +101,7 @@ class ReviewCard extends Component {
         </CardItem>
         <CardItem>
           <Button transparent onPress={() => {this.likeReview()}}>
-            <Icon name={this.isLiked()} style={{fontSize:20}} />
+            <Icon name={this.isLiked()} style={styles.icon} />
           </Button>
           <Text>{this.props.review.likes}</Text>
         </CardItem>
@@ -108,5 +109,20 @@ class ReviewCard extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  icon: {
+    fontSize: 30,
+    color: '#4391ab'
+  },
+  elipsesItem: {
+    flex:1,
+    justifyContent:'flex-end',
+    alignItems:'flex-end',
+  },
+  elipsesBtn:{
+    height:10
+  }
+});
 
 export default ReviewCard;

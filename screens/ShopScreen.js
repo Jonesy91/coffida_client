@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Text, Content, Row, Grid, Col, Right, H1, H2 } from 'native-base';
-import { Image } from 'react-native';
-import IonIcons from 'react-native-vector-icons/Ionicons';
+import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button } from 'native-base';
+import { Image, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ratings from '../components/Ratings';
@@ -97,41 +96,39 @@ class ShopScreen extends Component{
 
     render(){
         return(
-            <Content>
-                <Image source={{uri:this.props.route.params.data.photo_path}} style={{height: 250, width: null, flex: 1}}/>
-                <Grid>
+            <Content style={styles.content}>
+                <Image source={{uri:this.props.route.params.data.photo_path}} style={styles.image}/>
+                <Grid  style={styles.grid}>
                     <Row>
-                        <Grid>
-                            <Col>
+                        <Grid style={styles.grid}>
+                            <Row>
                                 <H1>{this.props.route.params.data.location_name}</H1>
-                                <Text>{this.props.route.params.data.location_town}</Text>
-                            </Col>
-                            <Col>
                                 <Right>
                                     <TouchableOpacity onPress={() => {this.favouriteLocation()}}>
-                                        <IonIcons 
-                                            name={this.isFavourite()}
-                                            size={30}/>
+                                        <Icon name={this.isFavourite()} style={styles.icon} />
                                     </TouchableOpacity>
                                 </Right>
-                            </Col>
+                            </Row>
+                            <Row>
+                                <Text>{this.props.route.params.data.location_town}</Text>
+                            </Row>
                         </Grid>
                     </Row>   
-                    <Row>
-                        <H2>Ratings</H2>
+                    <Grid style={styles.ratingGrid}>
+                        <Row>
+                            <H2>Ratings</H2>
+                        </Row>
+                        <Row> 
+                            <Ratings ratings={this.state.ratings}/> 
+                        </Row>
+                    </Grid>
+                    <Row style={styles.row}>
+                        <H2>Reviews</H2>
+                        <Right>
+                            <Button small onPress={() => this.openWriteReview()} style={styles.button}><Text>Leave a review</Text></Button>
+                        </Right>
                     </Row>
-                    <Row>
-                        <Ratings ratings={this.state.ratings}/> 
-                    </Row>
-                    <Row>
-                    <H2>Reviews</H2>
-                    <Right>
-                        <TouchableOpacity onPress={() => this.openWriteReview()}>
-                            <IonIcons name='md-add' size={30} color='black'/>     
-                        </TouchableOpacity>
-                    </Right>
-                    </Row>
-                    <Row>
+                    <Row style={styles.row}>
                         <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likes} navigation={this.props.navigation} userReviews={this.state.userReviews} nav={this.props.navigation}/>
                     </Row>
                 </Grid>
@@ -139,5 +136,43 @@ class ShopScreen extends Component{
         )
     };
 }
+
+const styles = StyleSheet.create({
+    image: {
+        height: 250, 
+        width: null, 
+        flex: 1
+    },
+    icon: {
+        fontSize:30,
+        color: '#4391ab'
+    },
+    content: {
+        backgroundColor: 'white'
+    },
+    grid: {
+        margin: 10,
+    },
+    ratingGrid:{
+        margin: 10,
+        borderBottomColor: '#0f84ab',
+        borderTopColor: '#0f84ab',
+        borderTopWidth: 2,
+        borderBottomWidth:2,
+        paddingTop: 20,
+        paddingBottom: 20
+
+    },
+    row:{
+        margin: 10,
+
+    },
+    button:{
+        backgroundColor: '#4391ab'
+    }
+
+
+
+});
 
 export default ShopScreen;

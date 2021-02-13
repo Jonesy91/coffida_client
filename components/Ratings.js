@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Text, Grid, Row, Col } from 'native-base';
+import { StyleSheet } from 'react-native';
 import StarRating from 'react-native-star-rating';
 
 export default function Ratings({ratings}) {
@@ -8,7 +9,7 @@ export default function Ratings({ratings}) {
     <Grid>
       <Grid>
         <Row>
-          <Col style={{width:150}}>
+          <Col style={styles.col}>
           <Text>Overall</Text>
           </Col>
           <StarRating
@@ -19,12 +20,14 @@ export default function Ratings({ratings}) {
             fullStar="ios-star"
             halfStar="ios-star-half"
             iconSet="Ionicons"
-            fullStarColor="gold"
+            fullStarColor="#16bff7"
+            emptyStarColor="#16bff7"
+            halfStarColor="#16bff7"
             starSize={20}
           />
         </Row>
         <Row>
-          <Col style={{width:150}}>
+          <Col style={styles.col}>
           <Text>Price</Text>
           </Col>
           <StarRating
@@ -35,13 +38,15 @@ export default function Ratings({ratings}) {
             fullStar="ios-star"
             halfStar="ios-star-half"
             iconSet="Ionicons"
-            fullStarColor="gold"
+            fullStarColor="#16bff7"
+            emptyStarColor="#16bff7"
+            halfStarColor="#16bff7"
             starSize={20}
           />
           
         </Row>
         <Row>
-          <Col style={{width:150}}>
+          <Col style={styles.col}>
           <Text>Quality</Text>
           </Col>
           <StarRating
@@ -52,12 +57,14 @@ export default function Ratings({ratings}) {
             fullStar="ios-star"
             halfStar="ios-star-half"
             iconSet="Ionicons"
-            fullStarColor="gold"
+            fullStarColor="#16bff7"
+            emptyStarColor="#16bff7"
+            halfStarColor="#16bff7"
             starSize={20}
           />
         </Row>
         <Row>
-          <Col style={{width:150}}>
+          <Col style={styles.col}>
           <Text>Clenliness</Text>
           </Col>
           <StarRating
@@ -68,7 +75,9 @@ export default function Ratings({ratings}) {
             fullStar="ios-star"
             halfStar="ios-star-half"
             iconSet="Ionicons"
-            fullStarColor="gold"
+            fullStarColor="#16bff7"
+            emptyStarColor="#16bff7"
+            halfStarColor="#16bff7"
             starSize={20}
           />
         </Row>
@@ -76,3 +85,9 @@ export default function Ratings({ratings}) {
     </Grid>
   );
 }
+
+const styles = StyleSheet.create({
+  col:{
+    width: 150
+  }
+});

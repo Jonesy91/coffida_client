@@ -28,8 +28,10 @@ const TabNavigator = () => (
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'gray',
+          activeTintColor: 'white',
+          inactiveTintColor: 'white',
+          inactiveBackgroundColor: '#08485e',
+          activeBackgroundColor:'#0f84ab'
         }}
       >
         <Tab.Screen name="Home" component={ShopNavigator}/>

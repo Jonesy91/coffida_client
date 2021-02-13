@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-filename-extension */
-import { Text, Item, Input, Button } from 'native-base';
+import { Text, Item, Input, Button, Content } from 'native-base';
 import React, { useState } from 'react';
+import { StyleSheet } from 'react-native'; 
 import { signIn, signUp, confirmSignUp } from '../navigation/AuthService';
 import { useAuthDispatch } from '../navigation/AuthContext';
 
@@ -32,37 +33,52 @@ const RegistrationScreen = ({ navigation }) => {
     };
         
     return(
-        <>
-            <Item rounded>
+        <Content style={styles.content}>
+            <Item style={styles.item}>
                 <Input 
                     placeholder='First Name' 
                     onChangeText={(inFirstName) =>setFirstName(inFirstName)}
                 />
             </Item>
-            <Item rounded>
+            <Item style={styles.item}>
                 <Input 
                     placeholder='Surname' 
                     onChangeText={(inSurname) =>setSurname(inSurname)}
                 />                
             </Item>
-            <Item rounded>
+            <Item style={styles.item}>
                 <Input 
                     placeholder='Email' 
                     onChangeText={(inEmail) =>setEmail(inEmail)}
                 />                
             </Item>
-            <Item rounded>
+            <Item style={styles.item}>
                 <Input 
                     secureTextEntry
                     placeholder='Password' 
                     onChangeText={(inPassword) =>setPassword(inPassword)}
                 />                
             </Item>
-            <Button rounded primary onPress={() => register()}>
+            <Button block onPress={() => register()} style={styles.button}>
                 <Text>Register!</Text>
             </Button>
-        </>
+        </Content>
     )
 }
+
+const styles = StyleSheet.create({
+    content:{
+        backgroundColor: 'white',
+        margin: 20,
+        marginTop: 100
+    },
+    button:{
+        backgroundColor:'#4391ab',
+        margin: 10
+    },
+    item:{
+        margin:10
+    }
+});
 
 export default RegistrationScreen;
