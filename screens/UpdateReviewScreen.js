@@ -43,9 +43,26 @@ class UpdateReviewScreen extends Component{
             review_body:this.state.newComments
         }
         this.getAuthKey().then( token => {
-            const locationId = this.props.route.params.locationId;
+            const {locationId} = this.props.route.params;
             const reviewId = this.props.route.params.review.review_id;
-            updateReview(locationId,token,body, reviewId);
+            updateReview(locationId,token,body, reviewId)
+                .then(() => {
+                    Toast.show({
+                        text: 'Review updated',
+                        buttonText: 'Okay',
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: '#4391ab'}
+                    })
+                    this.props.navigation.navigate('shopScreen');
+                })
+                .catch((error) => {
+                    Toast.show({
+                        text: 'Failed update review',
+                        buttonText: 'Okay',
+                        duration: 3000,
+                        buttonStyle: { backgroundColor: '#4391ab'}
+                    })
+                })
         });    
     }
 

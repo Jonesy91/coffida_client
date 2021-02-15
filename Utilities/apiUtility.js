@@ -2,6 +2,13 @@ import { getAuthToken } from './AsyncStorageUtil';
 
 const url = `http://10.0.2.2:3333/api/1.0.0`;
 
+const handleResponse = (response) => {
+    if(!response.ok && response.status !== 304){
+        throw response;
+    } 
+    return response.json();
+}
+
 const patchUser = (userId, userToken, body) =>
     fetch(`${url}/user/${userId}`, {
         method: 'PATCH',
@@ -28,10 +35,9 @@ const getUser = (userId, userToken) =>
         },
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json()})
+        const respJson = handleResponse(response);
+        return respJson;
+    })
     .catch(error => {
         throw error;
     })
@@ -44,10 +50,8 @@ const getFavourites = (userToken) =>
         }
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(response)
-        }
-        return response.json()
+        const respJson = handleResponse(response);
+        return respJson;
     }) 
     .catch(error => {
         throw error;
@@ -60,11 +64,9 @@ const getShops = (userToken) =>
             'X-Authorization': userToken
         }
     })
-    .then(response => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json()
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
     })
     .catch(error => {
         throw error;
@@ -78,9 +80,11 @@ const favourite = (locationId, userToken) =>
         }
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(response);     
-        }
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
  
 const unFavourite = (locationId, userToken) => 
@@ -91,10 +95,12 @@ const unFavourite = (locationId, userToken) =>
         }
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-    });
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
 
 const getLocation = (locationId, userToken) =>
     fetch(`${url}/location/${locationId}`,{
@@ -104,10 +110,8 @@ const getLocation = (locationId, userToken) =>
         }
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
     })
     .catch(error => {
         throw error;
@@ -123,9 +127,11 @@ const submitReview = (locationId, userToken, body) =>
         body:JSON.stringify(body)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
     const updateReview = (locationId, userToken, body, reviewId) =>
@@ -138,9 +144,11 @@ const submitReview = (locationId, userToken, body) =>
         body:JSON.stringify(body)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
     const deleteReview = async (reviewId, locationId) => {
@@ -153,9 +161,11 @@ const submitReview = (locationId, userToken, body) =>
             }
         })
         .then((response) => {
-            if(!response.ok){
-                throw new Error(response);
-            }
+            const respJson = handleResponse(response);
+            return respJson;
+        })
+        .catch(error => {
+            throw error;
         })
     }
 
@@ -167,10 +177,12 @@ const like = (locationId, reviewId, userToken) =>
         },
     })
     .then((response) => {
-        if(!response.ok) {
-            throw new Error(response);     
-        }
-    });
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
 
 const unLike = (locationId, reviewId, userToken) =>
     fetch(`${url}/${locationId}/review/${reviewId}/like`, {
@@ -180,10 +192,12 @@ const unLike = (locationId, reviewId, userToken) =>
         },
     })
     .then((response) => {
-        if(!response.ok) {
-            throw new Error(response);
-        }
-    });
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
 
 const logIn = (body) => 
     fetch(`${url}/user/login`,{
@@ -194,10 +208,11 @@ const logIn = (body) =>
         body: JSON.stringify(body)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
 
@@ -209,9 +224,11 @@ const logOut = (userToken) =>
         },
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response)
-        }
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
 const register = (data) =>
@@ -223,11 +240,12 @@ const register = (data) =>
         body: JSON.stringify(data)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
     })
+    .catch(error => {
+        throw error
+    });
 
     const getPhoto = (locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
@@ -237,10 +255,11 @@ const register = (data) =>
         },
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
     const addPhoto = (data) =>
@@ -252,10 +271,11 @@ const register = (data) =>
         body: JSON.stringify(data)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
 
     const deletePhoto = (data) =>
@@ -267,10 +287,11 @@ const register = (data) =>
         body: JSON.stringify(data)
     })
     .then((response) => {
-        if(!response.ok){
-            throw new Error(response);
-        }
-        return response.json();
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
     })
   
 export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser};

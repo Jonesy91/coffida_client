@@ -1,5 +1,13 @@
+import { act } from "react-test-renderer";
+
 export const AuthReducer = (prevState, action) => {
         switch (action.type){
+          case 'REGISTER':
+            return {
+              ...prevState,
+              userId: action.id,
+              isLoading: false,
+            };
           case 'RESTORE_TOKEN':
             return {
               ...prevState,

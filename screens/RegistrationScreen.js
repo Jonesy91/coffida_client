@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import { Text, Item, Input, Button, Content } from 'native-base';
+import { Text, Item, Input, Button, Content, Spinner, Toast } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native'; 
 import { signIn, signUp, confirmSignUp } from '../navigation/AuthService';
@@ -22,19 +22,42 @@ const RegistrationScreen = ({ navigation }) => {
         signUp(firstName,surname,email,password)
         .then((data) => {
             setSigned(true);
+            dispatch({ type: 'REGISTER', token: data.userId })
+            Toast.show({
+                text: 'Account created!',
+                duration: 3000
+            })
             setSignUpLoading(false);
-            signIn(email,password).then(() => 
-            dispatch({ type: 'SIGN_IN', token: data.token })
-            );
+            navigation.navigate('SignIn');
         })
-        .catch((err) => {
-            setSignUpLoading(false);
-        });
+        .catch((error) => {
+            if(error.status === 400){
+                Toast.show({
+                    text: 'Please check your password and email are valid',
+                    buttonText: 'Okay',
+                    duration: 3000,
+                    buttonStyle: { backgroundColor: '#4391ab'}
+                })
+            } else {
+                Toast.show({
+                    text: 'Please check your password and email are valid',
+                    buttonText: 'Okay',
+                    duration: 3000,
+                    buttonStyle: { backgroundColor: '#4391ab'}
+                })
+            }
+            
+        })
+        .finally(() => setSignUpLoading(false));
     };
         
     return(
         <Content style={styles.content}>
-            <Item style={styles.item}>
+            {signUpLoading ? (
+                <Spinner />
+            ) : (
+                <>
+                <Item style={styles.item}>
                 <Input 
                     placeholder='First Name' 
                     onChangeText={(inFirstName) =>setFirstName(inFirstName)}
@@ -62,6 +85,8 @@ const RegistrationScreen = ({ navigation }) => {
             <Button block onPress={() => register()} style={styles.button}>
                 <Text>Register!</Text>
             </Button>
+                </>
+            )}
         </Content>
     )
 }

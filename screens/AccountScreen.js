@@ -2,7 +2,7 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react';
 import {
-  Text, Item, Label, Input, Content, Form, Button, Spinner, H1
+  Text, Item, Label, Input, Content, Form, Button, Spinner, H1, Toast
 } from 'native-base';
 import { StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,23 +32,51 @@ export default function AccountScreen(){
   const requestAccount = async () => {
     setIsLoading(true);
     getUserData().then((userData) => {
-      getUser(userData.id, userData.token).then(data => {
-        setFirstName(data.first_name);
-        setSurname(data.last_name);
-        setEmail(data.email);
-      });
+      getUser(userData.id, userData.token)
+        .then(data => {
+          setFirstName(data.first_name);
+          setSurname(data.last_name);
+          setEmail(data.email);
+        })
+        .catch(error => {
+          if(error.status === 404){
+            Toast.show({
+              text: 'Unable to find user',
+              buttonText: 'Okay',
+              duration: 3000,
+              buttonStyle: { backgroundColor: '#4391ab'}
+            })
+          } else {
+            Toast.show({
+              text: 'Failed to get user details',
+              buttonText: 'Okay',
+              duration: 3000,
+              buttonStyle: { backgroundColor: '#4391ab'}
+            })
+          }
+        })
     });
     setIsLoading(false);
   }
 
   const changePassword = async () => {
     const { body } = { password:newPassword };
-    getUserData().then((userData) => {
-      patchUser(userData.id, userData.token, body).then(
-        setNewPassword(''),
-        setPassword('')
-      )
-    }); 
+    getUserData()
+      .then((userData) => {
+        patchUser(userData.id, userData.token, body)
+          .then(
+            setNewPassword(''),
+            setPassword('')
+          )
+          .catch(error => {
+            Toast.show({
+              text: 'Failed to change password',
+              buttonText: 'Okay',
+              duration: 3000,
+              buttonStyle: { backgroundColor: '#4391ab'}
+            })
+          })
+      }); 
   }
 
   const changeDetails = () => {
@@ -74,8 +102,19 @@ export default function AccountScreen(){
   });
 
   const logOut = async () => {
-    await signOut();
-    dispatch({ type: 'SIGN_OUT' });
+    await signOut()
+      .then(() =>
+        dispatch({ type: 'SIGN_OUT' })
+      )
+      .catch(error =>
+        Toast.show({
+          text: 'Failed to log out',
+          buttonText: 'Okay',
+          duration: 3000,
+          buttonStyle: { backgroundColor: '#4391ab'}
+      })
+      )
+    
   }
 
   return (

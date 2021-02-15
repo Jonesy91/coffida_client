@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button } from 'native-base';
+import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button, Toast } from 'native-base';
 import { Image, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -51,33 +51,64 @@ class ShopScreen extends Component{
     }
 
     favouriteLocation() {
-        this.getAuthKey().then(token => {
-            if(this.state.isFavourite === false){
-                favourite(this.state.locationId, token)
-                    .then(this.setState({isFavourite:true}));
-            } else{
-                unFavourite(this.state.locationId, token)
-                    .then(this.setState({isFavourite:false}));
-            }   
-        })
+        this.getAuthKey()
+            .then(token => {
+                if(this.state.isFavourite === false){
+                    favourite(this.state.locationId, token)
+                        .then(this.setState({isFavourite:true}))
+                        .catch(error => {
+                            Toast.show({
+                                text: 'Failed to add shop to your favourites',
+                                buttonText: 'Okay',
+                                duration: 3000,
+                                buttonStyle: { backgroundColor: '#4391ab'}
+                            })
+                        })
+                } else{
+                    unFavourite(this.state.locationId, token)
+                        .then(this.setState({isFavourite:false}))
+                        .catch(error => {
+                            Toast.show({
+                                text: 'Failed to remove shop from your favourites',
+                                buttonText: 'Okay',
+                                duration: 3000,
+                                buttonStyle: { backgroundColor: '#4391ab'}
+                            })
+                        })
+                }   
+            })
     }
 
     getShopData() {
-        this.getAuthKey().then(
-            token => {
-                getLocation(this.state.locationId, token).then(data => {
-                    this.setState({
-                        reviews: data.location_reviews,
-                        ratings:{
-                            overall:data.avg_overall_rating, 
-                            price:data.avg_price_rating, 
-                            quality:data.avg_quality_rating,
-                            clenliness:data.avg_clenliness_rating
-                        }
-                    });
+        this.getAuthKey()
+            .then(
+                token => {
+                    getLocation(this.state.locationId, token).then(data => {
+                        this.setState({
+                            reviews: data.location_reviews,
+                            ratings:{
+                                overall:data.avg_overall_rating, 
+                                price:data.avg_price_rating, 
+                                quality:data.avg_quality_rating,
+                                clenliness:data.avg_clenliness_rating
+                            }
+                        });
+                    })
+            })
+            .catch(error => {
+                let message = '';
+                if(error.status === 404){
+                    message = 'Unable to find the shop requested';
+                } else {
+                    message = 'Request failed'
+                }
+                Toast.show({
+                    text: message,
+                    buttonText: 'Okay',
+                    duration: 3000,
+                    buttonStyle: { backgroundColor: '#4391ab'}
                 })
-            }
-        )
+            })
     }
 
     async getAuthKey() {

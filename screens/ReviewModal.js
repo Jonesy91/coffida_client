@@ -7,12 +7,33 @@ import { deleteReview } from '../Utilities/APIUtility';
 export default function ReviewModal({ route, navigation }){
     const review = route.params.review;
     const locationId = route.params.locationId;
+
+    const deleteAReview = () => {
+        deleteReview(review.review_id, locationId)
+            .then(() => {
+                Toast.show({
+                    text: 'Review deleted',
+                    buttonText: 'Okay',
+                    duration: 3000,
+                    buttonStyle: { backgroundColor: '#4391ab'}
+                })
+            })
+            .catch((error) => {
+                Toast.show({
+                    text: 'Unable to delete review',
+                    buttonText: 'Okay',
+                    duration: 3000,
+                    buttonStyle: { backgroundColor: '#4391ab'}
+                })
+            })
+    }
+
     return(
             <Content contentContainerStyle={styles.content}>
                 <Button block onPress={() => navigation.navigate('updateReview', {review,locationId})} style={styles.updatebutton}>
                     <Text>Update Review</Text>
                 </Button>
-                <Button block onPress={() => deleteReview(review.review_id, locationId)} style={styles.delbutton}>
+                <Button block onPress={() => deleteAReview()} style={styles.delbutton}>
                     <Text>Delete</Text>
                 </Button>
                 <Button block onPress={() => navigation.goBack()} style={styles.button}>
@@ -21,6 +42,8 @@ export default function ReviewModal({ route, navigation }){
             </Content>
     ); 
 }
+
+
 
 const styles = StyleSheet.create({
     content:{

@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Container, Content, Spinner } from 'native-base';
+import { Container, Content, Spinner, Text, Button, Row, Grid, H3 } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser } from '../Utilities/APIUtility';
@@ -16,12 +16,19 @@ class HomeScreen extends Component{
             favLocations:[],
             likedReviews: [],
             userReviews:[],
+            error: false
         }
     }
 
-    componentDidMount(){
-        this.getUserInfo();
-        this.findShops();
+    componentDidMount() {
+        this.focusListener = this.props.navigation.addListener('focus', () => {
+            this.getUserInfo();
+            this.findShops();
+        });
+    }
+
+    componentWillUnmount() {
+        this.focusListener;
     }
     
     async getUserData() {
@@ -74,16 +81,18 @@ class HomeScreen extends Component{
                             }
                             return reviewId
                         })
-                        console.log(userReviews)
                         return {location:locationId,reviewIds:userReviews}
                     })
-                    console.log(reviews)
                     const userReviews = reviews.filter(review => {
                         if(!review.reviewIds.includes(null)){
                             return review;
                         }
                     })
-                    this.setState({userReviews, isLoading:false});
+                    this.setState({userReviews, isLoading:false, error:false});
+                })
+                .catch(error => {
+                    console.log(error)
+                    this.setState({error:true});
                 })
             }
         )
@@ -97,8 +106,12 @@ class HomeScreen extends Component{
                 item.id=item.location_id.toString();
                 return item;
         })
-        this.setState({locations: data, isLoading:false});
-        })       
+        this.setState({locations: data, isLoading:false, error: false});
+        }) 
+        .catch(error => {
+            console.log(error)
+            this.setState({error: true})    
+        })     
     }
 
     openShop(data, favourite, likes, reviews) {
@@ -109,7 +122,19 @@ class HomeScreen extends Component{
         return(
             <Container>
                 <HeaderMenu />
-                <Content>
+                {this.state.error ? (
+                    <Content contentContainerStyle={styles.failureScreen}>
+                    <Grid>
+                        <Row style={styles.row}>
+                            <H3>Failed to find coffee Shops</H3>
+                        </Row>
+                        <Row style={styles.row}>
+                            <Button style={styles.button}><Text>Try Again</Text></Button>
+                        </Row>
+                    </Grid>
+                    </Content>
+                ) : (
+                    <Content>
                     {this.state.isLoading ? (
                         <Spinner />
                     ) : 
@@ -133,10 +158,27 @@ class HomeScreen extends Component{
                     return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes, reviews)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                     )}  
-                </Content> 
+                </Content>      
+                )} 
             </Container> 
         );
     }
 }
+
+const styles = StyleSheet.create({
+    failureScreen:{
+        marginTop:50,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    row:{
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: 10
+    },
+    button:{
+        backgroundColor: '#4391ab'
+    }
+});
 
 export default HomeScreen;
