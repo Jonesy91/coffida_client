@@ -1,7 +1,7 @@
-import { Button, Content, Text } from 'native-base';
+import { Button, Content, Text, View } from 'native-base';
 import React, { Component } from 'react';
 import { RNCamera } from 'react-native-camera';
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 class CameraScreen extends Component{
 
@@ -10,18 +10,21 @@ class CameraScreen extends Component{
             const options = { quality:0.5, base64: true}
             const data = await this.camera.takePictureAsync(options);
             console.log(data.uri);
+            this.props.navigation.navigate('writeReview', {photo:data.uri});
         }
     }
     render(){
         return(
-            <Content style={styles.container}>
+            <Content contentContainerStyle={styles.container}>
                 <RNCamera
                     ref={ref=> {
                         this.camera = ref;
                     }}
                     style={styles.preview}
-                    />
-                <Button onPress={() => {this.takePicture()}} style={styles.capture}><Text>Take Photo</Text></Button>    
+                />
+                <View>
+                    <Button onPress={() => {this.takePicture()}} style={styles.capture} />
+                </View>
             </Content>
         )
     }
@@ -31,19 +34,25 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        backgroundColor: 'black'
       },
       preview: {
-        flex: 1,
+        flex:1,
         justifyContent: 'flex-end',
-        alignItems: 'center',
+        alignItems:'center'
+        
       },
       capture: {
         flex: 0,
-        borderRadius: 5,
+        backgroundColor:'#fff',
+        borderRadius: 50,
         padding: 15,
         paddingHorizontal: 20,
         alignSelf: 'center',
         margin: 20,
+        width: 80,
+        height: 80
+
       },
 });
 

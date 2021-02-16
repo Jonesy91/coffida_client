@@ -1,9 +1,9 @@
-import { Content, Text, H3, Textarea, Grid, Row, Button, Col } from 'native-base';
+import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Image } from 'react-native'
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { submitReview } from '../Utilities/APIUtility';
+import { submitReview, addPhoto } from '../Utilities/APIUtility';
 
 class WriteReviewScreen extends Component{
     constructor(props){
@@ -13,7 +13,7 @@ class WriteReviewScreen extends Component{
             overallRating:0,
             priceRating:0,
             qualityRating:0,
-            clenlinessRating:0
+            clenlinessRating:0,
         }
     }
     setOverall(rating){
@@ -28,6 +28,7 @@ class WriteReviewScreen extends Component{
     setClenliness(rating){
         this.setState({clenlinessRating:rating});
     }
+
     submitReview = () => {
         const body = {
             overall_rating:parseInt(this.state.overallRating),
@@ -39,7 +40,15 @@ class WriteReviewScreen extends Component{
         this.getAuthKey().then( token => {
             const id = this.props.route.params.locationId;
             submitReview(id,token,body);
-        });    
+        })
+        .catch((error) => {
+            Toast.show({
+                text: 'Failed to submit review',
+                buttonText: 'Okay',
+                duration: 3000,
+                buttonStyle: { backgroundColor: '#4391ab'}
+            })
+        })   
     }
 
     getAuthKey = async () => {
@@ -141,9 +150,19 @@ class WriteReviewScreen extends Component{
                         />
                     </Row>
                     <H3 style={styles.h3}>Comments</H3>
-                    <Textarea rowSpan={5} bordered placeholder="Add a comment" onChangeText={(comment) => this.setState({comments:comment})}/>
-                    <Button block onPress={() => {this.props.navigation.navigate('camera')}} style={styles.button}><Text>Add Photo</Text></Button>        
-                    <Button block onPress={this.submitReview} style={styles.button}><Text>Submit</Text></Button>    
+                    <Textarea 
+                        rowSpan={5} 
+                        bordered 
+                        placeholder="Add a comment" 
+                        onChangeText={(comment) => this.setState({comments:comment})}
+                    />
+                    <Button 
+                        block 
+                        onPress={this.submitReview} 
+                        style={styles.button}
+                    >
+                        <Text>Submit</Text>
+                    </Button>    
                 </Grid>
             </Content>        
         )

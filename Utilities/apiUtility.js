@@ -2,11 +2,17 @@ import { getAuthToken } from './AsyncStorageUtil';
 
 const url = `http://10.0.2.2:3333/api/1.0.0`;
 
-const handleResponse = (response) => {
+const handleResponse = async (response) => {
     if(!response.ok && response.status !== 304){
         throw response;
-    } 
-    return response.json();
+    } else if (response.status === 201) {
+        return response;
+    }
+    const responseText = await response.text();
+    if(!responseText.length){
+        return response
+    }
+    return JSON.parse(responseText);
 }
 
 const patchUser = (userId, userToken, body) =>
@@ -73,7 +79,7 @@ const getShops = (userToken) =>
     })
 
 const favourite = (locationId, userToken) => 
-    fetch(`${url}/${locationId}/favourite`,{
+    fetch(`${url}/location/${locationId}/favourite`,{
         method:'POST',
         headers:{
             'X-Authorization': userToken
@@ -262,13 +268,14 @@ const register = (data) =>
         throw error;
     })
 
-    const addPhoto = (data) =>
+    const addPhoto = (userToken, data, locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'X-Authorization': userToken,
+            'Content-Type': 'image/jpeg'
         },
-        body: JSON.stringify(data)
+        body: data
     })
     .then((response) => {
         const respJson = handleResponse(response);
@@ -294,4 +301,4 @@ const register = (data) =>
         throw error;
     })
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto};

@@ -57,6 +57,8 @@ class ShopScreen extends Component{
                     favourite(this.state.locationId, token)
                         .then(this.setState({isFavourite:true}))
                         .catch(error => {
+                            console.log(error)
+                            this.setState({isFavourite:false})
                             Toast.show({
                                 text: 'Failed to add shop to your favourites',
                                 buttonText: 'Okay',

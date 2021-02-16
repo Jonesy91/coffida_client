@@ -70,6 +70,7 @@ class HomeScreen extends Component{
                         }
                     })
                     this.setState({likedReviews, isLoading:false});
+                    console.log(this.state.likedReviews)
                 })
                 .then(() => {
                     const reviews = this.state.locations.map(location => {
