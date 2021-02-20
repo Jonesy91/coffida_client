@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content, Spinner, Text, Button, Row, Grid, H3 } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getShops, getUser } from '../Utilities/APIUtility';
+import { getShops, getUser, getShopsFiltered } from '../Utilities/APIUtility';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -103,16 +103,25 @@ class HomeScreen extends Component{
         this.setState({isLoading: true});
         const userData = await this.getUserData();
         getShops(userData.token).then(getResponse => {
-            const data = getResponse.map((item) => {
-                item.id=item.location_id.toString();
-                return item;
-        })
-        this.setState({locations: data, isLoading:false, error: false});
+        this.setState({locations: getResponse, isLoading:false, error: false});
         }) 
         .catch(error => {
             console.log(error)
             this.setState({error: true})    
         })     
+    }
+
+    handleSearch = async (searchData) => {
+        this.setState({isLoading: true});
+        const params = `q=${searchData}`
+        const userData = await this.getUserData();
+        getShopsFiltered(userData.token, params).then(getResponse => {
+        this.setState({locations: getResponse, isLoading:false, error: false});
+        }) 
+        .catch(error => {
+            console.log(error)
+            this.setState({error: true})    
+        })   
     }
 
     openShop(data, favourite, likes, reviews) {
@@ -122,7 +131,7 @@ class HomeScreen extends Component{
     render(){
         return(
             <Container>
-                <HeaderMenu />
+                <HeaderMenu searchCallback={this.handleSearch}/>
                 {this.state.error ? (
                     <Content contentContainerStyle={styles.failureScreen}>
                     <Grid>

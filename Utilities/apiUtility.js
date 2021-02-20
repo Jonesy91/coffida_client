@@ -78,6 +78,21 @@ const getShops = (userToken) =>
         throw error;
     })
 
+const getShopsFiltered = (userToken, params) => 
+    fetch(`${url}/find?${params}`,{
+        method: 'GET',    
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
 const favourite = (locationId, userToken) => 
     fetch(`${url}/location/${locationId}/favourite`,{
         method:'POST',
@@ -301,4 +316,4 @@ const register = (data) =>
         throw error;
     })
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getShopsFiltered};
