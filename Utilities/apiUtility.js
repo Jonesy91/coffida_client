@@ -9,10 +9,10 @@ const handleResponse = async (response) => {
         return response;
     }
     const responseText = await response.text();
-    if(!responseText.length){
-        return response
+    if(responseText.length > 2){
+        return JSON.parse(responseText);
     }
-    return JSON.parse(responseText);
+    return response;
 }
 
 const patchUser = (userId, userToken, body) =>

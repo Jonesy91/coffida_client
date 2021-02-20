@@ -10,7 +10,7 @@ class CameraScreen extends Component{
             const options = { quality:0.5, base64: true}
             const data = await this.camera.takePictureAsync(options);
             console.log(data.uri);
-            this.props.navigation.navigate('writeReview', {photo:data.uri});
+            this.props.navigation.navigate('writeReview', {photo:data});
         }
     }
     render(){

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
@@ -44,7 +45,6 @@ export default function ShopCard({location, favourite}) {
             emptyStarColor="#4391ab"
             starSize={20}
           />
-          <Text style={styles.text}>{location.avg_overall_rating}/5</Text>
         </Left>        
       </CardItem>
     </Card>
