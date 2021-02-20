@@ -7,16 +7,14 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Button, Text } from 'native-base';
 import TabNavigator from './TabNavigator';
 import SplashScreen from '../screens/SplashScreen';
 import { useAuthDispatch, useAuthState } from './AuthContext';
 import AuthNavigator from './AuthNavigator';
 import ReviewModal from '../screens/ReviewModal';
+import FilterModal from '../screens/FilterModal';
 import UpdateReviewScreen from '../screens/UpdateReviewScreen';
 import CameraScreen from '../screens/CameraScreen';
-import { floor } from 'react-native-reanimated';
 
 export default function Navigator(){
   const Stack = createStackNavigator();  
@@ -68,6 +66,7 @@ export default function Navigator(){
                 <>
                   <Stack.Screen name="main" component={TabNavigator} options={{headerShown:false}} />
                   <Stack.Screen name="modal" component={ReviewModal} options={{cardStyle:{backgroundColor: 'transparent', opacity: 2, headerShown: false}}} />
+                  <Stack.Screen name="filterModal" component={FilterModal} options={{headerShown: false}} />
                   <Stack.Screen name="updateReview" component={UpdateReviewScreen} options={{headerShown: true, headerTitle:'Update Review'}}/>
                   <Stack.Screen name="camera" component={CameraScreen} mode='card' />
                 </>

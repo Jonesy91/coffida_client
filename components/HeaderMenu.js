@@ -16,6 +16,10 @@ class HeaderMenu extends Component {
         this.props.searchCallback(this.state.search)
     }
 
+    openFilters(){
+        this.props.navigation.navigate('filterModal',{currentFilter: this.props.currentFilter});
+    }
+
     render(){
         return(
             <Header searchBar style={styles.header}>
@@ -28,7 +32,7 @@ class HeaderMenu extends Component {
                     </Button>
                 </Body>
                 <Right>
-                    <Button transparent>
+                    <Button transparent onPress={()  => this.openFilters()}>
                         <Icon name='md-options' style={styles.icon}/>
                     </Button>
                 </Right>

@@ -16,14 +16,21 @@ class HomeScreen extends Component{
             favLocations:[],
             likedReviews: [],
             userReviews:[],
-            error: false
+            error: false,
+            currentFilter: null
         }
     }
 
     componentDidMount() {
-        this.focusListener = this.props.navigation.addListener('focus', () => {
+        this.focusListener = this.props.navigation.addListener('focus', e => {
             this.getUserInfo();
-            this.findShops();
+            const params = this.props.route.params;
+            if(typeof params !== 'undefined'){
+                this.handleFilter(params.filter);
+                this.setState({currentFilter: params.currentFilter})
+            } else {
+                this.findShops();
+            }
         });
     }
 
@@ -124,6 +131,18 @@ class HomeScreen extends Component{
         })   
     }
 
+    handleFilter = async (params) => {
+        this.setState({isLoading: true});
+        const userData = await this.getUserData();
+        getShopsFiltered(userData.token, params).then(getResponse => {
+        this.setState({locations: getResponse, isLoading:false, error: false});
+        }) 
+        .catch(error => {
+            console.log(error)
+            this.setState({error: true})    
+        })   
+    }
+
     openShop(data, favourite, likes, reviews) {
         this.props.navigation.navigate('shopScreen', {data, favourite, likes, reviews})
     }
@@ -131,7 +150,7 @@ class HomeScreen extends Component{
     render(){
         return(
             <Container>
-                <HeaderMenu searchCallback={this.handleSearch}/>
+                <HeaderMenu searchCallback={this.handleSearch} navigation={this.props.navigation} currentFilter={this.state.currentFilter}/>
                 {this.state.error ? (
                     <Content contentContainerStyle={styles.failureScreen}>
                     <Grid>
