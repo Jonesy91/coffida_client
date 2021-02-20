@@ -16,14 +16,22 @@ class FavouriteScreen extends Component{
             isLoading: true,
             favourites:[],
             likedReviews: [],
-            error: false
+            error: false,
+            currentFilter: null,
         }
     }
 
     componentDidMount() {
         this.focusListener = this.props.navigation.addListener('focus', () => {
             this.getUser();
-            this.getFavourites();
+            const params = this.props.route.params;
+            if(typeof params !== 'undefined'){
+                this.handleFilter(params.filter);
+                this.setState({currentFilter: params.currentFilter})
+            } else {
+                this.getFavourites();
+            }
+           
         });
     }
 
@@ -54,6 +62,19 @@ class FavouriteScreen extends Component{
     handleSearch = async (searchData) => {
         this.setState({isLoading: true});
         const params = `q=${searchData}&search_in=favourite`
+        const userData = await this.getUserData();
+        getShopsFiltered(userData.token, params).then(getResponse => {
+        this.setState({favourites: getResponse, isLoading:false, error: false});
+        }) 
+        .catch(error => {
+            console.log(error)
+            this.setState({error: true})    
+        })   
+    }
+
+    handleFilter = async (inParams) => {
+        this.setState({isLoading: true});
+        const params = `${inParams}&search_in=favourite`
         const userData = await this.getUserData();
         getShopsFiltered(userData.token, params).then(getResponse => {
         this.setState({favourites: getResponse, isLoading:false, error: false});
@@ -115,7 +136,12 @@ class FavouriteScreen extends Component{
     render(){
         return(
             <Container>
-                <HeaderMenu searchCallback={this.handleSearch} />
+                <HeaderMenu 
+                    searchCallback={this.handleSearch}  
+                    navigation={this.props.navigation} 
+                    currentFilter={this.state.currentFilter} 
+                    route={this.props.route.name}
+                />
                 {this.state.error ? (
                     <Content contentContainerStyle={styles.failureScreen}>
                         <Grid>

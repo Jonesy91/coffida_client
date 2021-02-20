@@ -15,7 +15,7 @@ export default function FavouriteNavigator() {
     <Container>
       <Stack.Navigator>
         <Stack.Screen
-          name="home"
+          name="favourite"
           component={FavouriteScreen}
           options={{ headerShown: false }}
         />

@@ -150,7 +150,12 @@ class HomeScreen extends Component{
     render(){
         return(
             <Container>
-                <HeaderMenu searchCallback={this.handleSearch} navigation={this.props.navigation} currentFilter={this.state.currentFilter}/>
+                <HeaderMenu 
+                    searchCallback={this.handleSearch} 
+                    navigation={this.props.navigation} 
+                    currentFilter={this.state.currentFilter}
+                    route={this.props.route.name}
+                />
                 {this.state.error ? (
                     <Content contentContainerStyle={styles.failureScreen}>
                     <Grid>

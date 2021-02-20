@@ -17,7 +17,7 @@ class HeaderMenu extends Component {
     }
 
     openFilters(){
-        this.props.navigation.navigate('filterModal',{currentFilter: this.props.currentFilter});
+        this.props.navigation.navigate('filterModal',{currentFilter: this.props.currentFilter, route: this.props.route});
     }
 
     render(){

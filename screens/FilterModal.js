@@ -52,8 +52,8 @@ class FilterModal extends Component{
                 filter = `clenliness_rating=${this.state.clenliness}`
             }
         }
-        
-        this.props.navigation.navigate('home', {filter:filter, 
+        console.log(this.props.route.params.route)
+        this.props.navigation.navigate(this.props.route.params.route, {filter:filter, 
             currentFilter:{ 
                 overall:this.state.overall,
                 quality:this.state.quality,
