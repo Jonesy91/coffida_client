@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content, Spinner, H3, Grid, Row, Button, Text } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getFavourites, getUser } from '../Utilities/APIUtility';
+import { getFavourites, getUser, getShopsFiltered } from '../Utilities/APIUtility';
 
 
 class FavouriteScreen extends Component{
@@ -49,6 +49,19 @@ class FavouriteScreen extends Component{
                 this.setState({error:true});
             })
         })
+    }
+
+    handleSearch = async (searchData) => {
+        this.setState({isLoading: true});
+        const params = `q=${searchData}&search_in=favourite`
+        const userData = await this.getUserData();
+        getShopsFiltered(userData.token, params).then(getResponse => {
+        this.setState({favourites: getResponse, isLoading:false, error: false});
+        }) 
+        .catch(error => {
+            console.log(error)
+            this.setState({error: true})    
+        })   
     }
 
     async getUserData() {
@@ -102,7 +115,7 @@ class FavouriteScreen extends Component{
     render(){
         return(
             <Container>
-                <HeaderMenu />
+                <HeaderMenu searchCallback={this.handleSearch} />
                 {this.state.error ? (
                     <Content contentContainerStyle={styles.failureScreen}>
                         <Grid>
