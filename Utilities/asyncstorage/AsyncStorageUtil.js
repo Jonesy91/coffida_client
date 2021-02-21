@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+/* 
+Gets the users Authentication token from the Async Storage
+*/
 const getAuthToken = async () => {
     try{
         const token = await AsyncStorage.getItem('@userKey');
@@ -12,6 +14,9 @@ const getAuthToken = async () => {
     }
 }
 
+/* 
+Gets the userID from the Async Storage
+*/
 const getUserId = async () => {
     try{
         const token = await AsyncStorage.getItem('@userId');

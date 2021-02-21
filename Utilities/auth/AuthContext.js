@@ -1,10 +1,8 @@
 import React from 'react';
 import { AuthReducer } from './AuthReducer'; 
 
-
 const AuthStateContext = React.createContext();
 const AuthDispatchContext = React.createContext();
-
 
 function AuthProvider({ children }) {
   const [state, dispatch] = React.useReducer(AuthReducer, {
@@ -22,6 +20,9 @@ function AuthProvider({ children }) {
   );
 }
 
+/* 
+This function provides access to the auth state
+*/
 function useAuthState() {
   const context = React.useContext(AuthStateContext);
   if (context === undefined) {
@@ -29,6 +30,10 @@ function useAuthState() {
   }
   return context;
 }
+
+/* 
+This function allows you to send state to the auth reducer
+*/
 function useAuthDispatch() {
   const context = React.useContext(AuthDispatchContext);
   if (context === undefined) {

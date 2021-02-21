@@ -2,6 +2,10 @@ import { getAuthToken } from '../asyncstorage/AsyncStorageUtil';
 
 const url = `http://10.0.2.2:3333/api/1.0.0`;
 
+/* 
+Checks if the request was successful, if successful and has a body
+converts the response to json.
+*/
 const handleResponse = async (response) => {
     if(!response.ok && response.status !== 304){
         throw response;
@@ -15,6 +19,31 @@ const handleResponse = async (response) => {
     return response;
 }
 
+/*
+User Management API requests
+*/
+
+/* 
+GET reqeust for the users details
+*/
+const getUser = (userId, userToken) =>
+    fetch(`${url}/user/${userId}`, {
+        method: 'GET',
+        headers: {
+            'X-Authorization': userToken,
+        },
+    })
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+PATCH request to update the users details
+*/
 const patchUser = (userId, userToken, body) =>
     fetch(`${url}/user/${userId}`, {
         method: 'PATCH',
@@ -33,11 +62,33 @@ const patchUser = (userId, userToken, body) =>
         throw error;
     })
 
-const getUser = (userId, userToken) =>
-    fetch(`${url}/user/${userId}`, {
-        method: 'GET',
+/* 
+POST request to log in
+*/
+const logIn = (body) => 
+    fetch(`${url}/user/login`,{
+        method: 'POST',
         headers: {
-            'X-Authorization': userToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    })
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+POST reques to log out 
+*/
+const logOut = (userToken) => 
+    fetch(`${url}/user/logout`, {
+        method: 'POST',
+        headers: {
+          'X-Authorization': userToken,
         },
     })
     .then((response) => {
@@ -48,96 +99,32 @@ const getUser = (userId, userToken) =>
         throw error;
     })
 
-const getFavourites = (userToken) =>
-    fetch(`${url}/find?search_in=favourite`,{
-        method: 'GET',
-        headers:{
-            'X-Authorization': userToken
-        }
-    })
-    .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
-    }) 
-    .catch(error => {
-        throw error;
-    })
-
-const getShops = (userToken) => 
-    fetch(`${url}/find`,{
-        method: 'GET',    
-        headers:{
-            'X-Authorization': userToken
-        }
+/* 
+POST request to create a new user
+*/
+const register = (data) =>
+    fetch(`${url}/user`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     })
     .then((response) => {
         const respJson = handleResponse(response);
         return respJson;
     })
     .catch(error => {
-        throw error;
-    })
-
-const getShopsFiltered = (userToken, params) => 
-    fetch(`${url}/find?${params}`,{
-        method: 'GET',    
-        headers:{
-            'X-Authorization': userToken
-        }
-    })
-    .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
-    })
-
-const favourite = (locationId, userToken) => 
-    fetch(`${url}/location/${locationId}/favourite`,{
-        method:'POST',
-        headers:{
-            'X-Authorization': userToken
-        }
-    })
-    .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
-    })
- 
-const unFavourite = (locationId, userToken) => 
-    fetch(`${url}/location/${locationId}/favourite`,{
-        method:'DELETE',
-        headers:{
-            'X-Authorization': userToken
-        }
-    })
-    .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
-    })
-
-const getLocation = (locationId, userToken) =>
-    fetch(`${url}/location/${locationId}`,{
-        method:'GET',    
-        headers:{
-            'X-Authorization': userToken
-        }
-    })
-    .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
+        throw error
     });
 
+/* 
+Location Review API requests
+*/
+
+/* 
+POST request to submit a new review
+*/
 const submitReview = (locationId, userToken, body) =>
     fetch(`${url}/location/${locationId}/review`, {
         method:'POST',
@@ -155,7 +142,10 @@ const submitReview = (locationId, userToken, body) =>
         throw error;
     })
 
-    const updateReview = (locationId, userToken, body, reviewId) =>
+/*
+PATCH request to update a review
+*/
+const updateReview = (locationId, userToken, body, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}`, {
         method:'PATCH',
         headers:{
@@ -172,7 +162,10 @@ const submitReview = (locationId, userToken, body) =>
         throw error;
     })
 
-    const deleteReview = async (reviewId, locationId) => {
+/* 
+DELETE request to delete a review
+*/
+const deleteReview = async (reviewId, locationId) => {
         const token = await getAuthToken();
         fetch(`${url}/location/${locationId}/review/${reviewId}`, {
             method:'DELETE',
@@ -190,6 +183,9 @@ const submitReview = (locationId, userToken, body) =>
         })
     }
 
+/* 
+POST request to like a review
+*/
 const like = (locationId, reviewId, userToken) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/like`, {
         method: 'POST',
@@ -205,6 +201,9 @@ const like = (locationId, reviewId, userToken) =>
         throw error;
     })
 
+/*
+DELETE request to unlike a review
+*/
 const unLike = (locationId, reviewId, userToken) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/like`, {
         method: 'DELETE',
@@ -220,57 +219,12 @@ const unLike = (locationId, reviewId, userToken) =>
         throw error;
     })
 
-const logIn = (body) => 
-    fetch(`${url}/user/login`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-    })
-    .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
-    })
-
-
-const logOut = (userToken) => 
-    fetch(`${url}/user/logout`, {
-        method: 'POST',
-        headers: {
-          'X-Authorization': userToken,
-        },
-    })
-    .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error;
-    })
-
-const register = (data) =>
-    fetch(`${url}/user`,{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
-    })
-    .catch(error => {
-        throw error
-    });
-
-    const getPhoto = (userToken, locationId, reviewId) =>
+/* 
+GET request to get a photo for a review
+*/
+const getPhoto = (userToken, locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
-        method: 'POST',
+        method: 'GET',
         headers: {
             'X-Authorization': userToken,
             'Content-Type': 'application/json'
@@ -283,7 +237,10 @@ const register = (data) =>
         throw error;
     })
 
-    const addPhoto = (userToken, data, locationId, reviewId) =>
+/* 
+POST request to upload a photo
+*/    
+const addPhoto = (userToken, data, locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'POST',
         headers: {
@@ -300,9 +257,12 @@ const register = (data) =>
         throw error;
     })
 
-    const deletePhoto = (data) =>
+/*
+DELETE request to delete a photo
+*/
+const deletePhoto = (data) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -315,5 +275,120 @@ const register = (data) =>
     .catch(error => {
         throw error;
     })
+
+
+/* 
+Location Management API requests    
+*/
+
+/* 
+GET request to get all shops
+*/
+const getShops = (userToken) => 
+    fetch(`${url}/find`,{
+        method: 'GET',    
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/*
+GET request to get the users favourites 
+*/
+const getFavourites = (userToken) =>
+    fetch(`${url}/find?search_in=favourite`,{
+        method: 'GET',
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then(response => {
+        const respJson = handleResponse(response);
+        return respJson;
+    }) 
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+GET request to find shops with filter parameters
+*/
+const getShopsFiltered = (userToken, params) => 
+    fetch(`${url}/find?${params}`,{
+        method: 'GET',    
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then((response) => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+POST request to mark a location as a favourite
+*/
+const favourite = (locationId, userToken) => 
+    fetch(`${url}/location/${locationId}/favourite`,{
+        method:'POST',
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then(response => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+DELETE request to un-favourite a location
+*/
+const unFavourite = (locationId, userToken) => 
+    fetch(`${url}/location/${locationId}/favourite`,{
+        method:'DELETE',
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then(response => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    })
+
+/* 
+GET request to get data for a specific location
+*/
+const getLocation = (locationId, userToken) =>
+    fetch(`${url}/location/${locationId}`,{
+        method:'GET',    
+        headers:{
+            'X-Authorization': userToken
+        }
+    })
+    .then(response => {
+        const respJson = handleResponse(response);
+        return respJson;
+    })
+    .catch(error => {
+        throw error;
+    });
+
+
   
 export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getPhoto, getShopsFiltered};

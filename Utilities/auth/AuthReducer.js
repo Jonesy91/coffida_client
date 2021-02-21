@@ -1,5 +1,6 @@
-import { act } from "react-test-renderer";
-
+/* 
+The AuthReducer updates the auth state for the different actions.
+*/
 export const AuthReducer = (prevState, action) => {
         switch (action.type){
           case 'REGISTER':
