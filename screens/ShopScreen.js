@@ -24,19 +24,26 @@ class ShopScreen extends Component{
             userReviews: '',
             reviews: '',
             likedReviews: '',
-            isLoading: true
+            isLoading: true,
+            dataLoaded: false
         }
     }
 
     componentDidMount() {
         this.focusListener = this.props.navigation.addListener('focus', () => {
-            this.getShopData();
-            this.getUserInfo();
+            this.getData();
         });
     }
 
     componentWillUnmount() {
         this.focusListener;
+    }
+
+    async getData(){
+        this.setState({dataLoaded:false,isLoading:true})
+        await this.getShopData();
+        await this.getUserInfo();
+        this.setState({dataLoaded:true, isLoading:false})
     }
 
     openWriteReview() {
@@ -84,7 +91,6 @@ class ShopScreen extends Component{
     }
 
     async getShopData() {
-        this.setState({isLoading:true})
         const token = await getAuthToken();
         getLocation(this.state.locationId, token).then(data => {
             this.setState({
@@ -112,39 +118,29 @@ class ShopScreen extends Component{
                 buttonStyle: { backgroundColor: '#4391ab'}
            })
         })
-        .finally(() => this.setState({isLoading:false}))
     } 
 
     async getUserInfo() {
-        this.setState({isLoading:true});
         const token = await getAuthToken();
         const userId = await getUserId();
-        getUser(userId,token).then(userData => {
-            const likedReviews = userData.liked_reviews;
-            this.setState({likedReviews});
-            const userReviews = userData.reviews;
-            this.setState({userReviews});
-        })
-        .then(() => {
-                const locationId = this.state.locationId;
-                const likedReviews = this.state.likedReviews.filter(review =>
-                    review.location.location_id === locationId
-                );
-                const reviewIds = likedReviews.map(review => {return review.review.review_id});
-                this.setState({likedReviews:reviewIds});
-        })
-        .then(() => {
-            const locationId = this.state.locationId;
-            const userReviews = this.state.userReviews.filter(review =>
-                review.location.location_id === locationId
-            );
-            const reviewIds = userReviews.map(review => {return review.review.review_id});
-            this.setState({userReviews: reviewIds, isLoading:false, error:false});
-        })
-        .catch(error => {
-            this.setState({error:true});
-        })
-        .finally(() => this.setState({isLoading:false}))
+        const userData = await getUser(userId,token)
+        const resultreviews = userData.liked_reviews;
+        const resultuserReviews = userData.reviews;
+        const locationId = this.state.locationId;
+        const likedReviews = resultreviews.filter(review =>
+            review.location.location_id === locationId
+        );
+        const reviewIds = likedReviews.map(review => {return review.review.review_id});
+        this.setState({likedReviews:reviewIds});
+        const userReviews = resultuserReviews.filter(review =>
+            review.location.location_id === locationId
+        );
+        const reviewIdss = userReviews.map(review => {return review.review.review_id});
+        this.setState({userReviews: reviewIdss, error:false});
+        // .catch(error => {
+        //     this.setState({error:true});
+        // })
+        // .finally(() => this.setState({isLoading:false}))
     }
 
     render(){
@@ -186,7 +182,9 @@ class ShopScreen extends Component{
                             </Right>
                         </Row>
                         <Row style={styles.row}>
-                            <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likedReviews} navigation={this.props.navigation} userReviews={this.state.userReviews} />
+                            {this.state.dataLoaded === true && 
+                                <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likedReviews} navigation={this.props.navigation} userReviews={this.state.userReviews} />
+                            }
                         </Row>
                     </Grid>
                     </>

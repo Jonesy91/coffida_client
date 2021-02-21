@@ -28,7 +28,11 @@ class Reviews extends Component {
     return (
       <Content>
         {this.props.reviews.map((review) => {
-          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)} usersReview={this.isUsersReview(review.review_id)} navigation={this.props.navigation}/>
+          const liked = this.isLiked(review.review_id);
+          const users = this.isUsersReview(review.review_id);
+          console.log(users)
+          console.log(this.props.userReviews)
+          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={liked} usersReview={users} navigation={this.props.navigation}/>
           }
         )}
       </Content>

@@ -30,47 +30,43 @@ class WriteReviewScreen extends Component{
         this.setState({clenlinessRating:rating});
     }
 
-    submitReview = async () => {
-        const body = {
-            overall_rating:parseInt(this.state.overallRating),
-            price_rating:parseInt(this.state.priceRating),
-            quality_rating:parseInt(this.state.qualityRating),
-            clenliness_rating:parseInt(this.state.clenlinessRating),
-            review_body:this.state.comments
+    handleSubmit = async () => {
+        try{
+            const body = {
+                overall_rating:parseInt(this.state.overallRating),
+                price_rating:parseInt(this.state.priceRating),
+                quality_rating:parseInt(this.state.qualityRating),
+                clenliness_rating:parseInt(this.state.clenlinessRating),
+                review_body:this.state.comments
+            }
+            const token = await getAuthToken();
+            const id = this.props.route.params.locationId;
+            await submitReview(id,token,body)            
+            if(this.props.route.params.photo){
+                const reviewId = await this.getReviewId();
+                await addPhoto(
+                    token, 
+                    this.props.route.params.photo, 
+                    this.props.route.params.locationId, 
+                    reviewId
+                )
+            }
+            Toast.show({
+                text: 'Submitted review',
+                buttonText: 'Okay',
+                duration: 3000,
+                buttonStyle: { backgroundColor: '#4391ab'}
+            })
+            this.props.navigation.goBack();
+        } catch(error){
+            Toast.show({
+                text: 'Failed to submit review',
+                buttonText: 'Okay',
+                duration: 3000,
+                buttonStyle: { backgroundColor: '#4391ab'}
+            })
         }
-        const token = await getAuthToken()
-        const id = this.props.route.params.locationId;
-        submitReview(id,token,body)
-            .then(() => {
-                this.getReviewId()
-                    .then(reviewId => {
-                        addPhoto(
-                            token, 
-                            this.props.route.params.photo, 
-                            this.props.route.params.locationId, 
-                            reviewId
-                        ).then(response => {
-                            Toast.show({
-                                text: 'Submitted review',
-                                buttonText: 'Okay',
-                                duration: 3000,
-                                buttonStyle: { backgroundColor: '#4391ab'}
-                            })
-                        })
-                    })
 
-            })
-            .then(() => {
-                this.props.navigation.goBack();
-            })
-            .catch((error) => {
-                Toast.show({
-                    text: 'Failed to submit review',
-                    buttonText: 'Okay',
-                    duration: 3000,
-                    buttonStyle: { backgroundColor: '#4391ab'}
-                })
-            })   
     }
 
     async getReviewId(){
@@ -90,20 +86,6 @@ class WriteReviewScreen extends Component{
             })
         return reviewId;
     }
-
-    // getAuthKey = async () => {
-    //     try{
-    //         const token = await AsyncStorage.getItem('@userKey');
-    //         if(token !== null){
-    //             return token;
-    //         }
-    //         else{
-    //             throw error('Could not retrieve user key');
-    //         }
-    //     } catch (e) {
-    //         console.log(e);
-    //     }
-    // }
 
     render(){
         return(
@@ -206,7 +188,7 @@ class WriteReviewScreen extends Component{
                     {this.props.route.params.photo && (<Image source={{uri:this.props.route.params.photo.uri}} style={styles.img} />)}
                     <Button 
                         block 
-                        onPress={this.submitReview} 
+                        onPress={this.handleSubmit} 
                         style={styles.button}
                     >
                         <Text>Submit</Text>
