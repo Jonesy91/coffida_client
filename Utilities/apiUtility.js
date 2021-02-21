@@ -268,16 +268,16 @@ const register = (data) =>
         throw error
     });
 
-    const getPhoto = (locationId, reviewId) =>
+    const getPhoto = (userToken, locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'POST',
         headers: {
+            'X-Authorization': userToken,
             'Content-Type': 'application/json'
         },
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        return response.blob();
     })
     .catch(error => {
         throw error;
@@ -316,4 +316,4 @@ const register = (data) =>
         throw error;
     })
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getShopsFiltered};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getPhoto, getShopsFiltered};

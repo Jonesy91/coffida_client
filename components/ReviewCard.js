@@ -58,6 +58,11 @@ class ReviewCard extends Component {
     return iconName;
   }
 
+  getPhoto() {
+    
+
+  }
+
   render() {
     const reviewBody = this.props.review.review_body;
     const review = this.props.review;

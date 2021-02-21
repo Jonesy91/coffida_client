@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Content, Text, H3, Textarea, Grid, Row, Button, Col } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateReview } from '../Utilities/APIUtility';
+import { updateReview, getPhoto } from '../Utilities/APIUtility';
+import { getAuthToken } from '../Utilities/AsyncStorageUtil';
 
 class UpdateReviewScreen extends Component{
     constructor(props){
@@ -17,6 +17,10 @@ class UpdateReviewScreen extends Component{
             newClenlinessRating:this.props.route.params.review.clenliness_rating
         }
     }
+
+    // componentDidMount(){
+    //     this.getReviewPhoto();
+    // }
 
     setOverall(rating){
         this.setState({newOverallRating:rating});
@@ -34,6 +38,14 @@ class UpdateReviewScreen extends Component{
         this.setState({newClenlinessRating:rating});
     }
 
+    async getReviewPhoto(){
+        const token = await getAuthToken();
+        getPhoto(token, this.props.route.params.locationId, this.props.route.params.review.review_id).then((response) => {
+            console.log(response);
+            return <Image source={URL.createObjectURL(response)}/>;
+        })
+    }
+
     updateReview() {
         const body = {
             overall_rating:parseInt(this.state.newOverallRating),
@@ -42,7 +54,7 @@ class UpdateReviewScreen extends Component{
             clenliness_rating:parseInt(this.state.newClenlinessRating),
             review_body:this.state.newComments
         }
-        this.getAuthKey().then( token => {
+        getAuthToken().then( token => {
             const {locationId} = this.props.route.params;
             const reviewId = this.props.route.params.review.review_id;
             updateReview(locationId,token,body, reviewId)
@@ -66,19 +78,6 @@ class UpdateReviewScreen extends Component{
         });    
     }
 
-    async getAuthKey() {
-        try{
-            const token = await AsyncStorage.getItem('@userKey');
-            if(token !== null){
-                return token;
-            }
-            
-                throw error('Could not retrieve user key');
-            
-        } catch (e) {
-            console.log(e);
-        }
-    }
 
     render(){
         return(
@@ -167,6 +166,7 @@ class UpdateReviewScreen extends Component{
                 </Grid>
                 <H3 style={styles.h3}>Comments</H3>
                 <Textarea rowSpan={5} bordered defaultValue={this.state.newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
+                {this.getReviewPhoto()}
                 <Button block onPress={() => {this.updateReview()}} style={styles.button}><Text>Update</Text></Button>
             </Content>        
         )

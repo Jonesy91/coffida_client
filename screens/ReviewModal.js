@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import { Button, Container, Content, Text } from 'native-base';
+import { Button, Content, Text, Toast } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { deleteReview } from '../Utilities/APIUtility';
@@ -17,6 +17,7 @@ export default function ReviewModal({ route, navigation }){
                     duration: 3000,
                     buttonStyle: { backgroundColor: '#4391ab'}
                 })
+                navigation.goBack();
             })
             .catch((error) => {
                 Toast.show({
