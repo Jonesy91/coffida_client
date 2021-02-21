@@ -206,7 +206,7 @@ const like = (locationId, reviewId, userToken) =>
     })
 
 const unLike = (locationId, reviewId, userToken) =>
-    fetch(`${url}/${locationId}/review/${reviewId}/like`, {
+    fetch(`${url}/location/${locationId}/review/${reviewId}/like`, {
         method: 'DELETE',
         headers: {
             'X-Authorization': userToken,

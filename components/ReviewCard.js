@@ -22,7 +22,8 @@ class ReviewCard extends Component {
       isLiked: this.props.liked,
       reviewId: this.props.review.review_id,
       locationId: this.props.locationId,
-      usersReview: this.props.usersReview
+      usersReview: this.props.usersReview,
+      likes: this.props.review.likes
     };
   }
 
@@ -33,6 +34,7 @@ class ReviewCard extends Component {
         .then((response) => {
           if (response.ok) {
             this.setState({ isLiked: true });
+            this.setState({likes: this.state.likes + 1})
           }
         });
       } else {
@@ -40,6 +42,7 @@ class ReviewCard extends Component {
         .then((response) => {
           if (response.ok) {
             this.setState({ isLiked: false });
+            this.setState({likes: this.state.likes - 1})
           }
         });
       }
@@ -82,7 +85,7 @@ class ReviewCard extends Component {
           <Button transparent onPress={() => {this.likeReview()}}>
             <Icon name={this.isLiked()} style={styles.icon} />
           </Button>
-          <Text>{this.props.review.likes}</Text>
+          <Text>{this.state.likes}</Text>
         </CardItem>
       </Card>
     );
