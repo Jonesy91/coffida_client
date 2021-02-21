@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native'
 import StarRating from 'react-native-star-rating';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { submitReview, addPhoto, getUser } from '../Utilities/APIUtility';
-import { getUserId, getAuthToken } from '../Utilities/AsyncStorageUtil';
+import { submitReview, addPhoto, getUser } from '../Utilities/api/APIUtility';
+import { getUserId, getAuthToken } from '../Utilities/asyncstorage/AsyncStorageUtil';
 
 class WriteReviewScreen extends Component{
     constructor(props){

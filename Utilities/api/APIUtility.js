@@ -1,4 +1,4 @@
-import { getAuthToken } from './AsyncStorageUtil';
+import { getAuthToken } from '../asyncstorage/AsyncStorageUtil';
 
 const url = `http://10.0.2.2:3333/api/1.0.0`;
 
