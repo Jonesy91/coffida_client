@@ -5,18 +5,19 @@ import {
 } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ratings from './Ratings';
+import { like, unLike } from '../Utilities/APIUtility';
+import { getAuthToken } from '../Utilities/AsyncStorageUtil';
 
 class ReviewCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       ratings: {
-        overall: this.props.review.review_overallrating,
-        price: this.props.review.review_pricerating,
-        quality: this.props.review.review_qualityrating,
-        clenliness: this.props.review.review_clenlinessrating,
+        overall: this.props.review.overall_rating,
+        price: this.props.review.price_rating,
+        quality: this.props.review.quality_rating,
+        clenliness: this.props.review.clenliness_rating,
       },
       isLiked: this.props.liked,
       reviewId: this.props.review.review_id,
@@ -25,44 +26,22 @@ class ReviewCard extends Component {
     };
   }
 
-   async getAuthKey() {
-    try {
-      const token = await AsyncStorage.getItem('@userKey');
-      if (this.token === null) {
-        throw error('null object');
-      }
-      return token;
-    } catch (e) {
-      return e;
-    }
-  }
-
   async likeReview() {
-    const authKey = await this.getAuthKey();
+    const token = await getAuthToken();
       if (this.state.isLiked === false) {
-        fetch(`http://10.0.2.2:3333/api/1.0.0/location/${this.state.locationId}/review/${this.state.reviewId}/like`, {
-          method: 'POST',
-          headers: {
-            'X-Authorization': authKey,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              this.setState({ isLiked: true });
-            }
-          });
+        like(this.state.locationId, this.state.reviewId, token )
+        .then((response) => {
+          if (response.ok) {
+            this.setState({ isLiked: true });
+          }
+        });
       } else {
-        fetch(`http://10.0.2.2:3333/api/1.0.0/location/${this.state.locationId}/review/${this.state.reviewId}/like`, {
-          method: 'DELETE',
-          headers: {
-            'X-Authorization': authKey,
-          },
-        })
-          .then((response) => {
-            if (response.ok) {
-              this.setState({ isLiked: false });
-            }
-          });
+        unLike(this.state.locationId, this.state.reviewId, token )
+        .then((response) => {
+          if (response.ok) {
+            this.setState({ isLiked: false });
+          }
+        });
       }
   }
 
@@ -85,7 +64,7 @@ class ReviewCard extends Component {
         {this.state.usersReview && (
           <CardItem style={styles.elipsesItem}>
             <Right>
-              <Button transparent onPress={() => this.props.nav.navigate('modal',{review, locationId})} style={styles.elipsesBtn}>
+              <Button transparent onPress={() => this.props.navigation.navigate('modal',{review, locationId})} style={styles.elipsesBtn}>
                 <Icon name='md-ellipsis-horizontal' style={styles.icon} />
               </Button>
             </Right>

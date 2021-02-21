@@ -7,7 +7,7 @@ class Reviews extends Component {
   isLiked(reviewId){
     let liked = false;
     if(this.props.likes !== null){
-      if(this.props.likes.reviewIds.includes(reviewId)){
+      if(this.props.likes.includes(reviewId)){
         liked = true;
       }
     }
@@ -17,7 +17,7 @@ class Reviews extends Component {
   isUsersReview(reviewId){
     let isUsers = false;
     if(this.props.userReviews !== null){
-      if(this.props.userReviews.reviewIds.includes(reviewId)){
+      if(this.props.userReviews.includes(reviewId)){
         isUsers = true;
       }
     }
@@ -28,7 +28,7 @@ class Reviews extends Component {
     return (
       <Content>
         {this.props.reviews.map((review) => {
-          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)} usersReview={this.isUsersReview(review.review_id)} nav={this.props.nav}/>
+          return <ReviewCard key={review.review_id} review={review} locationId={this.props.locationId} liked={this.isLiked(review.review_id)} usersReview={this.isUsersReview(review.review_id)} navigation={this.props.navigation}/>
           }
         )}
       </Content>
