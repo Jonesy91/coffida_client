@@ -18,7 +18,7 @@ class ShopScreen extends Component{
                 quality:null,
                 clenliness:null
             },
-            locationId:this.props.route.params.data.location_id,
+            locationId:this.props.route.params.locationId,
             locationData: '',
             isFavourite: this.props.route.params.favourite,
             userReviews: '',

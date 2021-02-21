@@ -59,45 +59,6 @@ class HomeScreen extends Component{
                     const userReviews = userData.reviews;
                     this.setState({userReviews});
                 })
-                .then(() => {
-                    const likes = this.state.locations.map(location => {
-                        const locationId = location.location_id;
-                        const likedReviews = this.state.likedReviews.map(review => {
-                            let reviewId = null;
-                            if(locationId === review.location.location_id){
-                                reviewId = review.review.review_id;
-                            }
-                            return reviewId
-                        })
-                        return {location:locationId,reviewIds:likedReviews}
-                    })
-                    const likedReviews = likes.filter(like => {
-                        if(!like.reviewIds.includes(null)){
-                            return like;
-                        }
-                    })
-                    this.setState({likedReviews, isLoading:false});
-                    console.log(this.state.likedReviews)
-                })
-                .then(() => {
-                    const reviews = this.state.locations.map(location => {
-                        const locationId = location.location_id;
-                        const userReviews = this.state.userReviews.map(review => {
-                            let reviewId = null;
-                            if(locationId === review.location.location_id){
-                                reviewId = review.review.review_id;
-                            }
-                            return reviewId
-                        })
-                        return {location:locationId,reviewIds:userReviews}
-                    })
-                    const userReviews = reviews.filter(review => {
-                        if(!review.reviewIds.includes(null)){
-                            return review;
-                        }
-                    })
-                    this.setState({userReviews, isLoading:false, error:false});
-                })
                 .catch(error => {
                     console.log(error)
                     this.setState({error:true});
@@ -143,8 +104,8 @@ class HomeScreen extends Component{
         })   
     }
 
-    openShop(data, favourite, likes, reviews) {
-        this.props.navigation.navigate('shopScreen', {data, favourite, likes, reviews})
+    openShop(locationId, favourite) {
+        this.props.navigation.navigate('shopScreen', {locationId, favourite})
     }
 
     render(){
@@ -174,22 +135,10 @@ class HomeScreen extends Component{
                     ) : 
                     this.state.locations.map((location) => {
                     let favourite = false;
-                    let likes = null;
-                    let reviews = null;
                     if(this.state.favLocations.includes(location.location_id)){
                         favourite=true;
                     }
-                    this.state.likedReviews.forEach(like => {
-                        if(like.location === location.location_id){
-                            likes = like;
-                        }
-                    })
-                    this.state.userReviews.forEach(review => {
-                        if(review.location === location.location_id){
-                            reviews = review;
-                        }
-                    })
-                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location, favourite, likes, reviews)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                     }
                     )}  
                 </Content>      
