@@ -103,6 +103,7 @@ class ShopScreen extends Component{
                     clenliness:data.avg_clenliness_rating
                 }
             });
+            console.log(this.state.reviews)
         })
         .catch(error => {
             let message = '';
@@ -137,10 +138,6 @@ class ShopScreen extends Component{
         );
         const reviewIdss = userReviews.map(review => {return review.review.review_id});
         this.setState({userReviews: reviewIdss, error:false});
-        // .catch(error => {
-        //     this.setState({error:true});
-        // })
-        // .finally(() => this.setState({isLoading:false}))
     }
 
     render(){
@@ -150,43 +147,43 @@ class ShopScreen extends Component{
                         <Spinner />
                     ) :
                     <>
-                    <Image source={{uri:this.state.locationData.photo_path}} style={styles.image}/>
-                    <Grid  style={styles.grid}>
-                        <Row>
-                            <Grid style={styles.grid}>
+                        <Image source={{uri:this.state.locationData.photo_path}} style={styles.image}/>
+                        <Grid  style={styles.grid}>
+                            <Row>
+                                <Grid style={styles.grid}>
+                                    <Row>
+                                        <H1>{this.state.locationData.location_name}</H1>
+                                        <Right>
+                                            <TouchableOpacity onPress={() => {this.favouriteLocation()}}>
+                                                <Icon name={this.isFavourite()} style={styles.icon} />
+                                            </TouchableOpacity>
+                                        </Right>
+                                    </Row>
+                                    <Row>
+                                        <Text>{this.state.locationData.location_town}</Text>
+                                    </Row>
+                                </Grid>
+                            </Row>   
+                            <Grid style={styles.ratingGrid}>
                                 <Row>
-                                    <H1>{this.state.locationData.location_name}</H1>
-                                    <Right>
-                                        <TouchableOpacity onPress={() => {this.favouriteLocation()}}>
-                                            <Icon name={this.isFavourite()} style={styles.icon} />
-                                        </TouchableOpacity>
-                                    </Right>
+                                    <H2>Ratings</H2>
                                 </Row>
-                                <Row>
-                                    <Text>{this.state.locationData.location_town}</Text>
+                                <Row> 
+                                    <Ratings ratings={this.state.ratings}/> 
                                 </Row>
                             </Grid>
-                        </Row>   
-                        <Grid style={styles.ratingGrid}>
-                            <Row>
-                                <H2>Ratings</H2>
+                            <Row style={styles.row}>
+                                <H2>Reviews</H2>
+                                <Right>
+                                    <Button small onPress={() => this.openWriteReview()} style={styles.button}><Text>Leave a review</Text></Button>
+                                </Right>
                             </Row>
-                            <Row> 
-                                <Ratings ratings={this.state.ratings}/> 
+                            <Row style={styles.row}>
+                                {this.state.dataLoaded === true && 
+                                    <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likedReviews} navigation={this.props.navigation} userReviews={this.state.userReviews} />
+                                }
                             </Row>
                         </Grid>
-                        <Row style={styles.row}>
-                            <H2>Reviews</H2>
-                            <Right>
-                                <Button small onPress={() => this.openWriteReview()} style={styles.button}><Text>Leave a review</Text></Button>
-                            </Right>
-                        </Row>
-                        <Row style={styles.row}>
-                            {this.state.dataLoaded === true && 
-                                <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likedReviews} navigation={this.props.navigation} userReviews={this.state.userReviews} />
-                            }
-                        </Row>
-                    </Grid>
                     </>
                 }
             </Content>

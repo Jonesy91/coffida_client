@@ -18,9 +18,9 @@ class UpdateReviewScreen extends Component{
         }
     }
 
-    // componentDidMount(){
-    //     this.getReviewPhoto();
-    // }
+    componentDidMount(){
+        this.getReviewPhoto();
+    }
 
     setOverall(rating){
         this.setState({newOverallRating:rating});
@@ -42,7 +42,7 @@ class UpdateReviewScreen extends Component{
         const token = await getAuthToken();
         getPhoto(token, this.props.route.params.locationId, this.props.route.params.review.review_id).then((response) => {
             console.log(response);
-            return <Image source={URL.createObjectURL(response)}/>;
+            console.log(URL.createObjectURL(response))
         })
     }
 
@@ -166,7 +166,6 @@ class UpdateReviewScreen extends Component{
                 </Grid>
                 <H3 style={styles.h3}>Comments</H3>
                 <Textarea rowSpan={5} bordered defaultValue={this.state.newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
-                {this.getReviewPhoto()}
                 <Button block onPress={() => {this.updateReview()}} style={styles.button}><Text>Update</Text></Button>
             </Content>        
         )
@@ -188,7 +187,7 @@ const styles = StyleSheet.create({
         margin: 5
     },
     button: {
-        margin: 10,
+        marginVertical: 10,
         backgroundColor: '#4391ab'
     }
 });

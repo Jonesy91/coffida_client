@@ -166,22 +166,21 @@ const updateReview = (locationId, userToken, body, reviewId) =>
 DELETE request to delete a review
 */
 const deleteReview = async (reviewId, locationId) => {
+    try{
         const token = await getAuthToken();
-        fetch(`${url}/location/${locationId}/review/${reviewId}`, {
+        const response = await fetch(`${url}/location/${locationId}/review/${reviewId}`, {
             method:'DELETE',
             headers:{
                 'Content-Type': 'application/json',
                 'X-Authorization': token
             }
         })
-        .then((response) => {
-            const respJson = handleResponse(response);
-            return respJson;
-        })
-        .catch(error => {
-            throw error;
-        })
+        const respJson =  await handleResponse(response);
+        return respJson;
+    } catch(error) {
+        throw error;
     }
+}
 
 /* 
 POST request to like a review
@@ -231,7 +230,7 @@ const getPhoto = (userToken, locationId, reviewId) =>
         },
     })
     .then((response) => {
-        return response.blob();
+        return response;
     })
     .catch(error => {
         throw error;
@@ -260,17 +259,16 @@ const addPhoto = (userToken, data, locationId, reviewId) =>
 /*
 DELETE request to delete a photo
 */
-const deletePhoto = (data) =>
+const deletePhoto = (userToken, locationId, reviewId) =>
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'DELETE',
         headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+            'X-Authorization': userToken,
+        }
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        const returnResponse = handleResponse(response);
+        return returnResponse;
     })
     .catch(error => {
         throw error;
@@ -391,4 +389,4 @@ const getLocation = (locationId, userToken) =>
 
 
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getPhoto, getShopsFiltered};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getPhoto, deletePhoto, getShopsFiltered};

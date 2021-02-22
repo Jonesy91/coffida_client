@@ -65,7 +65,7 @@ export default function Navigator(){
             ) : (
                 <>
                   <Stack.Screen name="main" component={TabNavigator} options={{headerShown:false}} />
-                  <Stack.Screen name="modal" component={ReviewModal} options={{cardStyle:{backgroundColor: 'transparent', opacity: 2, headerShown: false}}} />
+                  <Stack.Screen name="modal" component={ReviewModal} options={{headerShown:false,cardStyle:{backgroundColor: 'transparent', opacity: 2}}} />
                   <Stack.Screen name="filterModal" component={FilterModal} options={{headerShown: false}} />
                   <Stack.Screen name="updateReview" component={UpdateReviewScreen} options={{headerShown: true, headerTitle:'Update Review'}}/>
                   <Stack.Screen name="camera" component={CameraScreen} mode='card' />
