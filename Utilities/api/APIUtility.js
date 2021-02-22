@@ -326,8 +326,8 @@ const getShopsFiltered = (userToken, params) =>
         }
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        //const respJson = handleResponse(response);
+        return response.json();
     })
     .catch(error => {
         throw error;

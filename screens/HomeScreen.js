@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Container, Content, Spinner, Text, Button, Row, Grid, H3 } from 'native-base';
+import { Container, Content, Spinner, Text, Button, Row, Grid, H3, View } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
@@ -95,13 +95,8 @@ class HomeScreen extends Component{
     handleFilter = async (params) => {
         this.setState({isLoading: true});
         const userData = await this.getUserData();
-        getShopsFiltered(userData.token, params).then(getResponse => {
+        const getResponse = await getShopsFiltered(userData.token, params);
         this.setState({locations: getResponse, isLoading:false, error: false});
-        }) 
-        .catch(error => {
-            console.log(error)
-            this.setState({error: true})    
-        })   
     }
 
     openShop(locationId, favourite) {
@@ -109,6 +104,7 @@ class HomeScreen extends Component{
     }
 
     render(){
+        const { locations = [] } = this.state;
         return(
             <Container>
                 <HeaderMenu 
@@ -130,18 +126,23 @@ class HomeScreen extends Component{
                     </Content>
                 ) : (
                     <Content>
-                    {this.state.isLoading ? (
-                        <Spinner />
-                    ) : 
-                    this.state.locations.map((location) => {
-                    let favourite = false;
-                    if(this.state.favLocations.includes(location.location_id)){
-                        favourite=true;
-                    }
-                    return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
-                    }
-                    )}  
-                </Content>      
+                        {this.state.isLoading ? (
+                            <Spinner />
+                        ) : (
+                            !locations.length ? (
+                                <View style={styles.resultView}>
+                                    <H3>No matching results</H3>
+                                </View>
+                            ) : (
+                                locations.map((location) => {
+                                let favourite = false;
+                                if(this.state.favLocations.includes(location.location_id)){
+                                    favourite=true;
+                                }
+                                return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                            })
+                        ))}
+                    </Content>      
                 )} 
             </Container> 
         );
@@ -161,6 +162,11 @@ const styles = StyleSheet.create({
     },
     button:{
         backgroundColor: '#4391ab'
+    },
+    resultView:{
+        marginTop:50,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 
