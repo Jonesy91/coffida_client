@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native'
@@ -17,20 +18,8 @@ class WriteReviewScreen extends Component{
             clenlinessRating:0,
         }
     }
-    setOverall(rating){
-        this.setState({overallRating:rating});
-    }
-    setPrice(rating){
-        this.setState({priceRating:rating});
-    }
-    setQuality(rating){
-        this.setState({qualityRating:rating});
-    }
-    setClenliness(rating){
-        this.setState({clenlinessRating:rating});
-    }
 
-    handleSubmit = async () => {
+    async handleSubmit() {
         try{
             const body = {
                 overall_rating:parseInt(this.state.overallRating),
@@ -70,13 +59,14 @@ class WriteReviewScreen extends Component{
     }
 
     async getReviewId(){
+        const { route } = this.props;
         const userId = await getUserId();
         const token = await  getAuthToken();
         let reviewId = 0;
         await getUser(userId, token)
             .then((response) => {
                 response.reviews.map(review => {
-                    if(review.location.location_id === this.props.route.params.locationId){
+                    if(review.location.location_id === route.params.locationId){
                         if(review.review.review_id > reviewId){
                             reviewId = review.review.review_id;
                         }
@@ -88,6 +78,13 @@ class WriteReviewScreen extends Component{
     }
 
     render(){
+        const { overallRating, qualityRating, priceRating, clenlinessRating} = this.state;
+        const { navigation, route } = this.props;
+        const starColour = "#16bff7";
+        const emptyStar="md-star-outline"
+        const fullStar="md-star"
+        const halfStar="md-star-half"
+        const iconSet="Ionicons"
         return(
             <Content style={styles.content}>
                 <H3 style={styles.h3}>Select a rating for each category</H3>
@@ -99,17 +96,17 @@ class WriteReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.overallRating}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            fullStarColor="#16bff7"
-                            emptyStarColor="#16bff7"
-                            halfStarColor="#16bff7"
+                            rating={overallRating}
+                            emptyStar={emptyStar}
+                            fullStar={fullStar}
+                            halfStar={halfStar}
+                            iconSet={iconSet}
+                            fullStarColor={starColour}
+                            emptyStarColor={starColour}
+                            halfStarColor={starColour}
                             starSize={25}
-                            halfStarEnabled={true}
-                            selectedStar={(rating) => this.setOverall(rating)}
+                            halfStarEnabled
+                            selectedStar={(rating) => this.setState({overallRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -119,17 +116,17 @@ class WriteReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.priceRating}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            fullStarColor="#16bff7"
-                            emptyStarColor="#16bff7"
-                            halfStarColor="#16bff7"
+                            rating={priceRating}
+                            emptyStar={emptyStar}
+                            fullStar={fullStar}
+                            halfStar={halfStar}
+                            iconSet={iconSet}
+                            fullStarColor={starColour}
+                            emptyStarColor={starColour}
+                            halfStarColor={starColour}
                             starSize={25}
-                            halfStarEnabled={true}
-                            selectedStar={(rating) => this.setPrice(rating)}
+                            halfStarEnabled
+                            selectedStar={(rating) => this.setState({priceRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -139,17 +136,17 @@ class WriteReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.qualityRating}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            fullStarColor="#16bff7"
-                            emptyStarColor="#16bff7"
-                            halfStarColor="#16bff7"
+                            rating={qualityRating}
+                            emptyStar={emptyStar}
+                            fullStar={fullStar}
+                            halfStar={halfStar}
+                            iconSet={iconSet}
+                            fullStarColor={starColour}
+                            emptyStarColor={starColour}
+                            halfStarColor={starColour}
                             starSize={25}
-                            halfStarEnabled={true}
-                            selectedStar={(rating) => this.setQuality(rating)}
+                            halfStarEnabled
+                            selectedStar={(rating) => this.setState({qualityRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -158,17 +155,17 @@ class WriteReviewScreen extends Component{
                         </Col>
                         <StarRating
                             maxStars={5}
-                            rating={this.state.clenlinessRating}
-                            emptyStar={'ios-star-outline'}
-                            fullStar={'ios-star'}
-                            halfStar={'ios-star-half'}
-                            iconSet={'Ionicons'}
-                            fullStarColor="#16bff7"
-                            emptyStarColor="#16bff7"
-                            halfStarColor="#16bff7"
+                            rating={clenlinessRating}
+                            emptyStar={emptyStar}
+                            fullStar={fullStar}
+                            halfStar={halfStar}
+                            iconSet={iconSet}
+                            fullStarColor={starColour}
+                            emptyStarColor={starColour}
+                            halfStarColor={starColour}
                             starSize={25}
-                            halfStarEnabled={true}
-                            selectedStar={(rating) => this.setClenliness(rating)}
+                            halfStarEnabled
+                            selectedStar={(rating) => this.setState({clenlinessRating:rating})}
                         />
                     </Row>
                     <H3 style={styles.h3}>Comments</H3>
@@ -180,15 +177,15 @@ class WriteReviewScreen extends Component{
                     />
                     <Button
                         block
-                        onPress={() => this.props.navigation.navigate('camera')}
+                        onPress={() => navigation.navigate('camera')}
                         style={styles.button}
                     >
                         <Text>Add a photo</Text>
                     </Button>
-                    {this.props.route.params.photo && (<Image source={{uri:this.props.route.params.photo.uri}} style={styles.img} />)}
+                    {route.params.photo && (<Image source={{uri:route.params.photo.uri}} style={styles.img} />)}
                     <Button 
                         block 
-                        onPress={this.handleSubmit} 
+                        onPress={this.handleSubmit()} 
                         style={styles.button}
                     >
                         <Text>Submit</Text>

@@ -1,5 +1,6 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
-import { AuthReducer } from './AuthReducer'; 
+import { AuthReducer }  from './AuthReducer'; 
 
 const AuthStateContext = React.createContext();
 const AuthDispatchContext = React.createContext();

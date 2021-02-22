@@ -2,7 +2,7 @@
 import { Text, Item, Input, Button, Content, Spinner, Toast } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native'; 
-import { signIn, signUp, confirmSignUp } from '../utilities/auth/AuthService';
+import { signUp } from '../utilities/auth/AuthService';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 
 const RegistrationScreen = ({ navigation }) => {
@@ -10,10 +10,7 @@ const RegistrationScreen = ({ navigation }) => {
     const [surname, setSurname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [signed, setSigned] = useState(false);
     const [signUpLoading, setSignUpLoading] = useState(false);
-    const [verifyLoading, setVerifyLoading] = useState(false);
-    const [code, setCode] = useState('');
     const dispatch = useAuthDispatch();
     
 
@@ -21,7 +18,6 @@ const RegistrationScreen = ({ navigation }) => {
         setSignUpLoading(true);
         signUp(firstName,surname,email,password)
         .then((data) => {
-            setSigned(true);
             dispatch({ type: 'REGISTER', token: data.userId })
             Toast.show({
                 text: 'Account created!',

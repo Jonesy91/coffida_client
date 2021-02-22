@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Content, H1 } from 'native-base';

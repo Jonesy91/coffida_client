@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Button, Content, Text, Toast, View } from 'native-base';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
-import { deleteReview, getPhoto, deletePhoto } from '../../utilities/api/APIUtility';
+import { deleteReview, deletePhoto } from '../../utilities/api/APIUtility';
 import { getAuthToken } from '../../utilities/asyncstorage/AsyncStorageUtil';
 
 export default function ReviewModal({ route, navigation }){
@@ -32,21 +32,21 @@ export default function ReviewModal({ route, navigation }){
     }
 
     return(
-            <Content contentContainerStyle={styles.content}>
-                <View style={styles.actionView}>
-                    <Button block onPress={() => navigation.navigate('updateReview', {review,locationId})} style={styles.updatebutton}>
-                        <Text>Update Review</Text>
-                    </Button>
-                    <Button block onPress={() => deleteAReview()} style={styles.delbutton}>
-                        <Text>Delete Review</Text>
-                    </Button>
-                </View>
-                <View>
-                    <Button block onPress={() => navigation.goBack()} style={styles.button}>
-                        <Text>Close</Text>
-                    </Button>
-                </View>
-            </Content>
+        <Content contentContainerStyle={styles.content}>
+            <View style={styles.actionView}>
+                <Button block onPress={() => navigation.navigate('updateReview', {review,locationId})} style={styles.updatebutton}>
+                    <Text>Update Review</Text>
+                </Button>
+                <Button block onPress={() => deleteAReview()} style={styles.delbutton}>
+                    <Text>Delete Review</Text>
+                </Button>
+            </View>
+            <View>
+                <Button block onPress={() => navigation.goBack()} style={styles.button}>
+                    <Text>Close</Text>
+                </Button>
+            </View>
+        </Content>
     ); 
 }
 

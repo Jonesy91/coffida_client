@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logIn, logOut, register } from '../api/APIUtility';
+import { getAuthToken, setAuthToken, setUserId, deleteData } from '../asyncstorage/AsyncStorageUtil';
 
 /* 
 Logs in the user
@@ -7,8 +7,8 @@ Logs in the user
 const signIn = async (data) => {
     try {
       return logIn(data).then( async (response) => {
-        await AsyncStorage.setItem('@userId', response.id.toString());
-        await AsyncStorage.setItem('@userKey', response.token);  
+        await setUserId(response.id.toString());
+        await setAuthToken(response.token);
         return response;
       })    
     } catch (error) {
@@ -21,7 +21,7 @@ Handles the registration of a new user
 */
 const signUp = async (firstName, surname, email, password) => {
   try {
-    const data = {first_name:firstName, last_name:surname, email:email, password:password};
+    const data = {first_name:firstName, last_name:surname, email, password};
     return register(data);
   } catch (error) {
     throw new Error(error.message);
@@ -33,10 +33,9 @@ Handles the log out of users
 */
 const signOut = async () => {
   try {
-    const token = await AsyncStorage.getItem('@userKey');
+    const token = await getAuthToken();
     logOut(token).then(async() => {
-      const keys = ['@userId', '@userKey'];
-      await AsyncStorage.multiRemove(keys, (err) => {});
+      deleteData();
       return true;
     })
   } catch (error) {

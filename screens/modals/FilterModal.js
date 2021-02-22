@@ -16,49 +16,51 @@ class FilterModal extends Component{
     }
 
     componentDidMount(){
-        if(this.props.route.params.currentFilter !== null){
+        const { route } = this.props;
+        if(route.params.currentFilter !== null){
             this.setState({
-                overall: this.props.route.params.currentFilter.overall,
-                price: this.props.route.params.currentFilter.price,
-                quality: this.props.route.params.currentFilter.quality,
-                clenliness: this.props.route.params.currentFilter.clenliness,
+                overall: route.params.currentFilter.overall,
+                price: route.params.currentFilter.price,
+                quality: route.params.currentFilter.quality,
+                clenliness: route.params.currentFilter.clenliness,
             });
         }
     }
 
     applyFilters(){
+        const { overall, price, quality, clenliness } = this.state;
+        const { navigation, route } = this.props;
         let filter = null;
-        if(this.state.overall !== 0){
-            filter = `overall_rating=${this.state.overall}`
+        if(overall !== 0){
+            filter = `overall_rating=${overall}`
         }
-        if(this.state.price !== 0){
+        if(price !== 0){
             if(filter !== null){
-                filter += `&price_rating=${this.state.price}`
+                filter += `&price_rating=${price}`
             } else {
-                filter = `price_rating=${this.state.price}`
+                filter = `price_rating=${price}`
             }
         }
-        if(this.state.quality !== 0){
+        if(quality !== 0){
             if(filter !== null){
-                filter += `&quality_rating=${this.state.quality}`
+                filter += `&quality_rating=${quality}`
             } else {
-                filter = `quality_rating=${this.state.quality}`
+                filter = `quality_rating=${quality}`
             }
         }
-        if(this.state.clenliness !== 0){
+        if(clenliness !== 0){
             if(filter !== null){
-                filter += `&clenliness_rating=${this.state.clenliness}`
+                filter += `&clenliness_rating=${clenliness}`
             } else {
-                filter = `clenliness_rating=${this.state.clenliness}`
+                filter = `clenliness_rating=${clenliness}`
             }
         }
-        console.log(this.props.route.params.route)
-        this.props.navigation.navigate(this.props.route.params.route, {filter:filter, 
+        navigation.navigate(route.params.route, {filter, 
             currentFilter:{ 
-                overall:this.state.overall,
-                quality:this.state.quality,
-                price:this.state.price,
-                clenliness:this.state.clenliness
+                overall,
+                quality,
+                price,
+                clenliness
             }
         })
     }
@@ -73,6 +75,10 @@ class FilterModal extends Component{
     }
 
     render(){
+        const { overall, price, quality, clenliness } = this.state;
+        const { navigation } = this.props;
+        const minimumTrackTintColor="#4391ab";
+        const thumbTintColor="#4391ab";
         return(
             <Content contentContainerStyle={styles.content}>
                 <View style={styles.view}>
@@ -82,18 +88,17 @@ class FilterModal extends Component{
                         <H3>Minimum Overall Rating</H3>
                     </Row>
                     <Row style={styles.row}>
-                        <H3>{this.state.overall}</H3>
+                        <H3>{overall}</H3>
                     </Row>
                     <Row style={styles.row}>
                         <Slider 
                             style={{width: 300, height: 40}}
                             minimumValue={0}
                             maximumValue={5}
-                            minimumTrackTintColor="#4391ab"
-                            thumbTintColor="#4391ab"
-                            maximumTrackTintColor="#000000"
+                            minimumTrackTintColor={minimumTrackTintColor}
+                            thumbTintColor={thumbTintColor}
                             step={1}
-                            value={this.state.overall}
+                            value={overall}
                             onValueChange={(value) => this.setState({overall:value})}
                         />
                     </Row>    
@@ -110,11 +115,10 @@ class FilterModal extends Component{
                             style={{width: 300, height: 40}}
                             minimumValue={0}
                             maximumValue={5}
-                            minimumTrackTintColor="#4391ab"
-                            thumbTintColor="#4391ab"
-                            maximumTrackTintColor="#000000"
+                            minimumTrackTintColor={minimumTrackTintColor}
+                            thumbTintColor={thumbTintColor}
                             step={1}
-                            value={this.state.price}
+                            value={price}
                             onValueChange={(value) => this.setState({price:value})}
                         />
                     </Row>     
@@ -124,18 +128,17 @@ class FilterModal extends Component{
                         <H3>Minimum Quality Rating</H3>
                     </Row>
                     <Row style={styles.row}>
-                        <H3>{this.state.quality}</H3>
+                        <H3>{quality}</H3>
                     </Row>
                     <Row style={styles.row}>
                         <Slider 
                             style={{width: 300, height: 40}}
                             minimumValue={0}
                             maximumValue={5}
-                            minimumTrackTintColor="#4391ab"
-                            thumbTintColor="#4391ab"
-                            maximumTrackTintColor="#000000"
+                            minimumTrackTintColor={minimumTrackTintColor}
+                            thumbTintColor={thumbTintColor}
                             step={1}
-                            value={this.state.quality}
+                            value={quality}
                             onValueChange={(value) => this.setState({quality:value})}
                         />
                     </Row>      
@@ -145,18 +148,17 @@ class FilterModal extends Component{
                         <H3>Minimum Clenliness Rating</H3>
                     </Row>
                     <Row style={styles.row}>
-                        <H3>{this.state.clenliness}</H3>
+                        <H3>{clenliness}</H3>
                     </Row>
                     <Row style={styles.row}>
                         <Slider 
-                            style={{width: 300, height: 40}}
+                            style={styles.slider}
                             minimumValue={0}
                             maximumValue={5}
-                            minimumTrackTintColor="#4391ab"
-                            thumbTintColor="#4391ab"
-                            maximumTrackTintColor="#000000"
+                            minimumTrackTintColor={minimumTrackTintColor}
+                            thumbTintColor={thumbTintColor}
                             step={1}
-                            value={this.state.clenliness}
+                            value={clenliness}
                             onValueChange={(value) => this.setState({clenliness:value})}
                         />
                     </Row>
@@ -166,7 +168,7 @@ class FilterModal extends Component{
                     </Row>   
                 </Grid>
                 
-                <Button block style={styles.closeBtn} onPress={() => this.props.navigation.goBack()}><Text>Close</Text></Button>
+                <Button block style={styles.closeBtn} onPress={() => navigation.goBack()}><Text>Close</Text></Button>
                 </View>
             </Content>
         );
@@ -211,6 +213,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom:5,
         backgroundColor:'#4391ab',
+    },
+    slider:{
+        width: 300, 
+        height: 40
     }
 });
 

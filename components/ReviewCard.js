@@ -28,21 +28,22 @@ class ReviewCard extends Component {
   }
 
   async likeReview() {
+    const { isLiked, locationId, reviewId, likes } = this.state;
     const token = await getAuthToken();
-      if (this.state.isLiked === false) {
-        like(this.state.locationId, this.state.reviewId, token )
+      if (isLiked === false) {
+        like(locationId, reviewId, token )
         .then((response) => {
           if (response.ok) {
             this.setState({ isLiked: true });
-            this.setState({likes: this.state.likes + 1})
+            this.setState({likes: likes + 1})
           }
         });
       } else {
-        unLike(this.state.locationId, this.state.reviewId, token )
+        unLike(locationId, reviewId, token )
         .then((response) => {
           if (response.ok) {
             this.setState({ isLiked: false });
-            this.setState({likes: this.state.likes - 1})
+            this.setState({likes: likes - 1})
           }
         });
       }
@@ -50,7 +51,8 @@ class ReviewCard extends Component {
 
   isLiked() {
     let iconName;
-    if (this.state.isLiked === true) {
+    const { isLiked } = this.state;
+    if (isLiked === true) {
       iconName = 'md-thumbs-up';
     } else {
       iconName = 'md-thumbs-up-outline';
@@ -58,21 +60,15 @@ class ReviewCard extends Component {
     return iconName;
   }
 
-  getPhoto() {
-    
-
-  }
-
   render() {
-    const reviewBody = this.props.review.review_body;
-    const review = this.props.review;
-    const locationId = this.state.locationId;
+    const { review, navigation } = this.props;
+    const { locationId, ratings, likes, usersReview } = this.state;
     return (
       <Card>
-        {this.state.usersReview && (
+        {usersReview && (
           <CardItem style={styles.elipsesItem}>
             <Right>
-              <Button transparent onPress={() => this.props.navigation.navigate('modal',{review, locationId})} style={styles.elipsesBtn}>
+              <Button transparent onPress={() => navigation.navigate('modal',{review, locationId})} style={styles.elipsesBtn}>
                 <Icon name='md-ellipsis-horizontal' style={styles.icon} />
               </Button>
             </Right>
@@ -80,17 +76,17 @@ class ReviewCard extends Component {
         )}
         <CardItem>
           <Body>
-            <Text>{reviewBody}</Text>
+            <Text>{review.reviewBody}</Text>
           </Body>
         </CardItem>
         <CardItem>
-          <Ratings ratings={this.state.ratings} />
+          <Ratings ratings={ratings} />
         </CardItem>
         <CardItem>
           <Button transparent onPress={() => {this.likeReview()}}>
             <Icon name={this.isLiked()} style={styles.icon} />
           </Button>
-          <Text>{this.state.likes}</Text>
+          <Text>{likes}</Text>
         </CardItem>
       </Card>
     );

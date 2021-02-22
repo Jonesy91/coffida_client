@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Text, Grid, Row, Col } from 'native-base';
@@ -5,6 +6,12 @@ import { StyleSheet } from 'react-native';
 import StarRating from 'react-native-star-rating';
 
 export default function Ratings({ratings}) {
+  const starColour = "#16bff7";
+  const emptyStar="md-star-outline"
+  const fullStar="md-star"
+  const halfStar="md-star-half"
+  const iconSet="Ionicons"
+
   return (
     <Grid>
       <Grid>
@@ -16,13 +23,13 @@ export default function Ratings({ratings}) {
             disabled={false}
             maxStars={5}
             rating={ratings.overall}
-            emptyStar="ios-star-outline"
-            fullStar="ios-star"
-            halfStar="ios-star-half"
-            iconSet="Ionicons"
-            fullStarColor="#16bff7"
-            emptyStarColor="#16bff7"
-            halfStarColor="#16bff7"
+            emptyStar={emptyStar}
+            fullStar={fullStar}
+            halfStar={halfStar}
+            iconSet={iconSet}
+            fullStarColor={starColour}
+            emptyStarColor={starColour}
+            halfStarColor={starColour}
             starSize={20}
           />
         </Row>
@@ -34,13 +41,13 @@ export default function Ratings({ratings}) {
             disabled={false}
             maxStars={5}
             rating={ratings.price}
-            emptyStar="ios-star-outline"
-            fullStar="ios-star"
-            halfStar="ios-star-half"
-            iconSet="Ionicons"
-            fullStarColor="#16bff7"
-            emptyStarColor="#16bff7"
-            halfStarColor="#16bff7"
+            emptyStar={emptyStar}
+            fullStar={fullStar}
+            halfStar={halfStar}
+            iconSet={iconSet}
+            fullStarColor={starColour}
+            emptyStarColor={starColour}
+            halfStarColor={starColour}
             starSize={20}
           />
           
@@ -53,13 +60,13 @@ export default function Ratings({ratings}) {
             disabled={false}
             maxStars={5}
             rating={ratings.quality}
-            emptyStar="ios-star-outline"
-            fullStar="ios-star"
-            halfStar="ios-star-half"
-            iconSet="Ionicons"
-            fullStarColor="#16bff7"
-            emptyStarColor="#16bff7"
-            halfStarColor="#16bff7"
+            emptyStar={emptyStar}
+            fullStar={fullStar}
+            halfStar={halfStar}
+            iconSet={iconSet}
+            fullStarColor={starColour}
+            emptyStarColor={starColour}
+            halfStarColor={starColour}
             starSize={20}
           />
         </Row>
@@ -71,13 +78,13 @@ export default function Ratings({ratings}) {
             disabled={false}
             maxStars={5}
             rating={ratings.clenliness}
-            emptyStar="ios-star-outline"
-            fullStar="ios-star"
-            halfStar="ios-star-half"
-            iconSet="Ionicons"
-            fullStarColor="#16bff7"
-            emptyStarColor="#16bff7"
-            halfStarColor="#16bff7"
+            emptyStar={emptyStar}
+            fullStar={fullStar}
+            halfStar={halfStar}
+            iconSet={iconSet}
+            fullStarColor={starColour}
+            emptyStarColor={starColour}
+            halfStarColor={starColour}
             starSize={20}
           />
         </Row>

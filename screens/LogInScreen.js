@@ -8,8 +8,8 @@ import { signIn } from '../utilities/auth/AuthService';
 
 const LogInScreen = ({ navigation }) => {
     const dispatch = useAuthDispatch();
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
     const requestLogIn = async () => {
@@ -17,7 +17,6 @@ const LogInScreen = ({ navigation }) => {
         setLoading(true);
         signIn(data)
             .then((json) => {
-                console.log('carried on')
                 dispatch({ type: 'SIGN_IN', token: json.token, id: json.id.toString() });
             })
             .catch(error => {

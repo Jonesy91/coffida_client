@@ -29,7 +29,8 @@ class ShopScreen extends Component{
     }
 
     componentDidMount() {
-        this.focusListener = this.props.navigation.addListener('focus', () => {
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener('focus', () => {
             this.getData();
         });
     }
@@ -80,15 +81,13 @@ class ShopScreen extends Component{
         const token = await getAuthToken();
         const userId = await getUserId();
         const userData = await getUser(userId,token)
-        const resultreviews = userData.liked_reviews;
-        const resultuserReviews = userData.reviews;
         const { locationId } = this.state;
-        const likedReviews = resultreviews.filter(review =>
+        const likedReviews = userData.liked_reviews.filter(review =>
             review.location.location_id === locationId
         );
         const reviewIds = likedReviews.map(review => review.review.review_id);
         this.setState({likedReviews:reviewIds});
-        const userReviews = resultuserReviews.filter(review =>
+        const userReviews = userData.reviews.filter(review =>
             review.location.location_id === locationId
         );
         const reviewIdss = userReviews.map(review => review.review.review_id);
@@ -138,7 +137,9 @@ class ShopScreen extends Component{
     }
 
     openWriteReview() {
-        this.props.navigation.navigate('writeReview', {locationId:this.state.locationId});
+        const { navigation } = this.props;
+        const { locationId } = this.state;
+        navigation.navigate('writeReview', {locationId});
     }
 
     render(){

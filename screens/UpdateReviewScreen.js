@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-filename-extension */
-import { Content, Text, H3, Textarea, Grid, Row, Button, Col } from 'native-base';
+import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import { updateReview, getPhoto } from '../utilities/api/APIUtility';
+import { updateReview } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class UpdateReviewScreen extends Component{
@@ -18,45 +18,30 @@ class UpdateReviewScreen extends Component{
         }
     }
 
-    componentDidMount(){
-        this.getReviewPhoto();
-    }
+    // componentDidMount(){
+    //     this.getReviewPhoto();
+    // }
 
-    setOverall(rating){
-        this.setState({newOverallRating:rating});
-    }
-
-    setPrice(rating){
-        this.setState({newPriceRating:rating});
-    }
-
-    setQuality(rating){
-        this.setState({newQualityRating:rating});
-    }
-
-    setClenliness(rating){
-        this.setState({newClenlinessRating:rating});
-    }
-
-    async getReviewPhoto(){
-        const token = await getAuthToken();
-        getPhoto(token, this.props.route.params.locationId, this.props.route.params.review.review_id).then((response) => {
-            console.log(response);
-            console.log(URL.createObjectURL(response))
-        })
-    }
+    // async getReviewPhoto(){
+    //     const token = await getAuthToken();
+    //     const { route } = this.props;
+    //     getPhoto(token, route.params.locationId, route.params.review.review_id).then((response) => {
+    //     })
+    // }
 
     updateReview() {
+        const { newOverallRating, newQualityRating, newPriceRating, newClenlinessRating, newComments} = this.state; 
+        const { navigation, route }  = this.props;
         const body = {
-            overall_rating:parseInt(this.state.newOverallRating),
-            price_rating:parseInt(this.state.newPriceRating),
-            quality_rating:parseInt(this.state.newQualityRating),
-            clenliness_rating:parseInt(this.state.newClenlinessRating),
-            review_body:this.state.newComments
+            overall_rating:parseInt(newOverallRating),
+            price_rating:parseInt(newPriceRating),
+            quality_rating:parseInt(newQualityRating),
+            clenliness_rating:parseInt(newClenlinessRating),
+            review_body:newComments
         }
         getAuthToken().then( token => {
-            const {locationId} = this.props.route.params;
-            const reviewId = this.props.route.params.review.review_id;
+            const { locationId } = route.params;
+            const reviewId = route.params.review.review_id;
             updateReview(locationId,token,body, reviewId)
                 .then(() => {
                     Toast.show({
@@ -65,7 +50,7 @@ class UpdateReviewScreen extends Component{
                         duration: 3000,
                         buttonStyle: { backgroundColor: '#4391ab'}
                     })
-                    this.props.navigation.navigate('shopScreen');
+                    navigation.navigate('shopScreen');
                 })
                 .catch((error) => {
                     Toast.show({
@@ -80,6 +65,7 @@ class UpdateReviewScreen extends Component{
 
 
     render(){
+        const { newOverallRating, newPriceRating, newQualityRating, newClenlinessRating, newComments} = this.state;
         return(
             <Content style={styles.content}>
                 <H3 style={styles.h3}>Select a rating for each category</H3>
@@ -91,7 +77,7 @@ class UpdateReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.newOverallRating}
+                            rating={newOverallRating}
                             emptyStar="ios-star-outline"
                             fullStar="ios-star"
                             halfStar="ios-star-half"
@@ -101,7 +87,7 @@ class UpdateReviewScreen extends Component{
                             halfStarColor="#16bff7"
                             starSize={20}
                             halfStarEnabled
-                            selectedStar={(rating) => this.setOverall(rating)}
+                            selectedStar={(rating) => this.setState({newOverallRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -111,7 +97,7 @@ class UpdateReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.newPriceRating}
+                            rating={newPriceRating}
                             emptyStar="ios-star-outline"
                             fullStar="ios-star"
                             halfStar="ios-star-half"
@@ -121,7 +107,7 @@ class UpdateReviewScreen extends Component{
                             halfStarColor="#16bff7"
                             starSize={20}
                             halfStarEnabled
-                            selectedStar={(rating) => this.setPrice(rating)}
+                            selectedStar={(rating) => this.setState({newPriceRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -131,7 +117,7 @@ class UpdateReviewScreen extends Component{
                         <StarRating
                             disabled={false}
                             maxStars={5}
-                            rating={this.state.newQualityRating}
+                            rating={newQualityRating}
                             emptyStar="ios-star-outline"
                             fullStar="ios-star"
                             halfStar="ios-star-half"
@@ -141,7 +127,7 @@ class UpdateReviewScreen extends Component{
                             halfStarColor="#16bff7"
                             starSize={20}
                             halfStarEnabled
-                            selectedStar={(rating) => this.setQuality(rating)}
+                            selectedStar={(rating) => this.setState({newQualityRating:rating})}
                         />
                     </Row>
                     <Row style={styles.row}>
@@ -150,7 +136,7 @@ class UpdateReviewScreen extends Component{
                         </Col>
                         <StarRating
                             maxStars={5}
-                            rating={this.state.newClenlinessRating}
+                            rating={newClenlinessRating}
                             emptyStar="ios-star-outline"
                             fullStar="ios-star"
                             halfStar="ios-star-half"
@@ -160,12 +146,12 @@ class UpdateReviewScreen extends Component{
                             halfStarColor="#16bff7"
                             starSize={20}
                             halfStarEnabled
-                            selectedStar={(rating) => this.setClenliness(rating)}
+                            selectedStar={(rating) => this.setState({newClenlinessRating:rating})}
                         />
                     </Row>
                 </Grid>
                 <H3 style={styles.h3}>Comments</H3>
-                <Textarea rowSpan={5} bordered defaultValue={this.state.newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
+                <Textarea rowSpan={5} bordered defaultValue={newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
                 <Button block onPress={() => {this.updateReview()}} style={styles.button}><Text>Update</Text></Button>
             </Content>        
         )

@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /* 
 The AuthReducer updates the auth state for the different actions.
 */
@@ -32,3 +33,5 @@ export const AuthReducer = (prevState, action) => {
             return prevState;
         }
 }
+
+

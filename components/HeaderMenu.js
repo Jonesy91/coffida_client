@@ -3,21 +3,23 @@ import React, { Component } from 'react';
 import { Header, Right, Icon, Button, Item, Input, Body } from 'native-base';
 import { StyleSheet } from 'react-native';
 
-
 class HeaderMenu extends Component {
     constructor(props){
         super(props);
         this.state={
-            search: ''
+            search: '',
         }
     }
 
     search(){
-        this.props.searchCallback(this.state.search)
+        const { searchCallback } = this.props;
+        const { search } = this.state;
+        searchCallback(search);
     }
 
     openFilters(){
-        this.props.navigation.navigate('filterModal',{currentFilter: this.props.currentFilter, route: this.props.route});
+        const { currentFilter, route, navigation } = this.props;
+        navigation.navigate('filterModal',{currentFilter, route});
     }
 
     render(){
