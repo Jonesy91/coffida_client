@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Item, Input, Button, Text, View, Content, Toast, Spinner } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { useAuthDispatch } from '../navigation/AuthContext';
-import { signIn } from '../navigation/AuthService';
+import { useAuthDispatch } from '../utilities/auth/AuthContext';
+import { signIn } from '../utilities/auth/AuthService';
 
 const LogInScreen = ({ navigation }) => {
     const dispatch = useAuthDispatch();

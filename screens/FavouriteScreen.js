@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content, Spinner, H3, Grid, Row, Button, Text } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getFavourites, getUser, getShopsFiltered } from '../Utilities/APIUtility';
+import { getFavourites, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 
 
 class FavouriteScreen extends Component{

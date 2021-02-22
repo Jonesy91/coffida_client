@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Container, Content, Spinner, Text, Button, Row, Grid, H3 } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getShops, getUser, getShopsFiltered } from '../Utilities/APIUtility';
+import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 
 class HomeScreen extends Component{
     constructor(props){

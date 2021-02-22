@@ -3,8 +3,8 @@ import { Content, Text, H3, Textarea, Grid, Row, Button, Col } from 'native-base
 import React, { Component } from 'react';
 import { StyleSheet, Image } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import { updateReview, getPhoto } from '../Utilities/api/APIUtility';
-import { getAuthToken } from '../Utilities/asyncstorage/AsyncStorageUtil';
+import { updateReview, getPhoto } from '../utilities/api/APIUtility';
+import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class UpdateReviewScreen extends Component{
     constructor(props){

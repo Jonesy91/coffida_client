@@ -6,8 +6,8 @@ import {
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import Ratings from './Ratings';
-import { like, unLike } from '../Utilities/api/APIUtility';
-import { getAuthToken } from '../Utilities/asyncstorage/AsyncStorageUtil';
+import { like, unLike } from '../utilities/api/APIUtility';
+import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class ReviewCard extends Component {
   constructor(props) {

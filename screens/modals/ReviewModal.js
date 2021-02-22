@@ -2,7 +2,7 @@
 import { Button, Content, Text, Toast } from 'native-base';
 import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
-import { deleteReview } from '../../Utilities/api/APIUtility';
+import { deleteReview } from '../../utilities/api/APIUtility';
 
 export default function ReviewModal({ route, navigation }){
     const review = route.params.review;

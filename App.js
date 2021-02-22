@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import React, { Component } from 'react';
 import { Root } from 'native-base';
 import Navigator from './navigation/Navigator';
-import { AuthProvider } from './navigation/AuthContext';
+import { AuthProvider } from './utilities/auth/AuthContext';
 
 
 

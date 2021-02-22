@@ -5,8 +5,8 @@ import { Image, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Ratings from '../components/Ratings';
 import Reviews from '../components/Reviews';
-import { getLocation, favourite, unFavourite, getUser, like } from '../Utilities/api/APIUtility';
-import { getAuthToken, getUserId } from '../Utilities/asyncstorage/AsyncStorageUtil';
+import { getLocation, favourite, unFavourite, getUser, like } from '../utilities/api/APIUtility';
+import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class ShopScreen extends Component{
     constructor(props){

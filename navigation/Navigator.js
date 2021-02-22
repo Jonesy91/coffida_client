@@ -9,10 +9,10 @@ import { NavigationContainer } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabNavigator from './TabNavigator';
 import SplashScreen from '../screens/SplashScreen';
-import { useAuthDispatch, useAuthState } from './AuthContext';
+import { useAuthDispatch, useAuthState } from '../utilities/auth/AuthContext';
 import AuthNavigator from './AuthNavigator';
-import ReviewModal from '../screens/ReviewModal';
-import FilterModal from '../screens/FilterModal';
+import ReviewModal from '../screens/modals/ReviewModal';
+import FilterModal from '../screens/modals/FilterModal';
 import UpdateReviewScreen from '../screens/UpdateReviewScreen';
 import CameraScreen from '../screens/CameraScreen';
 

@@ -2,8 +2,8 @@
 import { Text, Item, Input, Button, Content, Spinner, Toast } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native'; 
-import { signIn, signUp, confirmSignUp } from '../navigation/AuthService';
-import { useAuthDispatch } from '../navigation/AuthContext';
+import { signIn, signUp, confirmSignUp } from '../utilities/auth/AuthService';
+import { useAuthDispatch } from '../utilities/auth/AuthContext';
 
 const RegistrationScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
