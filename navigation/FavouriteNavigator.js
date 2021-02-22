@@ -24,7 +24,8 @@ export default function FavouriteNavigator() {
           component={ShopScreen}
           options={{
             title:'',
-            headerTransparent: true
+            headerTransparent: true,
+            headerTintColor: 'white',
           }}
         />
         <Stack.Screen

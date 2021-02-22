@@ -7,7 +7,7 @@ import { Container, Content, Spinner, H3, Grid, Row, Button, Text } from 'native
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getFavourites, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
-
+import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class FavouriteScreen extends Component{
     constructor(props){
@@ -16,6 +16,7 @@ class FavouriteScreen extends Component{
             isLoading: true,
             favourites:[],
             likedReviews: [],
+            userReviews:[],
             error: false,
             currentFilter: null,
         }
@@ -23,7 +24,7 @@ class FavouriteScreen extends Component{
 
     componentDidMount() {
         this.focusListener = this.props.navigation.addListener('focus', () => {
-            this.getUser();
+            this.getUserInfo();
             const params = this.props.route.params;
             if(typeof params !== 'undefined'){
                 this.handleFilter(params.filter);
@@ -38,102 +39,68 @@ class FavouriteScreen extends Component{
     componentWillUnmount() {
         this.focusListener;
     }
- 
-    getFavourites() {
+
+    async getUserInfo() {
         this.setState({isLoading: true});
-        this.getUserData().then(userData => {
-            getFavourites(userData.token)
-            .then(data => {
-                const favourites = data.map((favourite) =>  {
-                    favourite.id=favourite.location_id.toString();
-                    return favourite
-                })
-                this.setState({
-                    isLoading:false,
-                    favourites:favourites,
-                })
+        const token = await getAuthToken();
+        const userId = await getUserId();
+        getUser(userId,token)
+            .then(userData => {
+                const likedReviews = userData.liked_reviews;
+                this.setState({likedReviews});
+                const userReviews = userData.reviews;
+                this.setState({userReviews});
             })
             .catch(error => {
                 this.setState({error:true});
             })
-        })
+    }
+ 
+    async getFavourites() {
+        this.setState({isLoading: true});
+        const token = await getAuthToken();
+        getFavourites(token)
+            .then(getResponse => {
+                this.setState({favourites: getResponse, isLoading:false, error: false});
+            })
+            .catch(error => {
+                this.setState({error: true})
+            })
     }
 
     handleSearch = async (searchData) => {
         this.setState({isLoading: true});
         const params = `q=${searchData}&search_in=favourite`
-        const userData = await this.getUserData();
-        getShopsFiltered(userData.token, params).then(getResponse => {
-        this.setState({favourites: getResponse, isLoading:false, error: false});
-        }) 
-        .catch(error => {
-            console.log(error)
-            this.setState({error: true})    
-        })   
+        const token = await getAuthToken();
+        getShopsFiltered(token, params)
+            .then(getResponse => {
+                this.setState({favourites: getResponse, isLoading:false, error: false});
+            }) 
+            .catch(error => {
+                this.setState({error: true})    
+            })   
     }
 
     handleFilter = async (inParams) => {
         this.setState({isLoading: true});
         const params = `${inParams}&search_in=favourite`
-        const userData = await this.getUserData();
-        getShopsFiltered(userData.token, params).then(getResponse => {
-        this.setState({favourites: getResponse, isLoading:false, error: false});
-        }) 
-        .catch(error => {
-            console.log(error)
-            this.setState({error: true})    
-        })   
+        const token = await getAuthToken();
+        getShopsFiltered(token, params)
+            .then(getResponse => {
+                this.setState({favourites: getResponse, isLoading:false, error: false});
+            }) 
+            .catch(error => {
+                this.setState({error: true})    
+            })   
     }
 
-    async getUserData() {
-        const id = await AsyncStorage.getItem('@userId');
-        const token = await AsyncStorage.getItem('@userKey');
-        const data = {id:id,token:token};
-        return data;
-    }
-
-    getUser() {
-        this.setState({isLoading: true});
-        this.getUserData().then(
-            userData => {
-                const token = userData.token;
-                const userId = userData.id;
-                getUser(userId,token).then(data => {
-                    const likedReviews = data.liked_reviews;
-                    this.setState({likedReviews});
-                })
-                .then(() => {
-                    const likes = this.state.favourites.map(location => {
-                        const locationId = location.location_id;
-                        const likedReviews = this.state.likedReviews.map(review => {
-                            let reviewId = null;
-                            if(locationId === review.location.location_id){
-                                reviewId = review.review.review_id;
-                            }
-                            return reviewId
-                        })
-                        return {location:locationId,reviewIds:likedReviews}
-                    })
-                    const likedReviews = likes.filter(like => {
-                        if(!like.reviewIds.includes(null)){
-                            return like;
-                        }
-                    })
-                    this.setState({likedReviews, isLoading:false})
-                })
-        })
-        .catch(error => {
-            this.setState({error:true});
-        })
-    }
-
-    openShop(data, likes) {
-        console.log(likes);
+    openShop(locationId) {
         const favourite = true;
-        this.props.navigation.navigate('shopScreen', {data:data, favourite:favourite, likes:likes})
+        this.props.navigation.navigate('shopScreen', {locationId, favourite});
     }
 
     render(){
+        const { favourites = [] } = this.state;
         return(
             <Container>
                 <HeaderMenu 
@@ -156,20 +123,20 @@ class FavouriteScreen extends Component{
                 ):(
                     <Content>
                         {this.state.isLoading && (<Spinner />)}
-                        {!this.state.isLoading && this.state.favourites.length === 0 ? (
-                        <H3  style={styles.text}>No favourite locations</H3>
+                        {!this.state.isLoading && favourites.length === 0 ? (
+                            <H3  style={styles.text}>No favourite locations</H3>
                         ) : (
-                        this.state.favourites.map((favourite) => {
-                            let likes = null;
-                            this.state.likedReviews.forEach(like => {
-                                if(like.location === favourite.location_id){
-                                    likes = like;
+                            this.state.favourites.map((favourite) => {
+                                let likes = null;
+                                this.state.likedReviews.forEach(like => {
+                                    if(like.location === favourite.location_id){
+                                        likes = like;
+                                    }
+                                })
+                                return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite.location_id)}><ShopCard key={favourite.location_id} location={favourite} favourite={true}/></TouchableOpacity>
                                 }
-                            })
-                            return <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite, likes)}><ShopCard location={favourite} favourite/></TouchableOpacity>
-                            }
-                        )
-                    )}
+                            )
+                        )}
                     </Content>   
                 )}
             </Container>

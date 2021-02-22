@@ -6,6 +6,7 @@ import { Container, Content, Spinner, Text, Button, Row, Grid, H3, View } from '
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
+import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -37,65 +38,54 @@ class HomeScreen extends Component{
     componentWillUnmount() {
         this.focusListener;
     }
-    
-    async getUserData() {
-        const id = await AsyncStorage.getItem('@userId');
-        const token = await AsyncStorage.getItem('@userKey');
-        const data = {id,token};
-        return data;
-    }
 
-    getUserInfo() {
+    async getUserInfo() {
         this.setState({isLoading:true});
-        this.getUserData().then(
-            userData => {
-                const token = userData.token;
-                const userId = userData.id;
-                getUser(userId,token).then(userData => {
-                    const favlocations = userData.favourite_locations.map(favourite => favourite.location_id);
-                    this.setState({favLocations:favlocations});
-                    const likedReviews = userData.liked_reviews;
-                    this.setState({likedReviews});
-                    const userReviews = userData.reviews;
-                    this.setState({userReviews});
-                })
-                .catch(error => {
-                    console.log(error)
-                    this.setState({error:true});
-                })
-            }
-        )
+        const token = await getAuthToken();
+        const userId = await getUserId();
+        getUser(userId,token)
+            .then(userData => {
+                const favlocations = userData.favourite_locations.map(favourite => favourite.location_id);
+                this.setState({favLocations:favlocations});
+                const likedReviews = userData.liked_reviews;
+                this.setState({likedReviews});
+                const userReviews = userData.reviews;
+                this.setState({userReviews});
+            })
+            .catch(error => {
+                this.setState({error:true});
+            })
     }
 
     async findShops() {
         this.setState({isLoading: true});
-        const userData = await this.getUserData();
-        getShops(userData.token).then(getResponse => {
-        this.setState({locations: getResponse, isLoading:false, error: false});
-        }) 
-        .catch(error => {
-            console.log(error)
-            this.setState({error: true})    
-        })     
+        const token = await getAuthToken();
+        getShops(token)
+            .then(getResponse => {
+                this.setState({locations: getResponse, isLoading:false, error: false});
+            }) 
+            .catch(error => {
+                this.setState({error: true})    
+            })     
     }
 
     handleSearch = async (searchData) => {
         this.setState({isLoading: true});
         const params = `q=${searchData}`
-        const userData = await this.getUserData();
-        getShopsFiltered(userData.token, params).then(getResponse => {
-        this.setState({locations: getResponse, isLoading:false, error: false});
-        }) 
-        .catch(error => {
-            console.log(error)
-            this.setState({error: true})    
-        })   
+        const token = await getAuthToken();
+        getShopsFiltered(token, params)
+            .then(getResponse => {
+                this.setState({locations: getResponse, isLoading:false, error: false});
+            }) 
+            .catch(error => {
+                this.setState({error: true})    
+            })   
     }
 
     handleFilter = async (params) => {
         this.setState({isLoading: true});
-        const userData = await this.getUserData();
-        const getResponse = await getShopsFiltered(userData.token, params);
+        const token = await getAuthToken();
+        const getResponse = await getShopsFiltered(token, params);
         this.setState({locations: getResponse, isLoading:false, error: false});
     }
 
@@ -126,22 +116,20 @@ class HomeScreen extends Component{
                     </Content>
                 ) : (
                     <Content>
-                        {this.state.isLoading ? (
-                            <Spinner />
-                        ) : (
-                            !locations.length ? (
-                                <View style={styles.resultView}>
-                                    <H3>No matching results</H3>
-                                </View>
-                            ) : (
-                                locations.map((location) => {
+                        {this.state.isLoading && (<Spinner />)}
+                        {!this.state.isLoading && !locations.length ? (
+                            <View style={styles.resultView}>
+                                <H3>No matching results</H3>
+                            </View>
+                         ) : (
+                            locations.map((location) => {
                                 let favourite = false;
                                 if(this.state.favLocations.includes(location.location_id)){
                                     favourite=true;
                                 }
-                                return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
+                            return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
                             })
-                        ))}
+                        )}
                     </Content>      
                 )} 
             </Container> 
