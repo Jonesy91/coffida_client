@@ -1,11 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button, Toast, Spinner, Col, StyleProvider } from 'native-base';
+import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button, Toast, Spinner, Col } from 'native-base';
 import { Image, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Ratings from '../components/Ratings';
 import Reviews from '../components/Reviews';
-import { getLocation, favourite, unFavourite, getUser, like } from '../utilities/api/APIUtility';
+import { getLocation, favourite, unFavourite, getUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class ShopScreen extends Component{
@@ -25,7 +24,7 @@ class ShopScreen extends Component{
             reviews: '',
             likedReviews: '',
             isLoading: true,
-            dataLoaded: false
+            dataLoaded: false,
         }
     }
 
@@ -36,7 +35,7 @@ class ShopScreen extends Component{
     }
 
     componentWillUnmount() {
-        this.focusListener;
+        this.focusListener();
     }
 
     async getData(){
@@ -46,53 +45,10 @@ class ShopScreen extends Component{
         this.setState({dataLoaded:true, isLoading:false})
     }
 
-    openWriteReview() {
-        this.props.navigation.navigate('writeReview', {locationId:this.state.locationId});
-    }
-
-    isFavourite() {
-        let iconName;
-        if(this.state.isFavourite === true){
-            iconName='md-bookmark'
-        }else{
-            iconName='md-bookmark-outline'
-        }
-        return iconName
-    }
-
-    favouriteLocation() {
-        getAuthToken()
-            .then(token => {
-                if(this.state.isFavourite === false){
-                    favourite(this.state.locationId, token)
-                        .then(this.setState({isFavourite:true}))
-                        .catch(error => {
-                            this.setState({isFavourite:false})
-                            Toast.show({
-                                text: 'Failed to add shop to your favourites',
-                                buttonText: 'Okay',
-                                duration: 3000,
-                                buttonStyle: { backgroundColor: '#4391ab'}
-                            })
-                        })
-                } else{
-                    unFavourite(this.state.locationId, token)
-                        .then(this.setState({isFavourite:false}))
-                        .catch(error => {
-                            Toast.show({
-                                text: 'Failed to remove shop from your favourites',
-                                buttonText: 'Okay',
-                                duration: 3000,
-                                buttonStyle: { backgroundColor: '#4391ab'}
-                            })
-                        })
-                }   
-            })
-    }
-
     async getShopData() {
+        const { locationId } = this.state;
         const token = await getAuthToken();
-        getLocation(this.state.locationId, token).then(data => {
+        getLocation(locationId, token).then(data => {
             this.setState({
                 reviews: data.location_reviews,
                 locationData: data,
@@ -103,7 +59,6 @@ class ShopScreen extends Component{
                     clenliness:data.avg_clenliness_rating
                 }
             });
-            console.log(this.state.reviews)
         })
         .catch(error => {
             let message = '';
@@ -127,34 +82,81 @@ class ShopScreen extends Component{
         const userData = await getUser(userId,token)
         const resultreviews = userData.liked_reviews;
         const resultuserReviews = userData.reviews;
-        const locationId = this.state.locationId;
+        const { locationId } = this.state;
         const likedReviews = resultreviews.filter(review =>
             review.location.location_id === locationId
         );
-        const reviewIds = likedReviews.map(review => {return review.review.review_id});
+        const reviewIds = likedReviews.map(review => review.review.review_id);
         this.setState({likedReviews:reviewIds});
         const userReviews = resultuserReviews.filter(review =>
             review.location.location_id === locationId
         );
-        const reviewIdss = userReviews.map(review => {return review.review.review_id});
+        const reviewIdss = userReviews.map(review => review.review.review_id);
         this.setState({userReviews: reviewIdss, error:false});
     }
 
+    favouriteLocation() {
+        const { locationId, isFavourite,  } = this.state;
+        getAuthToken()
+            .then(token => {
+                if(isFavourite === false){
+                    favourite(locationId, token)
+                        .then(this.setState({isFavourite:true}))
+                        .catch(error => {
+                            this.setState({isFavourite:false})
+                            Toast.show({
+                                text: 'Failed to add shop to your favourites',
+                                buttonText: 'Okay',
+                                duration: 3000,
+                                buttonStyle: { backgroundColor: '#4391ab'}
+                            })
+                        })
+                } else{
+                    unFavourite(locationId, token)
+                        .then(this.setState({isFavourite:false}))
+                        .catch(error => {
+                            Toast.show({
+                                text: 'Failed to remove shop from your favourites',
+                                buttonText: 'Okay',
+                                duration: 3000,
+                                buttonStyle: { backgroundColor: '#4391ab'}
+                            })
+                        })
+                }   
+            })
+    }
+
+    isFavourite() {
+        let iconName;
+        const { isFavourite } = this.state;
+        if(isFavourite === true){
+            iconName='md-bookmark'
+        }else{
+            iconName='md-bookmark-outline'
+        }
+        return iconName
+    }
+
+    openWriteReview() {
+        this.props.navigation.navigate('writeReview', {locationId:this.state.locationId});
+    }
+
     render(){
+        const { isLoading, locationData, ratings, reviews, locationId, likedReviews, userReviews, dataLoaded } = this.state;
         return(
             <Content style={styles.content}>
-                {this.state.isLoading ? (
+                {isLoading ? (
                         <Spinner />
                     ) :
                     <>
-                        <Image source={{uri:this.state.locationData.photo_path}} style={styles.image}/>
+                        <Image source={{uri:locationData.photo_path}} style={styles.image}/>
                         <Grid  style={styles.grid}>
                             <Row>
                                 <Grid style={styles.grid}>
                                     <Row>
                                     <Col>
-                                        <H1>{this.state.locationData.location_name}</H1>
-                                        <Text>{this.state.locationData.location_town}</Text>
+                                        <H1>{locationData.location_name}</H1>
+                                        <Text>{locationData.location_town}</Text>
                                     </Col>
                                     <Col style={styles.col}>
                                         <Row>
@@ -172,7 +174,7 @@ class ShopScreen extends Component{
                                     <H2>Ratings</H2>
                                 </Row>
                                 <Row> 
-                                    <Ratings ratings={this.state.ratings}/> 
+                                    <Ratings ratings={ratings}/> 
                                 </Row>
                             </Grid>
                             <Row style={styles.row}>
@@ -182,8 +184,8 @@ class ShopScreen extends Component{
                                 </Right>
                             </Row>
                             <Row style={styles.row}>
-                                {this.state.dataLoaded === true && 
-                                    <Reviews reviews={this.state.reviews} locationId={this.state.locationId} likes={this.state.likedReviews} navigation={this.props.navigation} userReviews={this.state.userReviews} />
+                                {dataLoaded === true && 
+                                    <Reviews reviews={reviews} locationId={locationId} likes={likedReviews} navigation={this.props.navigation} userReviews={userReviews} />
                                 }
                             </Row>
                         </Grid>
@@ -247,9 +249,6 @@ const styles = StyleSheet.create({
     button:{
         backgroundColor: '#4391ab'
     }
-
-
-
 });
 
 export default ShopScreen;
