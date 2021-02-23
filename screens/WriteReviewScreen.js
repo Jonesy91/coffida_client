@@ -177,7 +177,7 @@ class WriteReviewScreen extends Component{
                     />
                     <Button
                         block
-                        onPress={() => navigation.navigate('camera')}
+                        onPress={() => navigation.navigate('camera',{ caller:route.name })}
                         style={styles.button}
                     >
                         <Text>Add a photo</Text>
@@ -185,7 +185,7 @@ class WriteReviewScreen extends Component{
                     {route.params.photo && (<Image source={{uri:route.params.photo.uri}} style={styles.img} />)}
                     <Button 
                         block 
-                        onPress={this.handleSubmit()} 
+                        onPress={() => this.handleSubmit()} 
                         style={styles.button}
                     >
                         <Text>Submit</Text>

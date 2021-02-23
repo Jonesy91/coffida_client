@@ -219,27 +219,10 @@ const unLike = (locationId, reviewId, userToken) =>
     })
 
 /* 
-GET request to get a photo for a review
-*/
-const getPhoto = (userToken, locationId, reviewId) =>
-    fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
-        method: 'GET',
-        headers: {
-            'X-Authorization': userToken,
-            'Content-Type': 'application/json'
-        },
-    })
-    .then((response) => {
-        return response;
-    })
-    .catch(error => {
-        throw error;
-    })
-
-/* 
 POST request to upload a photo
 */    
-const addPhoto = (userToken, data, locationId, reviewId) =>
+const addPhoto = (userToken, data, locationId, reviewId) => {
+    const timeStamp = Date.now();
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'POST',
         headers: {
@@ -255,6 +238,7 @@ const addPhoto = (userToken, data, locationId, reviewId) =>
     .catch(error => {
         throw error;
     })
+}
 
 /*
 DELETE request to delete a photo
@@ -389,4 +373,4 @@ const getLocation = (locationId, userToken) =>
 
 
   
-export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, getPhoto, deletePhoto, getShopsFiltered};
+export {register, logIn, logOut , getFavourites, getLocation, getUser, like, unLike, favourite, unFavourite, submitReview, updateReview, deleteReview, getShops, patchUser, addPhoto, deletePhoto, getShopsFiltered};

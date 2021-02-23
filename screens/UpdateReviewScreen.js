@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import { updateReview } from '../utilities/api/APIUtility';
+import { updateReview, addPhoto } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class UpdateReviewScreen extends Component{
@@ -18,17 +18,6 @@ class UpdateReviewScreen extends Component{
         }
     }
 
-    // componentDidMount(){
-    //     this.getReviewPhoto();
-    // }
-
-    // async getReviewPhoto(){
-    //     const token = await getAuthToken();
-    //     const { route } = this.props;
-    //     getPhoto(token, route.params.locationId, route.params.review.review_id).then((response) => {
-    //     })
-    // }
-
     updateReview() {
         const { newOverallRating, newQualityRating, newPriceRating, newClenlinessRating, newComments} = this.state; 
         const { navigation, route }  = this.props;
@@ -39,33 +28,48 @@ class UpdateReviewScreen extends Component{
             clenliness_rating:parseInt(newClenlinessRating),
             review_body:newComments
         }
-        getAuthToken().then( token => {
-            const { locationId } = route.params;
+        getAuthToken().then(async (token) => {
+            const { locationId, photo } = route.params;
             const reviewId = route.params.review.review_id;
-            updateReview(locationId,token,body, reviewId)
-                .then(() => {
-                    Toast.show({
-                        text: 'Review updated',
-                        buttonText: 'Okay',
-                        duration: 3000,
-                        buttonStyle: { backgroundColor: '#4391ab'}
-                    })
-                    navigation.navigate('shopScreen');
-                })
-                .catch((error) => {
-                    Toast.show({
-                        text: 'Failed update review',
-                        buttonText: 'Okay',
-                        duration: 3000,
-                        buttonStyle: { backgroundColor: '#4391ab'}
-                    })
-                })
+            await updateReview(locationId,token,body, reviewId)
+            if(photo){
+                await addPhoto(
+                    token, 
+                    photo, 
+                    locationId, 
+                    reviewId
+                )
+            }
+            Toast.show({
+                text: 'Review updated',
+                buttonText: 'Okay',
+                duration: 3000,
+                buttonStyle: { backgroundColor: '#4391ab'}
+            })
+            navigation.navigate('shopScreen');
+        })
+        .catch((error) => {
+            Toast.show({
+                text: 'Failed update review',
+                buttonText: 'Okay',
+                duration: 3000,
+                buttonStyle: { backgroundColor: '#4391ab'}
+            })
         });    
+    }
+
+    openCamera(){
+        const { navigation, route } = this.props;
+        const { locationId } = route.params;
+        navigation.navigate('camera', { caller:route.name, locationId });
     }
 
 
     render(){
         const { newOverallRating, newPriceRating, newQualityRating, newClenlinessRating, newComments} = this.state;
+        const { route }  = this.props;
+        const { locationId, photo = null } = route.params;
+        const reviewId = route.params.review.review_id;
         return(
             <Content style={styles.content}>
                 <H3 style={styles.h3}>Select a rating for each category</H3>
@@ -152,6 +156,12 @@ class UpdateReviewScreen extends Component{
                 </Grid>
                 <H3 style={styles.h3}>Comments</H3>
                 <Textarea rowSpan={5} bordered defaultValue={newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
+                {photo === null ? (
+                    <Image style={styles.image} source={{uri:`http://10.0.2.2:3333/api/1.0.0/location/${locationId}/review/${reviewId}/photo?timestamp=${Date.now()}`}}/>
+                ) : (
+                    <Image style={styles.image} source={{uri:photo.uri}}/>
+                )}
+                <Button block onPress={() => {this.openCamera()}} style={styles.button}><Text>Change Photo</Text></Button>
                 <Button block onPress={() => {this.updateReview()}} style={styles.button}><Text>Update</Text></Button>
             </Content>        
         )
@@ -161,7 +171,7 @@ class UpdateReviewScreen extends Component{
 const styles = StyleSheet.create({
     content:{
         backgroundColor: 'white',
-        margin: 20
+        margin: 10
     },
     row: {
         margin: 5
@@ -175,6 +185,11 @@ const styles = StyleSheet.create({
     button: {
         marginVertical: 10,
         backgroundColor: '#4391ab'
+    },
+    image:{
+        width:150,
+        height:150,
+        marginVertical: 25
     }
 });
 

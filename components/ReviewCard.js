@@ -76,7 +76,7 @@ class ReviewCard extends Component {
         )}
         <CardItem>
           <Body>
-            <Text>{review.reviewBody}</Text>
+            <Text>{review.review_body}</Text>
           </Body>
         </CardItem>
         <CardItem>

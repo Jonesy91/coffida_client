@@ -7,11 +7,12 @@ import { StyleSheet } from 'react-native';
 class CameraScreen extends Component{
 
     async takePicture() {
-        const { navigation } = this.props;
+        const { navigation, route } = this.props;
+        const { caller } = route.params;
         if(this.camera){
             const options = { quality:0.5, base64: true}
             const data = await this.camera.takePictureAsync(options);
-            navigation.navigate('writeReview', {photo:data});
+            navigation.navigate(caller, {photo:data});
         }
     }
 
