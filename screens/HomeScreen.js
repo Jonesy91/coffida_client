@@ -6,6 +6,7 @@ import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
+import { FlatList } from 'react-native-gesture-handler';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -87,8 +88,24 @@ class HomeScreen extends Component{
         navigation.navigate('shopScreen', {locationId, favourite})
     }
 
+    renderLocation(location){
+        const { favLocations } = this.state;
+        let favourite = false;
+        if(favLocations.includes(location.location_id)) {
+                favourite=true;
+        }
+        return <TouchableOpacity 
+                    onPress={() => this.openShop(location.location_id,favourite)}
+                >
+                    <ShopCard 
+                        location={location} 
+                        favourite={favourite}
+                    />
+                </TouchableOpacity> 
+    }
+
     render(){
-        const { locations = [], currentFilter, isLoading, favLocations, error } = this.state;
+        const { locations = [], currentFilter, isLoading, error } = this.state;
         const { navigation, route } = this.props;
         return(
             <Container>
@@ -110,22 +127,20 @@ class HomeScreen extends Component{
                     </Grid>
                     </Content>
                 ) : (
-                    <Content>
+                    <>
                         {isLoading && (<Spinner />)}
                         {!isLoading && !locations.length ? (
                             <View style={styles.resultView}>
                                 <H3>No matching results</H3>
                             </View>
                          ) : (
-                            locations.map((location) => {
-                                let favourite = false;
-                                if(favLocations.includes(location.location_id)){
-                                    favourite=true;
-                                }
-                            return <TouchableOpacity key={location.location_id} onPress={() => this.openShop(location.location_id,favourite)}><ShopCard key={location.location_id} location={location} favourite={favourite}/></TouchableOpacity> 
-                            })
+                            <FlatList 
+                                data={locations}
+                                renderItem={({item}) => this.renderLocation(item)}
+                                keyExtractor={item => item.location_id.toString()}
+                            />
                         )}
-                    </Content>      
+                    </>      
                 )} 
             </Container> 
         );

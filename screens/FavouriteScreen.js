@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { Container, Content, Spinner, H3, Grid, Row, Button, Text } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getFavourites, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
-import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
+import { getFavourites, getShopsFiltered } from '../utilities/api/APIUtility';
+import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 
 class FavouriteScreen extends Component{
     constructor(props){
@@ -80,6 +80,12 @@ class FavouriteScreen extends Component{
         navigation.navigate('shopScreen', {locationId, favourite});
     }
 
+    renderLocation(favourite){
+        return <TouchableOpacity onPress={() => this.openShop(favourite.location_id)}>
+                    <ShopCard location={favourite} favourite />
+                </TouchableOpacity>
+    }
+
     render(){
         const { favourites = [], currentFilter, isLoading } = this.state;
         const { navigation, route} = this.props;
@@ -103,16 +109,18 @@ class FavouriteScreen extends Component{
                         </Grid>
                     </Content>
                 ):(
-                    <Content>
+                    <>
                         {isLoading && (<Spinner />)}
                         {!isLoading && favourites.length === 0 ? (
                             <H3  style={styles.text}>No favourite locations</H3>
                         ) : (
-                            favourites.map((favourite) => 
-                                <TouchableOpacity key={favourite.location_id} onPress={() => this.openShop(favourite.location_id)}><ShopCard key={favourite.location_id} location={favourite} favourite/></TouchableOpacity>
-                            )
+                            <FlatList 
+                                data={favourites}
+                                renderItem={({item}) => this.renderLocation(item)}
+                                keyExtractor={item => item.location_id.toString()}
+                            />
                         )}
-                    </Content>   
+                    </>   
                 )}
             </Container>
        );
