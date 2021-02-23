@@ -78,7 +78,7 @@ const RegistrationScreen = ({ navigation }) => {
                     onChangeText={(inPassword) =>setPassword(inPassword)}
                 />                
             </Item>
-            <Button block onPress={() => register()} style={styles.button}>
+            <Button primary block onPress={() => register()} style={styles.button}>
                 <Text>Register!</Text>
             </Button>
                 </>

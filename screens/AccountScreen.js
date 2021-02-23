@@ -140,6 +140,7 @@ export default function AccountScreen(){
             </Item>
           </Form>
           <Button 
+            primary
             block 
             onPress={() => {changeDetails()}} 
             style={styles.button}
@@ -155,6 +156,7 @@ export default function AccountScreen(){
             />
           </Item>
           <Button 
+            primary
             block 
             onPress={() => {changePassword()}} 
             style={styles.button}
@@ -162,6 +164,7 @@ export default function AccountScreen(){
             <Text>Change Password</Text>
           </Button>
           <Button 
+            primary
             block 
             onPress={() => {logOut()}} 
             style={styles.button}

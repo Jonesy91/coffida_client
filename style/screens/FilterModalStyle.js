@@ -16,20 +16,7 @@ export default StyleSheet.create({
       marginTop: 5,
       marginBottom: 5
   },
-  button:{
-      flex:1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'white',
-      borderWidth: 1,
-      borderColor: '#2f6678'
-  },
-  text:{
-      color: '#2f6678',
-      fontSize: 20
-  },
   applyBtn:{
-      backgroundColor:'#4391ab',
       marginHorizontal: 30,
       width: 100
 
@@ -37,7 +24,6 @@ export default StyleSheet.create({
   closeBtn:{
       marginTop: 20,
       marginBottom:5,
-      backgroundColor:'#4391ab',
   },
   slider:{
       width: 300, 

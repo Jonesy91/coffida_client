@@ -58,7 +58,7 @@ const LogInScreen = ({ navigation }) => {
                     onChangeText={(inPassword) =>setPassword(inPassword)}
                 />                
             </Item>
-            <Button block onPress={() => requestLogIn()} style={styles.button}>
+            <Button primary block onPress={() => requestLogIn()} style={styles.button}>
                 <Text>Log In</Text>
             </Button>
             <View style={styles.view}>

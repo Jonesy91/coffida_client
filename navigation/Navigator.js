@@ -70,7 +70,7 @@ export default function Navigator(){
                   <Stack.Screen name="modal" component={ReviewModal} options={{headerShown:false,cardStyle:{backgroundColor: 'transparent', opacity: 2}}} />
                   <Stack.Screen name="filterModal" component={FilterModal} options={{headerShown: false}} />
                   <Stack.Screen name="updateReview" component={UpdateReviewScreen} options={{headerShown: true, headerTitle:'Update Review'}}/>
-                  <Stack.Screen name="camera" component={CameraScreen} mode='card' />
+                  <Stack.Screen name="camera" component={CameraScreen} mode='card' options={{headerStyle:{backgroundColor:'black'}, headerTitle:'',headerTintColor:'white'}} />
                 </>
             )}
           </Stack.Navigator>

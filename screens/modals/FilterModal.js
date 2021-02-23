@@ -163,12 +163,12 @@ class FilterModal extends Component{
                         />
                     </Row>
                     <Row style={styles.row}>
-                        <Button block style={styles.applyBtn} onPress={() => this.clear()}><Text>Clear</Text></Button>
-                        <Button block style={styles.applyBtn} onPress={() => this.applyFilters()}><Text>Apply</Text></Button>
+                        <Button primary block style={styles.applyBtn} onPress={() => this.clear()}><Text>Clear</Text></Button>
+                        <Button primary block style={styles.applyBtn} onPress={() => this.applyFilters()}><Text>Apply</Text></Button>
                     </Row>   
                 </Grid>
                 
-                <Button block style={styles.closeBtn} onPress={() => navigation.goBack()}><Text>Close</Text></Button>
+                <Button primary block style={styles.closeBtn} onPress={() => navigation.goBack()}><Text>Close</Text></Button>
                 </View>
             </Content>
         );

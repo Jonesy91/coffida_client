@@ -7,7 +7,6 @@ export default StyleSheet.create({
         marginTop: 100
     },
     button:{
-        backgroundColor:'#4391ab',
         margin: 10
     },
     item:{

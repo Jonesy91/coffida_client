@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
@@ -7,7 +8,6 @@ import { Container } from 'native-base';
 import ShopScreen from '../screens/ShopScreen';
 import FavouriteScreen from '../screens/FavouriteScreen';
 import WriteReviewScreen from '../screens/WriteReviewScreen';
-import HeaderMenu from '../components/HeaderMenu';
 
 export default function FavouriteNavigator() {
   const Stack = createStackNavigator();

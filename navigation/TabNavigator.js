@@ -4,7 +4,7 @@
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Container, Icon } from 'native-base';
+import { Icon } from 'native-base';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AccountScreen from '../screens/AccountScreen';
 import ShopNavigator from './ShopNavigator';

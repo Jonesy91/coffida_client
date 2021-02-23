@@ -50,7 +50,4 @@ export default StyleSheet.create({
         backgroundColor:'white'
 
     },
-    button:{
-        backgroundColor: '#4391ab'
-    }
 });

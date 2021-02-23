@@ -182,7 +182,7 @@ class ShopScreen extends Component{
                             <Row style={styles.row}>
                                 <H2>Reviews</H2>
                                 <Right>
-                                    <Button small onPress={() => this.openWriteReview()} style={styles.button}><Text>Leave a review</Text></Button>
+                                    <Button primary small onPress={() => this.openWriteReview()} style={styles.button}><Text>Leave a review</Text></Button>
                                 </Right>
                             </Row>
                             <Row style={styles.row}>

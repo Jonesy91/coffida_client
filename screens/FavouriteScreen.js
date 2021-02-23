@@ -137,7 +137,7 @@ class FavouriteScreen extends Component{
                                 <H3>Failed to find coffee Shops</H3>
                             </Row>
                             <Row style={styles.row}>
-                                <Button style={styles.button}><Text>Try Again</Text></Button>
+                                <Button primary style={styles.button}><Text>Try Again</Text></Button>
                             </Row>
                         </Grid>
                     </Content>

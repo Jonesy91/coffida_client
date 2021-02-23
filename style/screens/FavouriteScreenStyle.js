@@ -15,7 +15,4 @@ export default StyleSheet.create({
         alignItems: 'center',
         margin: 10
     },
-    button:{
-        backgroundColor: '#4391ab'
-    }
 });
