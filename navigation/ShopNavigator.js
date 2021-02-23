@@ -12,7 +12,7 @@ import WriteReviewScreen from '../screens/WriteReviewScreen';
 export default function ShopNavigator() {
   const Stack = createStackNavigator();
   return (
-    <Container>
+      <>
       <Stack.Navigator>
         <Stack.Screen
           name="home"
@@ -36,6 +36,6 @@ export default function ShopNavigator() {
           }}
         />
       </Stack.Navigator>
-    </Container>
+      </>
   );
 }

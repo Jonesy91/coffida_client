@@ -16,12 +16,16 @@ class FavouriteScreen extends Component{
             favourites:[],
             error: false,
             currentFilter: null,
+            currentSearch: null,
+            page:0,
+            results:3,
         }
     }
 
     componentDidMount() {
-        const { navigation, route } = this.props;
+        const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', () => {
+            const { route } = this.props;
             if(typeof route.params !== 'undefined'){
                 this.handleFilter(route.params.filter);
                 this.setState({currentFilter: route.params.currentFilter})
@@ -37,10 +41,11 @@ class FavouriteScreen extends Component{
     }
 
     async handleSearch(searchData) {
-        this.setState({isLoading: true});
+        const { page, results } = this.state;
+        this.setState({isLoading: true, currentSearch:searchData});
         const params = `q=${searchData}&search_in=favourite`
         const token = await getAuthToken();
-        getShopsFiltered(token, params)
+        getShopsFiltered(token, params, results, 0)
             .then(getResponse => {
                 this.setState({favourites: getResponse, isLoading:false, error: false});
             }) 
@@ -50,24 +55,50 @@ class FavouriteScreen extends Component{
     }
 
     async handleFilter(inParams) {
+        const { results } = this.state;
         this.setState({isLoading: true});
         const params = `${inParams}&search_in=favourite`
         const token = await getAuthToken();
-        getShopsFiltered(token, params)
+        if(inParams === null){
+            this.setState({currentFilter: null})
+            this.getFavourites();
+        } else{
+            getShopsFiltered(token, params, results, )
             .then(getResponse => {
                 this.setState({favourites: getResponse, isLoading:false, error: false});
             }) 
             .catch(error => {
                 this.setState({error: true})    
             })   
+        }
+    }
+
+    async handlePagination() {
+        const { page, results, favourites, currentSearch, currentFilter } = this.state;
+        const token = await getAuthToken();
+        if((currentSearch === null || currentSearch === '')&& (currentFilter === null || currentFilter === '')){
+            getShopsFiltered(token,`search_in=favourite`, results, page)
+                .then(getResponse => {
+                    let newPage = (page + results);
+                    this.setState({
+                        favourites: [...favourites, ...getResponse], 
+                        isLoading:false, error: false, page: newPage
+                    });
+                }) 
+                .catch(error => {
+                    this.setState({error: true})    
+                }) 
+        } 
     }
 
     async getFavourites() {
         this.setState({isLoading: true});
+        const { results } = this.state;
         const token = await getAuthToken();
-        getFavourites(token)
+        getShopsFiltered(token,`search_in=favourite`, results, 0)
             .then(getResponse => {
-                this.setState({favourites: getResponse, isLoading:false, error: false});
+                let newPage = (0 + results);
+                this.setState({favourites: getResponse, isLoading:false, error: false, page: newPage});
             })
             .catch(error => {
                 this.setState({error: true})
@@ -77,6 +108,7 @@ class FavouriteScreen extends Component{
     openShop(locationId) {
         const { navigation } = this.props;
         const favourite = true;
+        this.setState({currentSearch:'', currentFilter: null})
         navigation.navigate('shopScreen', {locationId, favourite});
     }
 
@@ -118,6 +150,9 @@ class FavouriteScreen extends Component{
                                 data={favourites}
                                 renderItem={({item}) => this.renderLocation(item)}
                                 keyExtractor={item => item.location_id.toString()}
+                                onEndReachedThreshold={0.1}
+                                onEndReached={() => this.handlePagination()}
+                                scrollEventThrottle={400}
                             />
                         )}
                     </>   

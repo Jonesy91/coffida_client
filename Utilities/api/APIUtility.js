@@ -266,16 +266,16 @@ Location Management API requests
 /* 
 GET request to get all shops
 */
-const getShops = (userToken) => 
-    fetch(`${url}/find`,{
+const getShops = (userToken, offset) => 
+    fetch(`${url}/find?limit=3&offset=${offset}`,{
         method: 'GET',    
         headers:{
             'X-Authorization': userToken
         }
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        //const respJson = handleResponse(response);
+        return response.json();
     })
     .catch(error => {
         throw error;
@@ -302,8 +302,8 @@ const getFavourites = (userToken) =>
 /* 
 GET request to find shops with filter parameters
 */
-const getShopsFiltered = (userToken, params) => 
-    fetch(`${url}/find?${params}`,{
+const getShopsFiltered = (userToken, params,limit, offset) => 
+    fetch(`${url}/find?${params}&limit=${limit}&offset=${offset}`,{
         method: 'GET',    
         headers:{
             'X-Authorization': userToken

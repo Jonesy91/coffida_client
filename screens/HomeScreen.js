@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, Content, Spinner, Text, Button, Row, Grid, H3, View } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
-import { FlatList } from 'react-native-gesture-handler';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -16,20 +16,24 @@ class HomeScreen extends Component{
             locations:[],
             favLocations:[],
             error: false,
-            currentFilter: null
+            currentFilter: null,
+            currentSearch: null,
+            page:0,
+            results:3,
         }
     }
 
     componentDidMount() {
-        const { navigation, route } = this.props;
+        const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', e => {
+            const { route } = this.props;
             this.getUserInfo();
             if(typeof route.params !== 'undefined'){
                 this.handleFilter(route.params.filter);
                 this.setState({currentFilter: route.params.currentFilter})
             } else {
                 this.findShops();
-            }
+            }        
         });
     }
 
@@ -38,10 +42,11 @@ class HomeScreen extends Component{
     }
 
     async handleSearch(searchData) {
-        this.setState({isLoading: true});
+        const { results } = this.state;
+        this.setState({isLoading: true, currentSearch:searchData});
         const params = `q=${searchData}`
         const token = await getAuthToken();
-        getShopsFiltered(token, params)
+        getShopsFiltered(token, params, results, 0)
             .then(getResponse => {
                 this.setState({locations: getResponse, isLoading:false, error: false});
             }) 
@@ -51,10 +56,35 @@ class HomeScreen extends Component{
     }
 
     async handleFilter(params) {
+        const { results } = this.state;
         this.setState({isLoading: true});
         const token = await getAuthToken();
-        const getResponse = await getShopsFiltered(token, params);
-        this.setState({locations: getResponse, isLoading:false, error: false});
+        if(params === null){
+            this.setState({currentFilter: null})
+            this.findShops();
+        } else {
+            const getResponse = await getShopsFiltered(token, params, results, 0);
+            this.setState({locations: getResponse, isLoading:false, error: false});
+        }
+        
+    }
+
+    async handlePagination() {
+        const { page, results, locations, currentSearch, currentFilter } = this.state;
+        const token = await getAuthToken();
+        if((currentSearch === null || currentSearch === '')&& (currentFilter === null || currentFilter === '')){
+            getShops(token, page)
+            .then(getResponse => {
+                let newPage = (page + results);
+                this.setState({
+                    locations: [...locations, ...getResponse], 
+                    isLoading:false, error: false, page: newPage
+                });
+            }) 
+            .catch(error => {
+                this.setState({error: true})    
+            })  
+        }
     }
 
     async getUserInfo() {
@@ -73,18 +103,21 @@ class HomeScreen extends Component{
 
     async findShops() {
         this.setState({isLoading: true});
+        const { results } = this.state;
         const token = await getAuthToken();
-        getShops(token)
+        getShops(token, 0)
             .then(getResponse => {
-                this.setState({locations: getResponse, isLoading:false, error: false});
+                let newPage = (0 + results);
+                this.setState({locations:getResponse, isLoading:false, error: false, page: newPage});
             }) 
             .catch(error => {
                 this.setState({error: true})    
             })     
-    }
+        }
 
     openShop(locationId, favourite) {
         const { navigation } = this.props;
+        this.setState({currentSearch:'', currentFilter: null})
         navigation.navigate('shopScreen', {locationId, favourite})
     }
 
@@ -94,13 +127,8 @@ class HomeScreen extends Component{
         if(favLocations.includes(location.location_id)) {
                 favourite=true;
         }
-        return <TouchableOpacity 
-                    onPress={() => this.openShop(location.location_id,favourite)}
-                >
-                    <ShopCard 
-                        location={location} 
-                        favourite={favourite}
-                    />
+        return <TouchableOpacity onPress={() => this.openShop(location.location_id,favourite)}>
+                    <ShopCard location={location} favourite={favourite} />
                 </TouchableOpacity> 
     }
 
@@ -108,9 +136,9 @@ class HomeScreen extends Component{
         const { locations = [], currentFilter, isLoading, error } = this.state;
         const { navigation, route } = this.props;
         return(
-            <Container>
+            <>
                 <HeaderMenu 
-                    searchCallback={this.handleSearch} 
+                    searchCallback={(data) => this.handleSearch(data)} 
                     navigation={navigation} 
                     currentFilter={currentFilter}
                     route={route.name}
@@ -138,11 +166,14 @@ class HomeScreen extends Component{
                                 data={locations}
                                 renderItem={({item}) => this.renderLocation(item)}
                                 keyExtractor={item => item.location_id.toString()}
+                                onEndReachedThreshold={0.1}
+                                onEndReached={() => this.handlePagination()}
+                                scrollEventThrottle={400}
                             />
                         )}
                     </>      
                 )} 
-            </Container> 
+            </>
         );
     }
 }

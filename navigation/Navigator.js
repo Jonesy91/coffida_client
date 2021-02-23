@@ -6,6 +6,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native'
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TabNavigator from './TabNavigator';
 import SplashScreen from '../screens/SplashScreen';
@@ -35,6 +36,7 @@ export default function Navigator(){
     }, [dispatch]);
     
     return (
+      <SafeAreaProvider>
         <NavigationContainer>
           <Stack.Navigator 
             mode="modal" 
@@ -73,6 +75,7 @@ export default function Navigator(){
             )}
           </Stack.Navigator>
         </NavigationContainer>
+      </SafeAreaProvider>
     );
 }
 
