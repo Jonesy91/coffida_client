@@ -1,11 +1,11 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet, Image } from 'react-native'
+import { Image } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { submitReview, addPhoto, getUser } from '../utilities/api/APIUtility';
 import { getUserId, getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/screens/ReviewScreenStyle';
 
 class WriteReviewScreen extends Component{
     constructor(props){
@@ -182,7 +182,7 @@ class WriteReviewScreen extends Component{
                     >
                         <Text>Add a photo</Text>
                     </Button>
-                    {route.params.photo && (<Image source={{uri:route.params.photo.uri}} style={styles.img} />)}
+                    {route.params.photo && (<Image source={{uri:route.params.photo.uri}} style={styles.image} />)}
                     <Button 
                         block 
                         onPress={() => this.handleSubmit()} 
@@ -195,29 +195,5 @@ class WriteReviewScreen extends Component{
         )
     }
 }
-
-const styles = StyleSheet.create({
-    content:{
-        backgroundColor: 'white',
-        margin: 20
-    },
-    row: {
-        margin: 5
-    },
-    col:{
-        width: 150
-    },
-    h3: {
-        margin: 5
-    },
-    button: {
-        marginVertical: 10,
-        backgroundColor: '#4391ab'
-    },
-    img:{
-        height:120, 
-        width:120
-    }
-});
 
 export default WriteReviewScreen;

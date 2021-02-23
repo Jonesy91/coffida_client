@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Text, Item, Input, Button, Content, Spinner, Toast } from 'native-base';
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native'; 
 import { signUp } from '../utilities/auth/AuthService';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
+import styles from '../style/screens/RegistrationScreenStyle';
 
 const RegistrationScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
@@ -86,20 +86,5 @@ const RegistrationScreen = ({ navigation }) => {
         </Content>
     )
 }
-
-const styles = StyleSheet.create({
-    content:{
-        backgroundColor: 'white',
-        margin: 20,
-        marginTop: 100
-    },
-    button:{
-        backgroundColor:'#4391ab',
-        margin: 10
-    },
-    item:{
-        margin:10
-    }
-});
 
 export default RegistrationScreen;

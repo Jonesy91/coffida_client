@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { Header, Right, Icon, Button, Item, Input, Body } from 'native-base';
-import { StyleSheet } from 'react-native';
+import { Header, Right, Icon, Button, Item, Input, Body, StyleProvider } from 'native-base';
+import getTheme from '../native-base-theme/components';
+import platform from '../native-base-theme/variables/platform';
+import styles from '../style/components/HeaderMenuStyle';
 
 class HeaderMenu extends Component {
     constructor(props){
@@ -24,7 +26,8 @@ class HeaderMenu extends Component {
 
     render(){
         return(
-            <Header searchBar style={styles.header}>
+            <StyleProvider style={getTheme(platform)}>
+            <Header>
                 <Body style={styles.body}>
                     <Item style={styles.item}>
                         <Input placeholder='search' onChangeText={(text) => this.setState({search:text})} />
@@ -38,28 +41,10 @@ class HeaderMenu extends Component {
                         <Icon name='md-options' style={styles.icon}/>
                     </Button>
                 </Right>
-            </Header>       
+            </Header>    
+            </StyleProvider>   
         )
     }
 }
-
-const styles = StyleSheet.create({
-    header:  {
-        backgroundColor: '#08485e'
-    },
-    icon:{
-        color:'white',
-        fontSize:30
-    },
-    item:{
-        backgroundColor:'white',
-        maxHeight: 30
-    },
-    body:{
-        flex: 2,
-        flexDirection:'row',
-        alignItems: 'center'
-    }
-});
 
 export default HeaderMenu;

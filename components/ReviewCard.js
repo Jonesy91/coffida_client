@@ -4,10 +4,10 @@ import {
   Card, CardItem, Body, Text, Button, Icon, Right
 } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
 import Ratings from './Ratings';
 import { like, unLike } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/components/ReviewCardStyle';
 
 class ReviewCard extends Component {
   constructor(props) {
@@ -92,20 +92,5 @@ class ReviewCard extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  icon: {
-    fontSize: 30,
-    color: '#4391ab'
-  },
-  elipsesItem: {
-    flex:1,
-    justifyContent:'flex-end',
-    alignItems:'flex-end',
-  },
-  elipsesBtn:{
-    height:10
-  }
-});
 
 export default ReviewCard;

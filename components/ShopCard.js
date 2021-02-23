@@ -1,11 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { Image } from 'react-native';
 import {
   Card, CardItem, Text, Left, Body, Right, Icon
 } from 'native-base';
 import StarRating from 'react-native-star-rating';
+import styles from '../style/components/ShopCardStyle';
 
 export default function ShopCard({location, favourite}) {
   let bookmarkType = 'md-bookmark-outline';
@@ -50,18 +51,3 @@ export default function ShopCard({location, favourite}) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    height: 200,
-    width: null,
-    flex: 1,
-  },
-  icon: {
-    fontSize: 25,
-    color: '#4391ab'
-  },
-  text:{
-    color: '#4391ab'
-  }
-});

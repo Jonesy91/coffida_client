@@ -2,8 +2,8 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Text, Grid, Row, Col } from 'native-base';
-import { StyleSheet } from 'react-native';
 import StarRating from 'react-native-star-rating';
+import styles from '../style/components/RatingsStyle';
 
 export default function Ratings({ratings}) {
   const starColour = "#16bff7";
@@ -92,9 +92,3 @@ export default function Ratings({ratings}) {
     </Grid>
   );
 }
-
-const styles = StyleSheet.create({
-  col:{
-    width: 150
-  }
-});

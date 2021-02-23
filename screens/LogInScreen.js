@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
 import { Item, Input, Button, Text, View, Content, Toast, Spinner } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import { signIn } from '../utilities/auth/AuthService';
+import styles from '../style/screens/LogInScreenStyle';
 
 const LogInScreen = ({ navigation }) => {
     const dispatch = useAuthDispatch();
@@ -72,27 +72,4 @@ const LogInScreen = ({ navigation }) => {
     );
 }
 
-const styles = StyleSheet.create({
-    content:{
-        backgroundColor:'white',
-        margin: 20
-    },
-    button:{
-         backgroundColor:'#4391ab',
-         margin: 10
-    },
-    item:{
-        margin:10
-    },
-    view:{
-        flex:1, 
-        flexDirection: 'row', 
-        margin: 10
-    },
-    text:{
-        color: '#16bff7',
-        fontWeight:'bold',
-        textDecorationLine:'underline'
-    }
-});
 export default LogInScreen;

@@ -4,11 +4,11 @@ import React, { useState } from 'react';
 import {
   Text, Item, Label, Input, Content, Form, Button, Spinner, H1, Toast
 } from 'native-base';
-import { StyleSheet } from 'react-native';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import { signOut } from '../utilities/auth/AuthService';
 import { getUser, patchUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId }from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/screens/AccountScreenStyle';
 
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();
@@ -110,28 +110,28 @@ export default function AccountScreen(){
   }
 
   return (
-    <Content style={Styles.content}>
+    <Content style={styles.content}>
       {isLoading ? (
         <Spinner />
       ) : (
         <>
           <H1>Account</H1>
           <Form>
-            <Label style={Styles.label}>First Name</Label>
+            <Label style={styles.label}>First Name</Label>
             <Item>
               <Input
                 defaultValue={firstName}
                 onChangeText={(inFirstName) => setNewirstName(inFirstName)}
               />
             </Item>
-            <Label style={Styles.label}>Surname</Label>
+            <Label style={styles.label}>Surname</Label>
             <Item >
               <Input
                 defaultValue={surname}
                 onChangeText={(inSurname) => setNewSurname(inSurname)}
               />
             </Item>
-            <Label style={Styles.label}>Email</Label>
+            <Label style={styles.label}>Email</Label>
             <Item>
               <Input
                 defaultValue={email}
@@ -142,11 +142,11 @@ export default function AccountScreen(){
           <Button 
             block 
             onPress={() => {changeDetails()}} 
-            style={Styles.button}
+            style={styles.button}
           >
             <Text>Update Details</Text>
           </Button>
-          <Label style={Styles.label}>Change Password</Label>
+          <Label style={styles.label}>Change Password</Label>
           <Item>
             <Input
               placeholder='Type password here'
@@ -157,14 +157,14 @@ export default function AccountScreen(){
           <Button 
             block 
             onPress={() => {changePassword()}} 
-            style={Styles.button}
+            style={styles.button}
           >
             <Text>Change Password</Text>
           </Button>
           <Button 
             block 
             onPress={() => {logOut()}} 
-            style={Styles.button}
+            style={styles.button}
           >
             <Text>Log Out</Text>
           </Button>
@@ -173,19 +173,3 @@ export default function AccountScreen(){
       </Content>  
   );
 }
-
-const Styles = StyleSheet.create({
-  content: {
-    padding: 20,
-    backgroundColor: 'white'
-  },
-  button:{
-    backgroundColor:'#4391ab',
-    margin: 20
-  },
-  label: {
-    color: 'black',
-    margin: 5,
-    marginTop: 10
-  }
-});

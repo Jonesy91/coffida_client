@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Content, Spinner, Text, Button, Row, Grid, H3, View } from 'native-base';
+import { TouchableOpacity, FlatList } from 'react-native';
+import { Content, Spinner, Text, Button, Row, Grid, H3, View } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/screens/HomeScreenStyle';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -177,26 +177,5 @@ class HomeScreen extends Component{
         );
     }
 }
-
-const styles = StyleSheet.create({
-    failureScreen:{
-        marginTop:50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    row:{
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10
-    },
-    button:{
-        backgroundColor: '#4391ab'
-    },
-    resultView:{
-        marginTop:50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
-});
 
 export default HomeScreen;

@@ -1,10 +1,11 @@
 /* eslint-disable react/jsx-filename-extension */
 import { Content, Text, H3, Textarea, Grid, Row, Button, Col, Toast } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { Image } from 'react-native';
 import StarRating from 'react-native-star-rating';
 import { updateReview, addPhoto } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/screens/ReviewScreenStyle';
 
 class UpdateReviewScreen extends Component{
     constructor(props){
@@ -167,30 +168,5 @@ class UpdateReviewScreen extends Component{
         )
     }
 }
-
-const styles = StyleSheet.create({
-    content:{
-        backgroundColor: 'white',
-        margin: 10
-    },
-    row: {
-        margin: 5
-    },
-    col:{
-        width: 150
-    },
-    h3: {
-        margin: 5
-    },
-    button: {
-        marginVertical: 10,
-        backgroundColor: '#4391ab'
-    },
-    image:{
-        width:150,
-        height:150,
-        marginVertical: 25
-    }
-});
 
 export default UpdateReviewScreen;

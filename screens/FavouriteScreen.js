@@ -1,12 +1,13 @@
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/jsx-filename-extension */
 import React, { Component } from 'react';
-import { TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { TouchableOpacity, FlatList } from 'react-native';
 import { Container, Content, Spinner, H3, Grid, Row, Button, Text } from 'native-base';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
-import { getFavourites, getShopsFiltered } from '../utilities/api/APIUtility';
+import { getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
+import styles from '../style/screens/FavouriteScreenStyle';
 
 class FavouriteScreen extends Component{
     constructor(props){
@@ -161,25 +162,5 @@ class FavouriteScreen extends Component{
        );
     }
 }
-
-const styles = StyleSheet.create({
-    text: {
-        margin: 50,
-        textAlign: 'center',
-    },
-    failureScreen:{
-        marginTop:50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    row:{
-        justifyContent: 'center',
-        alignItems: 'center',
-        margin: 10
-    },
-    button:{
-        backgroundColor: '#4391ab'
-    }
-});
 
 export default FavouriteScreen;
