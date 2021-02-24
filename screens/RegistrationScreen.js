@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { signUp } from '../utilities/auth/AuthService';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import styles from '../style/screens/RegistrationScreenStyle';
+import displayMessage from '../utilities/error/errorHandler';
 
 const RegistrationScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
@@ -19,28 +20,15 @@ const RegistrationScreen = ({ navigation }) => {
         signUp(firstName,surname,email,password)
         .then((data) => {
             dispatch({ type: 'REGISTER', token: data.userId })
-            Toast.show({
-                text: 'Account created!',
-                duration: 3000
-            })
+            displayMessage('Account created!');
             setSignUpLoading(false);
             navigation.navigate('SignIn');
         })
         .catch((error) => {
             if(error.status === 400){
-                Toast.show({
-                    text: 'Please check your password and email are valid',
-                    buttonText: 'Okay',
-                    duration: 3000,
-                    buttonStyle: { backgroundColor: '#4391ab'}
-                })
+                displayMessage('Please check your password and email are valid');
             } else {
-                Toast.show({
-                    text: 'Please check your password and email are valid',
-                    buttonText: 'Okay',
-                    duration: 3000,
-                    buttonStyle: { backgroundColor: '#4391ab'}
-                })
+                displayMessage('Failed to create account, please try again');
             }
             
         })

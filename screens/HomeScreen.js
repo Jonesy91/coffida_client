@@ -7,6 +7,7 @@ import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/HomeScreenStyle';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -51,7 +52,12 @@ class HomeScreen extends Component{
                 this.setState({locations: getResponse, isLoading:false, error: false});
             }) 
             .catch(error => {
-                this.setState({error: true})    
+                this.setState({error: true})
+                if(error === 401) {
+                    displayMessage('You dont have access to view locations');
+                } else {
+                    displayMessage('Failed to get locations');
+                }
             })   
     }
 
@@ -59,13 +65,20 @@ class HomeScreen extends Component{
         const { results } = this.state;
         this.setState({isLoading: true});
         const token = await getAuthToken();
-        if(params === null){
-            this.setState({currentFilter: null})
-            this.findShops();
-        } else {
+        this.setState({currentFilter: null})
+        this.findShops();
+        try{
             const getResponse = await getShopsFiltered(token, params, results, 0);
             this.setState({locations: getResponse, isLoading:false, error: false});
+        } catch(error) {
+            this.setState({error: true})
+            if(error === 401) {
+                displayMessage('You dont have access to view locations');
+            } else {
+                displayMessage('Failed to get locations');
+            }
         }
+        
         
     }
 
@@ -82,7 +95,12 @@ class HomeScreen extends Component{
                 });
             }) 
             .catch(error => {
-                this.setState({error: true})    
+                this.setState({error: true})  
+                if(error === 401) {
+                    displayMessage('You dont have access to view locations');
+                } else {
+                    displayMessage('Failed to get locations');
+                }
             })  
         }
     }
@@ -98,6 +116,13 @@ class HomeScreen extends Component{
             })
             .catch(error => {
                 this.setState({error:true});
+                if(error === 401) {
+                    displayMessage('You dont have access to get user information');
+                } else if(error === 404) {
+                    displayMessage('Cannot find the request user');
+                } else {
+                    displayMessage('Failed to get user informattion');
+                }
             })
     }
 
@@ -112,6 +137,11 @@ class HomeScreen extends Component{
             }) 
             .catch(error => {
                 this.setState({error: true})    
+                if(error === 401) {
+                    displayMessage('You dont have access to view locations');
+                } else {
+                    displayMessage('Failed to get locations');
+                }s
             })     
         }
 

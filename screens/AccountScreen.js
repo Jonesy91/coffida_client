@@ -9,6 +9,7 @@ import { signOut } from '../utilities/auth/AuthService';
 import { getUser, patchUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId }from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/AccountScreenStyle';
+import displayMessage from '../utilities/error/errorHandler';
 
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();
@@ -34,19 +35,9 @@ export default function AccountScreen(){
       })
       .catch(error => {
         if(error.status === 404){
-          Toast.show({
-            text: 'Unable to find user',
-            buttonText: 'Okay',
-            duration: 3000,
-            buttonStyle: { backgroundColor: '#4391ab'}
-          })
+          displayMessage('User not found');
         } else {
-          Toast.show({
-            text: 'Failed to get user details',
-            buttonText: 'Okay',
-            duration: 3000,
-            buttonStyle: { backgroundColor: '#4391ab'}
-          })
+          displayMessage('Failed to get user')
         }
       })
     setIsLoading(false);
@@ -62,12 +53,13 @@ export default function AccountScreen(){
         setPassword('')
       )
       .catch(error => {
-        Toast.show({
-          text: 'Failed to change password',
-          buttonText: 'Okay',
-          duration: 3000,
-          buttonStyle: { backgroundColor: '#4391ab'}
-        })
+        if(error === 400){
+          displayMessage('Please check you new password is valid');
+        } else if (error === 401 || error === 403) {
+          displayMessage('You do not have access to change passwords')
+        }  else {
+          displayMessage('Failed to change password');
+        }
       })
   }
 
@@ -87,7 +79,16 @@ export default function AccountScreen(){
         setNewirstName(null);
         setNewSurname(null);
         setNewEmail(null);
-      });
+      })
+      .catch(error => {
+        if(error === 400){
+          displayMessage('Please check your new email is valid');
+        } else if (error === 401 || error === 403) {
+          displayMessage('You do not have access to change user details');
+        } else {
+          displayMessage('Failed to update details');
+        }
+      })
   }
 
   React.useEffect(() => {
@@ -98,14 +99,9 @@ export default function AccountScreen(){
     await signOut()
       .then(() => dispatch({ type: 'SIGN_OUT' })
     )
-    .catch(error =>
-      Toast.show({
-        text: 'Failed to log out',
-        buttonText: 'Okay',
-        duration: 3000,
-        buttonStyle: { backgroundColor: '#4391ab'}
-      })
-    )
+    .catch(error => {
+      displayMessage('Failed to log out');
+    })
     
   }
 

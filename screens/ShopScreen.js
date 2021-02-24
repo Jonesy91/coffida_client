@@ -7,6 +7,7 @@ import Reviews from '../components/Reviews';
 import { getLocation, favourite, unFavourite, getUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/ShopScreenStyle';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -63,36 +64,36 @@ class ShopScreen extends Component{
             });
         })
         .catch(error => {
-            let message = '';
             if(error.status === 404){
-                message = 'Unable to find the shop requested';
+                displayMessage('location not found');
             } else {
-                message = 'Request failed'
+                displayMessage('Failed to get location');
             }
-            Toast.show({
-                text: message,
-                buttonText: 'Okay',
-                duration: 3000,
-                buttonStyle: { backgroundColor: '#4391ab'}
-           })
         })
     } 
 
     async getUserInfo() {
         const token = await getAuthToken();
         const userId = await getUserId();
-        const userData = await getUser(userId,token)
-        const { locationId } = this.state;
-        const likedReviews = userData.liked_reviews.filter(review =>
+        try{
+            const userData = await getUser(userId,token)
+            const { locationId } = this.state;
+            const likedReviews = userData.liked_reviews.filter(review =>
             review.location.location_id === locationId
-        );
-        const reviewIds = likedReviews.map(review => review.review.review_id);
-        this.setState({likedReviews:reviewIds});
-        const userReviews = userData.reviews.filter(review =>
+            );
+            const reviewIds = likedReviews.map(review => review.review.review_id);
+            this.setState({likedReviews:reviewIds});
+            const userReviews = userData.reviews.filter(review =>
             review.location.location_id === locationId
-        );
-        const reviewIdss = userReviews.map(review => review.review.review_id);
-        this.setState({userReviews: reviewIdss, error:false});
+            );
+            const reviewIdss = userReviews.map(review => review.review.review_id);
+            this.setState({userReviews: reviewIdss, error:false});
+        } catch (error){
+            this.setState({error:true});
+            displayMessage('Failed to get user data');
+        }
+        
+        
     }
 
     favouriteLocation() {
@@ -104,23 +105,13 @@ class ShopScreen extends Component{
                         .then(this.setState({isFavourite:true}))
                         .catch(error => {
                             this.setState({isFavourite:false})
-                            Toast.show({
-                                text: 'Failed to add shop to your favourites',
-                                buttonText: 'Okay',
-                                duration: 3000,
-                                buttonStyle: { backgroundColor: '#4391ab'}
-                            })
+                            displayMessage('Failed to add shop to your favourites')
                         })
                 } else{
                     unFavourite(locationId, token)
                         .then(this.setState({isFavourite:false}))
                         .catch(error => {
-                            Toast.show({
-                                text: 'Failed to remove shop from your favourites',
-                                buttonText: 'Okay',
-                                duration: 3000,
-                                buttonStyle: { backgroundColor: '#4391ab'}
-                            })
+                            displayMessage('Failed to remove shop from your favourites')
                         })
                 }   
             })

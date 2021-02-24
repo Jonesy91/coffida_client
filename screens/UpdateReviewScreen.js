@@ -6,6 +6,7 @@ import StarRating from 'react-native-star-rating';
 import { updateReview, addPhoto } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/ReviewScreenStyle';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 class UpdateReviewScreen extends Component{
     constructor(props){
@@ -41,21 +42,18 @@ class UpdateReviewScreen extends Component{
                     reviewId
                 )
             }
-            Toast.show({
-                text: 'Review updated',
-                buttonText: 'Okay',
-                duration: 3000,
-                buttonStyle: { backgroundColor: '#4391ab'}
-            })
+           displayMessage('Review updated');
             navigation.navigate('shopScreen');
         })
         .catch((error) => {
-            Toast.show({
-                text: 'Failed update review',
-                buttonText: 'Okay',
-                duration: 3000,
-                buttonStyle: { backgroundColor: '#4391ab'}
-            })
+            if(error === 404){
+                displayMessage('Unable to find the requested review');
+            } else if (error === 401 || error === 403) {
+                displayMessage('You don\'t have permission to update this review');
+            } else {
+                displayMessage('Failed to update review');
+            }
+            
         });    
     }
 

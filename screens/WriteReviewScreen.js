@@ -6,6 +6,7 @@ import StarRating from 'react-native-star-rating';
 import { submitReview, addPhoto, getUser } from '../utilities/api/APIUtility';
 import { getUserId, getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/ReviewScreenStyle';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 class WriteReviewScreen extends Component{
     constructor(props){
@@ -40,20 +41,14 @@ class WriteReviewScreen extends Component{
                     reviewId
                 )
             }
-            Toast.show({
-                text: 'Submitted review',
-                buttonText: 'Okay',
-                duration: 3000,
-                buttonStyle: { backgroundColor: '#4391ab'}
-            })
+            displayMessage('Review submitted');
             this.props.navigation.goBack();
         } catch(error){
-            Toast.show({
-                text: 'Failed to submit review',
-                buttonText: 'Okay',
-                duration: 3000,
-                buttonStyle: { backgroundColor: '#4391ab'}
-            })
+            if (error === 401 || error === 403) {
+                displayMessage('You don\'t have permission to write reviews');
+            } else {
+                displayMessage('Failed to add a review');
+            }
         }
 
     }
@@ -73,6 +68,13 @@ class WriteReviewScreen extends Component{
                     }
                 });
 
+            })
+            .catch(error => {
+                if(error === 404){
+                    displayMessage('Unable to find user');
+                } else {
+                    displayMessage('Failed to get user data');
+                }
             })
         return reviewId;
     }

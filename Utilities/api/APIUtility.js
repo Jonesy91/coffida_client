@@ -6,17 +6,11 @@ const url = `http://10.0.2.2:3333/api/1.0.0`;
 Checks if the request was successful, if successful and has a body
 converts the response to json.
 */
-const handleResponse = async (response) => {
-    if(!response.ok && response.status !== 304){
-        throw response;
-    } else if (response.status === 201) {
-        return response;
-    }
-    const responseText = await response.text();
-    if(responseText.length > 2){
-        return JSON.parse(responseText);
-    }
-    return response;
+const checkResponse = async (response) => {
+   if(!response.ok && response.status !== 304){
+       throw response.status;
+   } 
+   return response;
 }
 
 /*
@@ -34,8 +28,8 @@ const getUser = (userId, userToken) =>
         },
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
+        return response.json();
     })
     .catch(error => {
         throw error;
@@ -54,9 +48,7 @@ const patchUser = (userId, userToken, body) =>
         body: JSON.stringify(body),
     })
     .then(response => {
-        if(!response.ok){
-            throw new Error(response);            
-        }
+        checkResponse(response);  
     })
     .catch(error => {
         throw error;
@@ -73,9 +65,9 @@ const logIn = (body) =>
         },
         body: JSON.stringify(body)
     })
-    .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+    .then(async (response) => {
+        await checkResponse(response)
+        return response.json();
     })
     .catch(error => {
         throw error;
@@ -92,8 +84,7 @@ const logOut = (userToken) =>
         },
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -111,8 +102,8 @@ const register = (data) =>
         body: JSON.stringify(data)
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
+        return response.json();
     })
     .catch(error => {
         throw error
@@ -135,8 +126,7 @@ const submitReview = (locationId, userToken, body) =>
         body:JSON.stringify(body)
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -155,8 +145,7 @@ const updateReview = (locationId, userToken, body, reviewId) =>
         body:JSON.stringify(body)
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -166,7 +155,6 @@ const updateReview = (locationId, userToken, body, reviewId) =>
 DELETE request to delete a review
 */
 const deleteReview = async (reviewId, locationId) => {
-    try{
         const token = await getAuthToken();
         const response = await fetch(`${url}/location/${locationId}/review/${reviewId}`, {
             method:'DELETE',
@@ -175,11 +163,7 @@ const deleteReview = async (reviewId, locationId) => {
                 'X-Authorization': token
             }
         })
-        const respJson =  await handleResponse(response);
-        return respJson;
-    } catch(error) {
-        throw error;
-    }
+        checkResponse(response);
 }
 
 /* 
@@ -193,8 +177,7 @@ const like = (locationId, reviewId, userToken) =>
         },
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -211,8 +194,7 @@ const unLike = (locationId, reviewId, userToken) =>
         },
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -222,7 +204,6 @@ const unLike = (locationId, reviewId, userToken) =>
 POST request to upload a photo
 */    
 const addPhoto = (userToken, data, locationId, reviewId) => {
-    const timeStamp = Date.now();
     fetch(`${url}/location/${locationId}/review/${reviewId}/photo`,{
         method: 'POST',
         headers: {
@@ -232,8 +213,7 @@ const addPhoto = (userToken, data, locationId, reviewId) => {
         body: data
     })
     .then((response) => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -251,8 +231,7 @@ const deletePhoto = (userToken, locationId, reviewId) =>
         }
     })
     .then((response) => {
-        const returnResponse = handleResponse(response);
-        return returnResponse;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -274,11 +253,11 @@ const getShops = (userToken, offset) =>
         }
     })
     .then((response) => {
-        //const respJson = handleResponse(response);
+        checkResponse(response);
         return response.json();
     })
     .catch(error => {
-        throw error;
+        throw error.status;
     })
 
 /*
@@ -292,8 +271,8 @@ const getFavourites = (userToken) =>
         }
     })
     .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
+        return response.json();
     }) 
     .catch(error => {
         throw error;
@@ -310,7 +289,7 @@ const getShopsFiltered = (userToken, params,limit, offset) =>
         }
     })
     .then((response) => {
-        //const respJson = handleResponse(response);
+        checkResponse(response);
         return response.json();
     })
     .catch(error => {
@@ -328,8 +307,7 @@ const favourite = (locationId, userToken) =>
         }
     })
     .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -346,8 +324,7 @@ const unFavourite = (locationId, userToken) =>
         }
     })
     .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
     })
     .catch(error => {
         throw error;
@@ -364,8 +341,8 @@ const getLocation = (locationId, userToken) =>
         }
     })
     .then(response => {
-        const respJson = handleResponse(response);
-        return respJson;
+        checkResponse(response);
+        return response.json();
     })
     .catch(error => {
         throw error;

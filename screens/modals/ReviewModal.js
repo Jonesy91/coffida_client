@@ -4,10 +4,11 @@ import React from 'react';
 import { deleteReview, deletePhoto } from '../../utilities/api/APIUtility';
 import { getAuthToken } from '../../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../../style/screens/ReviewModalStyle';
+import displayMessage from '../../utilities/error/errorHandler';
 
 export default function ReviewModal({ route, navigation }){
-    const review = route.params.review;
-    const locationId = route.params.locationId;
+    const { review }  = route.params;
+    const { locationId } = route.params;
 
     const deleteAReview = async () => {
         const token = await getAuthToken();
@@ -22,12 +23,13 @@ export default function ReviewModal({ route, navigation }){
             });
             navigation.goBack();
         } catch(error) {
-            Toast.show({
-                text: 'Failed to delete review',
-                buttonText: 'Okay',
-                duration: 3000,                            
-                buttonStyle: { backgroundColor: '#4391ab'}
-            });
+            if(error === 404){
+                displayMessage('Review/Photo not found');
+            } else if (error === 401 || error === 403) {
+                displayMessage('You cannot delete this review/photo')
+            } else {
+                displayMessage('Failed to delete review/photo');
+            }
         }
     }
 
