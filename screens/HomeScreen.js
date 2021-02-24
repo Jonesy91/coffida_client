@@ -196,7 +196,7 @@ class HomeScreen extends Component{
                                 data={locations}
                                 renderItem={({item}) => this.renderLocation(item)}
                                 keyExtractor={item => item.location_id.toString()}
-                                onEndReachedThreshold={0.1}
+                                onEndReachedThreshold={0.5}
                                 onEndReached={() => this.handlePagination()}
                                 scrollEventThrottle={400}
                             />

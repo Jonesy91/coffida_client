@@ -33,18 +33,14 @@ class ReviewCard extends Component {
       if (isLiked === false) {
         like(locationId, reviewId, token )
         .then((response) => {
-          if (response.ok) {
             this.setState({ isLiked: true });
             this.setState({likes: likes + 1})
-          }
         });
       } else {
         unLike(locationId, reviewId, token )
         .then((response) => {
-          if (response.ok) {
             this.setState({ isLiked: false });
             this.setState({likes: likes - 1})
-          }
         });
       }
   }

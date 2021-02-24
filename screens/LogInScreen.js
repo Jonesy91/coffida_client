@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import { signIn } from '../utilities/auth/AuthService';
 import styles from '../style/screens/LogInScreenStyle';
-import displayMessage from '../utilities/error/errorHandler';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 const LogInScreen = ({ navigation }) => {
     const dispatch = useAuthDispatch();

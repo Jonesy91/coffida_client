@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { signUp } from '../utilities/auth/AuthService';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import styles from '../style/screens/RegistrationScreenStyle';
-import displayMessage from '../utilities/error/errorHandler';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 const RegistrationScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');

@@ -9,7 +9,7 @@ import { signOut } from '../utilities/auth/AuthService';
 import { getUser, patchUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId }from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/AccountScreenStyle';
-import displayMessage from '../utilities/error/errorHandler';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();
