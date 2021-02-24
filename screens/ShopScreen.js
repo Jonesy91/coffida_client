@@ -128,6 +128,15 @@ class ShopScreen extends Component{
         return iconName
     }
 
+    getImage() {
+        const { locationData } = this.state;
+        let { photo_path = '' } = locationData;
+        if(photo_path === ''){
+          return <Image source={require('../resources/images/SD-default-image.png')} style={styles.image} />
+        }
+        return <Image source={{ uri: photo_path }} style={styles.image} />
+      }
+
     openWriteReview() {
         const { navigation } = this.props;
         const { locationId } = this.state;
@@ -142,7 +151,7 @@ class ShopScreen extends Component{
                         <Spinner />
                     ) :
                     <>
-                        <Image source={{uri:locationData.photo_path}} style={styles.image}/>
+                        {this.getImage()}
                         <Grid  style={styles.grid}>
                             <Row>
                                 <Grid style={styles.grid}>

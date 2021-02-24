@@ -13,6 +13,15 @@ export default function ShopCard({location, favourite}) {
   if (favourite === true) {
     bookmarkType = 'md-bookmark';
   }
+  
+  const getImage = () => {
+    let { photo_path = '' } = location;
+    if(photo_path === ''){
+      return <Image source={require('../resources/images/SD-default-image.png')} style={styles.image} />
+    }
+    return <Image source={{ uri: photo_path }} style={styles.image} />
+  }
+
   return (
     <Card>
       <CardItem>
@@ -27,10 +36,7 @@ export default function ShopCard({location, favourite}) {
         </Right>
       </CardItem>
       <CardItem cardBody>
-        <Image
-          source={{ uri: location.photo_path }}
-          style={styles.image}
-        />
+        {getImage()}
       </CardItem>
       <CardItem>
         <Left>
