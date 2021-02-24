@@ -44,7 +44,7 @@ export default function AccountScreen(){
   }
 
   const changePassword = async () => {
-    const { body } = { password:newPassword };
+    const body = { password:newPassword };
     const token = await getAuthToken();
     const userId = await getUserId();
     patchUser(userId, token, body)

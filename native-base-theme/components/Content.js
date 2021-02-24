@@ -3,10 +3,10 @@
 export default () => {
   const contentTheme = {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     'NativeBase.Segment': {
       borderWidth: 0,
-      backgroundColor: 'white'
+      backgroundColor: 'transparent'
     }
   };
 

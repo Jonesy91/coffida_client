@@ -27,6 +27,7 @@ class HomeScreen extends Component{
     componentDidMount() {
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', e => {
+            console.log('trying')
             const { route } = this.props;
             this.getUserInfo();
             if(typeof route.params !== 'undefined'){
@@ -47,6 +48,24 @@ class HomeScreen extends Component{
         this.setState({isLoading: true, currentSearch:searchData});
         const params = `q=${searchData}`
         const token = await getAuthToken();
+        if(searchData === ''){
+            this.setState({currentSearch: null})
+            this.findShops();
+        } else {
+            getShopsFiltered(token, params, results, 0)
+            .then(getResponse => {
+                this.setState({locations: getResponse, isLoading:false, error: false});
+            }) 
+            .catch(error => {
+                this.setState({error: true})
+                if(error === 401) {
+                    displayMessage('You dont have access to view locations');
+                } else {
+                    displayMessage('Failed to get locations');
+                }
+            }) 
+        }
+
         getShopsFiltered(token, params, results, 0)
             .then(getResponse => {
                 this.setState({locations: getResponse, isLoading:false, error: false});
@@ -65,21 +84,27 @@ class HomeScreen extends Component{
         const { results } = this.state;
         this.setState({isLoading: true});
         const token = await getAuthToken();
-        this.setState({currentFilter: null})
-        this.findShops();
-        try{
-            const getResponse = await getShopsFiltered(token, params, results, 0);
-            this.setState({locations: getResponse, isLoading:false, error: false});
-        } catch(error) {
-            this.setState({error: true})
-            if(error === 401) {
-                displayMessage('You dont have access to view locations');
-            } else {
-                displayMessage('Failed to get locations');
+        if(params === null){
+            this.setState({currentFilter: null})
+            this.findShops();
+        } else {
+            try{
+                const getResponse = await getShopsFiltered(token, params, results, 0);
+                this.setState({locations: getResponse, isLoading:false, error: false});
+            } catch(error) {
+                this.setState({error: true})
+                if(error === 401) {
+                    displayMessage('You dont have access to view locations');
+                } else {
+                    displayMessage('Failed to get locations');
+                }
             }
-        }
-        
-        
+        }        
+    }
+
+    handleTryAgain(){
+        this.getUserInfo();
+        this.findShops();
     }
 
     async handlePagination() {
@@ -141,7 +166,7 @@ class HomeScreen extends Component{
                     displayMessage('You dont have access to view locations');
                 } else {
                     displayMessage('Failed to get locations');
-                }s
+                }
             })     
         }
 
@@ -180,7 +205,7 @@ class HomeScreen extends Component{
                             <H3>Failed to find coffee Shops</H3>
                         </Row>
                         <Row style={styles.row}>
-                            <Button style={styles.button}><Text>Try Again</Text></Button>
+                            <Button style={styles.button} onPress={() => this.handleTryAgain()}><Text>Try Again</Text></Button>
                         </Row>
                     </Grid>
                     </Content>
