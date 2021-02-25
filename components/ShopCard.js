@@ -1,18 +1,32 @@
 /* eslint-disable react/jsx-filename-extension */
 /* eslint-disable linebreak-style */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image } from 'react-native';
 import {
   Card, CardItem, Text, Left, Body, Right, Icon
 } from 'native-base';
 import StarRating from 'react-native-star-rating';
 import styles from '../style/components/ShopCardStyle';
+import { calculateDistance } from '../utilities/location/LocationUtility';
 
-export default function ShopCard({location, favourite}) {
-  let bookmarkType = 'md-bookmark-outline';
-  if (favourite === true) {
-    bookmarkType = 'md-bookmark';
-  }
+export default function ShopCard({location, favourite, devLocation}) {
+  const [distance, setDistance] = useState(0);
+  const [bookmarkType, setBookmarkType] = useState('md-bookmark-outline');
+  
+  useEffect(() => {
+    const resultDistance = calculateDistance(
+      {latitude:devLocation.latitude, longitude:devLocation.longitude},
+      {latitude:location.latitude, longitude:location.longitude},
+    )
+    setDistance(resultDistance.toFixed(2));
+
+    if (favourite === true) {
+      setBookmarkType('md-bookmark');
+    }
+
+    
+  },[]);
+
   
   const getImage = () => {
     let { photo_path = '' } = location;
@@ -21,6 +35,7 @@ export default function ShopCard({location, favourite}) {
     }
     return <Image source={{ uri: photo_path }} style={styles.image} />
   }
+
 
   return (
     <Card>
@@ -52,7 +67,10 @@ export default function ShopCard({location, favourite}) {
             emptyStarColor="#4391ab"
             starSize={20}
           />
-        </Left>        
+        </Left>
+        <Right>
+          <Text>{`${distance} km`}</Text>
+        </Right>      
       </CardItem>
     </Card>
   );

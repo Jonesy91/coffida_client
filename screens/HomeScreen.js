@@ -2,12 +2,14 @@
 import React, { Component } from 'react';
 import { TouchableOpacity, FlatList } from 'react-native';
 import { Content, Spinner, Text, Button, Row, Grid, H3, View } from 'native-base';
+import Geolocation from 'react-native-geolocation-service';
 import ShopCard from '../components/ShopCard';
 import HeaderMenu from '../components/HeaderMenu';
 import { getShops, getUser, getShopsFiltered } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/HomeScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
+import { requestLocationPermission } from '../utilities/location/LocationUtility';
 
 class HomeScreen extends Component{
     constructor(props){
@@ -21,6 +23,7 @@ class HomeScreen extends Component{
             currentSearch: null,
             page:0,
             results:3,
+            devLocation: null,
         }
     }
 
@@ -28,6 +31,7 @@ class HomeScreen extends Component{
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', e => {
             const { route } = this.props;
+            this.handleLocation();
             this.getUserInfo();
             if(typeof route.params !== 'undefined'){
                 this.handleFilter(route.params.filter);
@@ -40,6 +44,22 @@ class HomeScreen extends Component{
 
     componentWillUnmount() {
         this.focusListener();
+    }
+
+    async handleLocation() {
+        if(await requestLocationPermission()){
+            Geolocation.getCurrentPosition((position) => {
+            const { longitude, latitude } = position.coords;
+            const location = {latitude, longitude};
+            this.setState({devLocation:location})
+            }, (error) => 
+                error
+            , {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 1000
+            });
+        }
     }
 
     async handleSearch(searchData) {
@@ -176,13 +196,14 @@ class HomeScreen extends Component{
     }
 
     renderLocation(location){
-        const { favLocations } = this.state;
+        const { favLocations, devLocation } = this.state;
+
         let favourite = false;
         if(favLocations.includes(location.location_id)) {
                 favourite=true;
         }
         return <TouchableOpacity onPress={() => this.openShop(location.location_id,favourite)}>
-                    <ShopCard location={location} favourite={favourite} />
+                    <ShopCard location={location} favourite={favourite} devLocation={devLocation} />
                 </TouchableOpacity> 
     }
 

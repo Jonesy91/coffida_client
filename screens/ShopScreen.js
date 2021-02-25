@@ -2,12 +2,14 @@
 import React, { Component } from 'react';
 import { Text, Content, Row, Grid, Right, H1, H2, Icon, Button, Toast, Spinner, Col } from 'native-base';
 import { Image } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import Ratings from '../components/Ratings';
 import Reviews from '../components/Reviews';
 import { getLocation, favourite, unFavourite, getUser } from '../utilities/api/APIUtility';
 import { getAuthToken, getUserId } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/ShopScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
+import { calculateDistance } from '../utilities/location/LocationUtility';
 
 class ShopScreen extends Component{
     constructor(props){
@@ -27,6 +29,8 @@ class ShopScreen extends Component{
             likedReviews: '',
             isLoading: true,
             dataLoaded: false,
+            distance: 0,
+            devLocation: null
         }
     }
 
@@ -45,6 +49,7 @@ class ShopScreen extends Component{
         this.setState({dataLoaded:false,isLoading:true})
         await this.getShopData();
         await this.getUserInfo();
+        await this.getDistance();
         this.setState({dataLoaded:true, isLoading:false})
     }
 
@@ -70,7 +75,28 @@ class ShopScreen extends Component{
                 displayMessage('Failed to get location');
             }
         })
-    } 
+    }
+    
+    getDistance() {
+        const { locationData } = this.state;
+        Geolocation.getCurrentPosition((position) => {
+            const { longitude, latitude } = position.coords;
+            const location = {latitude, longitude};
+            this.setState({devLocation:location});
+            const resultDistance = calculateDistance(
+                {latitude:location.latitude, longitude:location.longitude},
+                {latitude:locationData.latitude, longitude:locationData.longitude},
+              )
+              console.log(resultDistance)
+              this.setState({distance:resultDistance.toFixed(2)});
+            }, (error) => 
+                error
+            , {
+                enableHighAccuracy: true,
+                timeout: 20000,
+                maximumAge: 1000
+            });
+    }
 
     async getUserInfo() {
         const token = await getAuthToken();
@@ -96,6 +122,26 @@ class ShopScreen extends Component{
         
     }
 
+    getImage() {
+        const { locationData } = this.state;
+        let { photo_path = '' } = locationData;
+        if(photo_path === ''){
+          return <Image source={require('../resources/images/SD-default-image.png')} style={styles.image} />
+        }
+        return <Image source={{ uri: photo_path }} style={styles.image} />
+    }
+
+    isFavourite() {
+        let iconName;
+        const { isFavourite } = this.state;
+        if(isFavourite === true){
+            iconName='md-bookmark'
+        }else{
+            iconName='md-bookmark-outline'
+        }
+        return iconName
+    }  
+
     favouriteLocation() {
         const { locationId, isFavourite,  } = this.state;
         getAuthToken()
@@ -117,25 +163,6 @@ class ShopScreen extends Component{
             })
     }
 
-    isFavourite() {
-        let iconName;
-        const { isFavourite } = this.state;
-        if(isFavourite === true){
-            iconName='md-bookmark'
-        }else{
-            iconName='md-bookmark-outline'
-        }
-        return iconName
-    }
-
-    getImage() {
-        const { locationData } = this.state;
-        let { photo_path = '' } = locationData;
-        if(photo_path === ''){
-          return <Image source={require('../resources/images/SD-default-image.png')} style={styles.image} />
-        }
-        return <Image source={{ uri: photo_path }} style={styles.image} />
-      }
 
     openWriteReview() {
         const { navigation } = this.props;
@@ -144,7 +171,7 @@ class ShopScreen extends Component{
     }
 
     render(){
-        const { isLoading, locationData, ratings, reviews, locationId, likedReviews, userReviews, dataLoaded } = this.state;
+        const { isLoading, locationData, ratings, reviews, locationId, likedReviews, userReviews, dataLoaded, distance } = this.state;
         return(
             <Content style={styles.content}>
                 {isLoading ? (
@@ -159,6 +186,7 @@ class ShopScreen extends Component{
                                     <Col>
                                         <H1>{locationData.location_name}</H1>
                                         <Text>{locationData.location_town}</Text>
+                                        <Text>{`${distance} km`}</Text>
                                     </Col>
                                     <Col style={styles.col}>
                                         <Row>

@@ -13,20 +13,6 @@ const RegistrationScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [signUpLoading, setSignUpLoading] = useState(false);
     const dispatch = useAuthDispatch();
-    
-    const validateEmail = (inEmail) => {
-        if(!inEmail.includes('@')){
-            return false;
-        }
-        return true;
-    }
-
-    const validatePassword = (inPassword) => {
-        if(inPassword.length < 6){
-            return false;
-        }
-        return true;
-    }
 
     const validateInput = (inFirstName,inSurname,inEmail,inPassword) => {
         if(inFirstName !== '') {
