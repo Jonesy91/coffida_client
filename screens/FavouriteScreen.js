@@ -108,6 +108,10 @@ class FavouriteScreen extends Component{
         } 
     }
 
+    handleTryAgain(){
+        this.getFavourites();
+    }
+
     async getFavourites() {
         this.setState({isLoading: true});
         const { results } = this.state;

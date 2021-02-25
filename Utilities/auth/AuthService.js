@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 import { logIn, logOut, register } from '../api/APIUtility';
 import { getAuthToken, setAuthToken, setUserId, deleteData } from '../asyncstorage/AsyncStorageUtil';
 
@@ -22,9 +23,9 @@ Handles the registration of a new user
 const signUp = async (firstName, surname, email, password) => {
   try {
     const data = {first_name:firstName, last_name:surname, email, password};
-    return register(data);
+    return await register(data);
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 };
 

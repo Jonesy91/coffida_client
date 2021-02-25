@@ -7,7 +7,10 @@ export default StyleSheet.create({
     },
     item:{
         backgroundColor:'white',
-        maxHeight: 30
+        maxHeight: 30,
+        flexDirection: 'row',
+        justifyContent:'center',
+        alignItems:'center'
     },
     body:{
         flex: 2,

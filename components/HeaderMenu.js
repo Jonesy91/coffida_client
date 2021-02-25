@@ -4,19 +4,31 @@ import { Header, Right, Icon, Button, Item, Input, Body, StyleProvider } from 'n
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import styles from '../style/components/HeaderMenuStyle';
+import { displayMessage } from '../utilities/error/errorHandler';
 
 class HeaderMenu extends Component {
     constructor(props){
         super(props);
         this.state={
-            search: '',
+            search: null,
         }
+    }
+
+    async handleClear(){
+        await this.setState({search:''});
+        this.search();
     }
 
     search(){
         const { searchCallback } = this.props;
         const { search } = this.state;
-        searchCallback(search);
+        if(search !== null){
+            console.log(search)
+            searchCallback(search);
+        } else {
+            displayMessage('Please enter search criteria');
+        }
+        
     }
 
     openFilters(){
@@ -25,12 +37,18 @@ class HeaderMenu extends Component {
     }
 
     render(){
+        const { search, placeholder } = this.state;
         return(
             <StyleProvider style={getTheme(platform)}>
             <Header>
                 <Body style={styles.body}>
                     <Item style={styles.item}>
-                        <Input placeholder='search' onChangeText={(text) => this.setState({search:text})} />
+                        <Input value={search} onChangeText={(text) => this.setState({search:text})} />
+                        {search !== null && (
+                            <Button small transparent onPress={() => this.handleClear()}>
+                                <Icon name="md-close-circle" />
+                            </Button>
+                        )}
                     </Item>
                     <Button transparent onPress={() => this.search()}>
                         <Icon name="md-search" style={styles.icon}/>

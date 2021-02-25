@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import { Text, Item, Input, Button, Content, Spinner, Toast } from 'native-base';
+import { Text, Item, Input, Button, Content, Spinner } from 'native-base';
 import React, { useState } from 'react';
 import { signUp } from '../utilities/auth/AuthService';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
@@ -14,25 +14,60 @@ const RegistrationScreen = ({ navigation }) => {
     const [signUpLoading, setSignUpLoading] = useState(false);
     const dispatch = useAuthDispatch();
     
+    const validateEmail = (inEmail) => {
+        if(!inEmail.includes('@')){
+            return false;
+        }
+        return true;
+    }
+
+    const validatePassword = (inPassword) => {
+        if(inPassword.length < 6){
+            return false;
+        }
+        return true;
+    }
+
+    const validateInput = (inFirstName,inSurname,inEmail,inPassword) => {
+        if(inFirstName !== '') {
+            if(inSurname !== '') {
+                if(inEmail.includes('@')){
+                    if(inPassword.length >= 6) {
+                        return true;
+                    } else {
+                        displayMessage('Minimum password length is 6 characters');
+                    }
+                } else {
+                    displayMessage('Please enter a valid email');
+                }
+            } else {
+                displayMessage('Please provide a surname');
+            }
+        } else {
+            displayMessage('Please provide a first name');
+        }
+        return false
+    }
 
     const register = async () => {
-        setSignUpLoading(true);
-        signUp(firstName,surname,email,password)
-        .then((data) => {
-            dispatch({ type: 'REGISTER', token: data.userId })
-            displayMessage('Account created!');
-            setSignUpLoading(false);
-            navigation.navigate('SignIn');
-        })
-        .catch((error) => {
-            if(error.status === 400){
-                displayMessage('Please check your password and email are valid');
-            } else {
-                displayMessage('Failed to create account, please try again');
-            }
-            
-        })
-        .finally(() => setSignUpLoading(false));
+        if(validateInput(firstName,surname,email,password)){
+            setSignUpLoading(true);
+            signUp(firstName,surname,email,password)
+                .then((data) => {
+                    dispatch({ type: 'REGISTER', token: data.userId })
+                    displayMessage('Account created!');
+                    setSignUpLoading(false);
+                    navigation.navigate('SignIn');
+                })
+                .catch((error) => {
+                    if(error.status === 400){
+                        displayMessage('Please check your password and email are valid');
+                    } else {
+                        displayMessage('Failed to create account, please try again');
+                    }
+                })
+                .finally(() => setSignUpLoading(false));
+        }
     };
         
     return(

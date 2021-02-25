@@ -13,21 +13,35 @@ const LogInScreen = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const validateInput = (inEmail, inPassword) => {
+        if(inEmail.includes('@')){
+            if(inPassword.length >= 6) {
+                return true;
+            } else {
+                displayMessage('Minimum password length is 6 characters');
+            }
+        } else {
+            displayMessage('Please enter a valid email');
+        }
+        return false;
+    }
     const requestLogIn = async () => {
         const data = {email, password};
-        setLoading(true);
-        signIn(data)
-            .then((json) => {
-                dispatch({ type: 'SIGN_IN', token: json.token, id: json.id.toString() });
-            })
-            .catch(error => {
-                if(error === 400){
-                    displayMessage('Invalid username/password');
-                } else{
-                    displayMessage('Something went wrong, please try again');
-                }
-            })           
-            .finally(() => setLoading(false))
+        if(validateInput(email,password)){
+            setLoading(true);
+            signIn(data)
+                .then((json) => {
+                    dispatch({ type: 'SIGN_IN', token: json.token, id: json.id.toString() });
+                })
+                .catch(error => {
+                    if(error === 400){
+                        displayMessage('Invalid username/password');
+                    } else{
+                        displayMessage('Something went wrong, please try again');
+                    }
+                })           
+                .finally(() => setLoading(false))
+        }
     }
         
     return(

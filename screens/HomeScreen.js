@@ -27,7 +27,6 @@ class HomeScreen extends Component{
     componentDidMount() {
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', e => {
-            console.log('trying')
             const { route } = this.props;
             this.getUserInfo();
             if(typeof route.params !== 'undefined'){

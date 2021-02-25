@@ -8,7 +8,7 @@ converts the response to json.
 */
 const checkResponse = async (response) => {
    if(!response.ok && response.status !== 304){
-       throw response.status;
+       throw response;
    } 
    return response;
 }
@@ -101,8 +101,8 @@ const register = (data) =>
         },
         body: JSON.stringify(data)
     })
-    .then((response) => {
-        checkResponse(response);
+    .then(async (response) => {
+        await checkResponse(response);
         return response.json();
     })
     .catch(error => {

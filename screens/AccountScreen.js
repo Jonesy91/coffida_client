@@ -2,7 +2,7 @@
 /* eslint-disable linebreak-style */
 import React, { useState } from 'react';
 import {
-  Text, Item, Label, Input, Content, Form, Button, Spinner, H1, Toast
+  Text, Item, Label, Input, Content, Form, Button, Spinner, H1
 } from 'native-base';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import { signOut } from '../utilities/auth/AuthService';
@@ -17,10 +17,10 @@ export default function AccountScreen(){
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [newFirstName, setNewirstName] = useState('');
-  const [newSurname, setNewSurname] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [newFirstName, setNewirstName] = useState(null);
+  const [newSurname, setNewSurname] = useState(null);
+  const [newEmail, setNewEmail] = useState(null);
+  const [newPassword, setNewPassword] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const requestAccount = async () => {
@@ -43,24 +43,57 @@ export default function AccountScreen(){
     setIsLoading(false);
   }
 
+  const validatePassword = (inPassword) => {
+    if(inPassword.length < 6) {
+      displayMessage('Minimum password length is 6 characters');
+      return false;
+    }
+    return true; 
+  }
+
   const changePassword = async () => {
     const body = { password:newPassword };
     const token = await getAuthToken();
     const userId = await getUserId();
-    patchUser(userId, token, body)
-      .then(
-        setNewPassword(''),
-        setPassword('')
-      )
-      .catch(error => {
-        if(error === 400){
-          displayMessage('Please check you new password is valid');
-        } else if (error === 401 || error === 403) {
-          displayMessage('You do not have access to change passwords')
-        }  else {
-          displayMessage('Failed to change password');
-        }
-      })
+    if(validatePassword(newPassword)){
+      patchUser(userId, token, body)
+        .then(() => {
+          setNewPassword(null);
+          setPassword(null);
+        })
+        .catch(error => {
+          if(error === 400){
+            displayMessage('Please check you new password is valid');
+          } else if (error === 401 || error === 403) {
+            displayMessage('You do not have access to change passwords')
+          }  else {
+            displayMessage('Failed to change password');
+          }
+        })
+    }
+  }
+
+  const validateDetails = (inBody) => {
+    const {first_name = null, last_name = null, email = null} = inBody;
+    if(first_name !== null){
+      if(first_name === ''){
+        displayMessage('Please enter a first name');
+        return false;
+      }
+    }
+    if(last_name !== null){
+      if(last_name === ''){
+        displayMessage('Please enter a surname');
+        return false;
+      }  
+    }
+    if(email !== null){
+      if(email === '' || !email.includes('@')){
+        displayMessage('Please check your new email is valid');
+        return false;
+      }
+    }
+    return true;
   }
 
   const changeDetails = async () => {
@@ -74,21 +107,24 @@ export default function AccountScreen(){
     }
     const token = await getAuthToken();
     const userId = await getUserId();
-    patchUser(userId, token, body)
-      .then(() => {
-        setNewirstName(null);
-        setNewSurname(null);
-        setNewEmail(null);
-      })
-      .catch(error => {
-        if(error === 400){
-          displayMessage('Please check your new email is valid');
-        } else if (error === 401 || error === 403) {
-          displayMessage('You do not have access to change user details');
-        } else {
-          displayMessage('Failed to update details');
-        }
-      })
+    if(validateDetails(body)){
+      patchUser(userId, token, body)
+        .then(() => {
+          displayMessage('Details updated');
+          setNewirstName(null);
+          setNewSurname(null);
+          setNewEmail(null);
+        })
+        .catch(error => {
+          if(error === 400){
+            displayMessage('Please check your detais');
+          } else if (error === 401 || error === 403) {
+            displayMessage('You do not have access to change user details');
+          } else {
+            displayMessage('Failed to update details');
+          }
+        })
+    }
   }
 
   React.useEffect(() => {
@@ -135,14 +171,24 @@ export default function AccountScreen(){
               />
             </Item>
           </Form>
-          <Button 
-            primary
-            block 
-            onPress={() => {changeDetails()}} 
-            style={styles.button}
-          >
-            <Text>Update Details</Text>
-          </Button>
+          {newFirstName === null && newSurname === null && newEmail === null ? (
+            <Button 
+              block
+              disabled 
+              style={styles.button}
+            >
+              <Text>Update Details</Text>
+            </Button>  
+          ) : (
+            <Button 
+              primary
+              block 
+              onPress={() => {changeDetails()}} 
+              style={styles.button}
+            >
+              <Text>Update Details</Text>
+            </Button>
+          )}
           <Label style={styles.label}>Change Password</Label>
           <Item>
             <Input
@@ -151,14 +197,24 @@ export default function AccountScreen(){
               onChangeText={(inPassword) => setNewPassword(inPassword)}
             />
           </Item>
-          <Button 
-            primary
+          {newPassword === null ? (
+            <Button 
+            disabled
             block 
-            onPress={() => {changePassword()}} 
             style={styles.button}
-          >
-            <Text>Change Password</Text>
-          </Button>
+            >
+              <Text>Change Password</Text>  
+            </Button>
+          ) : (
+            <Button 
+              primary
+              block 
+              onPress={() => {changePassword()}} 
+              style={styles.button}
+            >
+              <Text>Change Password</Text>
+            </Button>
+          )}
           <Button 
             primary
             block 
