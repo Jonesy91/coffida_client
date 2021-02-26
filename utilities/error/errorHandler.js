@@ -1,5 +1,8 @@
 import { Toast }  from 'native-base';
 
+/* 
+Displays a toast message using the message provided.
+*/
 const displayMessage = (message) => {
     Toast.show({
         text: message,

@@ -8,6 +8,11 @@ import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/screens/ReviewScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+
+/* 
+The update review screen is displayed to users when they want to update one of their
+existing reviews. Here users can change their ratings, comments and photos.
+*/
 class UpdateReviewScreen extends Component{
     constructor(props){
         super(props)
@@ -20,6 +25,9 @@ class UpdateReviewScreen extends Component{
         }
     }
 
+    /* 
+    Handles the requests to update a review and will navigate the user back to the shop screen on success.. 
+    */
     updateReview() {
         const { newOverallRating, newQualityRating, newPriceRating, newClenlinessRating, newComments} = this.state; 
         const { navigation, route }  = this.props;
@@ -57,6 +65,10 @@ class UpdateReviewScreen extends Component{
         });    
     }
 
+    /* 
+    Handles the navigation to the camera screen when the user wants to 
+    add a photo.
+    */
     openCamera(){
         const { navigation, route } = this.props;
         const { locationId } = route.params;
@@ -155,6 +167,10 @@ class UpdateReviewScreen extends Component{
                 </Grid>
                 <H3 style={styles.h3}>Comments</H3>
                 <Textarea rowSpan={5} bordered defaultValue={newComments} onChangeText={(comment) => this.setState({newComments:comment})}/>
+                {/* 
+                renders an image component. on render the first image component will be rendered which makes the request to GET a photo,
+                if the users has taken a different photo the second component is rendered instead to show the phot which will be uploaded.    
+                */}
                 {photo === null ? (
                     <Image style={styles.image} source={{uri:`http://10.0.2.2:3333/api/1.0.0/location/${locationId}/review/${reviewId}/photo?timestamp=${Date.now()}`}}/>
                 ) : (

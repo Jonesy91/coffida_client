@@ -11,6 +11,10 @@ import styles from '../style/screens/ShopScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 import { calculateDistance } from '../utilities/location/LocationUtility';
 
+/* 
+The shop screen renders the data about a shop including the reviews for the location.
+Here users can add a shop to their favourites and interact with reviews.
+*/
 class ShopScreen extends Component{
     constructor(props){
         super(props)
@@ -34,6 +38,10 @@ class ShopScreen extends Component{
         }
     }
 
+    /* 
+    When the component mounts a listener is added to check if the component is focused
+    and requests the data to render.
+    */
     componentDidMount() {
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', () => {
@@ -45,6 +53,12 @@ class ShopScreen extends Component{
         this.focusListener();
     }
 
+    /* 
+    Makes the requests required to render the data about a shop.
+    - the shops data
+    - the users data (favourites,likes and reviews)
+    - the distance between the user and the shop
+    */
     async getData(){
         this.setState({dataLoaded:false,isLoading:true})
         await this.getShopData();
@@ -53,6 +67,9 @@ class ShopScreen extends Component{
         this.setState({dataLoaded:true, isLoading:false})
     }
 
+    /* 
+    Handles the api reqeust to get the data about a shop
+    */
     async getShopData() {
         const { locationId } = this.state;
         const token = await getAuthToken();
@@ -77,6 +94,9 @@ class ShopScreen extends Component{
         })
     }
     
+    /* 
+    Retrieves the users lcoation and the distance between the user and the shop.
+    */
     getDistance() {
         const { locationData } = this.state;
         Geolocation.getCurrentPosition((position) => {
@@ -87,7 +107,6 @@ class ShopScreen extends Component{
                 {latitude:location.latitude, longitude:location.longitude},
                 {latitude:locationData.latitude, longitude:locationData.longitude},
               )
-              console.log(resultDistance)
               this.setState({distance:resultDistance.toFixed(2)});
             }, (error) => 
                 error
@@ -98,6 +117,12 @@ class ShopScreen extends Component{
             });
     }
 
+    /* 
+    
+    Get the users data to check if the shop is one of the users favourites, what reviews
+    the user has liked and which reviews belong to the user to proivde extra functionality like
+    being able to update a review.
+    */
     async getUserInfo() {
         const token = await getAuthToken();
         const userId = await getUserId();
@@ -122,6 +147,9 @@ class ShopScreen extends Component{
         
     }
 
+    /* 
+    Checks to see if the shop has an image to display if not a default image is used.
+    */
     getImage() {
         const { locationData } = this.state;
         let { photo_path = '' } = locationData;
@@ -131,6 +159,9 @@ class ShopScreen extends Component{
         return <Image source={{ uri: photo_path }} style={styles.image} />
     }
 
+    /* 
+    Checks whether the shop is a favourite
+    */
     isFavourite() {
         let iconName;
         const { isFavourite } = this.state;
@@ -142,6 +173,10 @@ class ShopScreen extends Component{
         return iconName
     }  
 
+    /* 
+    This function is called when the user presses the favourite button. This will make 
+    the api request to either add or remove the shop from the users favourites.
+    */
     favouriteLocation() {
         const { locationId, isFavourite,  } = this.state;
         getAuthToken()
@@ -163,7 +198,9 @@ class ShopScreen extends Component{
             })
     }
 
-
+    /* 
+    Handles the nvaigation to the writereview screen where users can create a new review.
+    */
     openWriteReview() {
         const { navigation } = this.props;
         const { locationId } = this.state;

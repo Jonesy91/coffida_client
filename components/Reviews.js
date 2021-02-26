@@ -4,7 +4,13 @@ import React, { Component } from 'react';
 import { Content } from 'native-base';
 import ReviewCard from './ReviewCard';
 
+/* 
+The Reviews component renders the reviews for a shop.
+*/
 class Reviews extends Component {
+  /* 
+  isLiked checks whether the review has been liked by the user.
+  */
   isLiked(reviewId){
     const { likes } = this.props;
     let liked = false;
@@ -16,6 +22,9 @@ class Reviews extends Component {
     return liked;
   }
 
+  /* 
+  isUserReview checks whether the review belongs to the user.
+  */
   isUsersReview(reviewId){
     const { userReviews } = this.props;
     let isUsers = false;

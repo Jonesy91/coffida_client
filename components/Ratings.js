@@ -5,6 +5,10 @@ import { Text, Grid, Row, Col } from 'native-base';
 import StarRating from 'react-native-star-rating';
 import styles from '../style/components/RatingsStyle';
 
+/*
+Ratings component renders four different ratings which are displayed using stars
+to show the rating.
+*/
 export default function Ratings({ratings}) {
   const starColour = "#16bff7";
   const emptyStar="md-star-outline"

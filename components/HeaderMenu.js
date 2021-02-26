@@ -6,6 +6,10 @@ import platform from '../native-base-theme/variables/platform';
 import styles from '../style/components/HeaderMenuStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+/*
+The HeaderMenu renders a header component with a search bar and and icon 
+button which opens a filter menu.
+*/
 class HeaderMenu extends Component {
     constructor(props){
         super(props);
@@ -14,16 +18,23 @@ class HeaderMenu extends Component {
         }
     }
 
+    /*
+    Clears the search bar and triggers a request to the find api
+    */
     async handleClear(){
         await this.setState({search:''});
         this.search();
     }
 
+    /*
+    Triggered when the users clicks the search icon. 
+    If no search criteria is provided a toast message is displayed.
+    */
     search(){
         const { searchCallback } = this.props;
         const { search } = this.state;
+        console.log(search)
         if(search !== null){
-            console.log(search)
             searchCallback(search);
         } else {
             displayMessage('Please enter search criteria');
@@ -31,6 +42,9 @@ class HeaderMenu extends Component {
         
     }
 
+    /*
+    Open the filter menu when the user click the filter button.
+    */
     openFilters(){
         const { currentFilter, route, navigation } = this.props;
         navigation.navigate('filterModal',{currentFilter, route});

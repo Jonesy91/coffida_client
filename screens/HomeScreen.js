@@ -11,6 +11,10 @@ import styles from '../style/screens/HomeScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 import { requestLocationPermission } from '../utilities/location/LocationUtility';
 
+/* 
+The home screens is displayed to users when they have logged in and will 
+display as list of coffee shops.
+*/
 class HomeScreen extends Component{
     constructor(props){
         super(props);
@@ -27,18 +31,15 @@ class HomeScreen extends Component{
         }
     }
 
+    /* 
+    When the component mounts the users data and shop data is requested to 
+    populate the screen.
+    */
     componentDidMount() {
         const { navigation } = this.props;
         this.focusListener = navigation.addListener('focus', e => {
-            const { route } = this.props;
-            this.handleLocation();
-            this.getUserInfo();
-            if(typeof route.params !== 'undefined'){
-                this.handleFilter(route.params.filter);
-                this.setState({currentFilter: route.params.currentFilter})
-            } else {
-                this.findShops();
-            }        
+            this.getData();
+              
         });
     }
 
@@ -46,22 +47,34 @@ class HomeScreen extends Component{
         this.focusListener();
     }
 
+    /* 
+    Gets the users current location 
+    */
     async handleLocation() {
-        if(await requestLocationPermission()){
-            Geolocation.getCurrentPosition((position) => {
-            const { longitude, latitude } = position.coords;
-            const location = {latitude, longitude};
-            this.setState({devLocation:location})
-            }, (error) => 
-                error
-            , {
-                enableHighAccuracy: true,
-                timeout: 20000,
-                maximumAge: 1000
-            });
+        this.setState({isLoading: true})
+        try{
+            if(await requestLocationPermission()){
+                Geolocation.getCurrentPosition((position) => {
+                const { longitude, latitude } = position.coords;
+                const location = {latitude, longitude};
+                this.setState({devLocation:location, isLoading:false})
+                }, (error) => 
+                    error
+                , {
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 1000
+                });
+            }
+        } catch(error){
+            this.setState({error})
         }
     }
 
+    /*
+    if the users has provided a search criteria this function will search using the 
+    criteria if the search criteria is empty all shops will be returned.
+    */
     async handleSearch(searchData) {
         const { results } = this.state;
         this.setState({isLoading: true, currentSearch:searchData});
@@ -85,6 +98,9 @@ class HomeScreen extends Component{
             }) 
         }
 
+        /* 
+        Requests a list of shops using the filter provided by the user.
+        */
         getShopsFiltered(token, params, results, 0)
             .then(getResponse => {
                 this.setState({locations: getResponse, isLoading:false, error: false});
@@ -99,6 +115,10 @@ class HomeScreen extends Component{
             })   
     }
 
+    /* 
+    If the user has applied filters this function is called check the filters
+    and request the data.
+    */
     async handleFilter(params) {
         const { results } = this.state;
         this.setState({isLoading: true});
@@ -121,11 +141,19 @@ class HomeScreen extends Component{
         }        
     }
 
+    /* 
+    If the user faces an error the try again button calls this function
+    to re-request the the user and shop data.
+    */
     handleTryAgain(){
         this.getUserInfo();
         this.findShops();
     }
 
+    /* 
+    This function handles the pagination and requests the next set of shops
+    when the user approaches the bottom of the screen.
+    */
     async handlePagination() {
         const { page, results, locations, currentSearch, currentFilter } = this.state;
         const token = await getAuthToken();
@@ -149,6 +177,28 @@ class HomeScreen extends Component{
         }
     }
 
+    /* 
+    Gets the data to render the home screen.
+    */
+    async getData(){
+        this.setState({isLoading: true})
+        const { route } = this.props;
+        await this.handleLocation();
+        await this.getUserInfo();
+        /* 
+        if there are route.params there a filters to be applied.
+        */
+        if(typeof route.params !== 'undefined'){
+            this.handleFilter(route.params.filter);
+            this.setState({currentFilter: route.params.currentFilter})
+        } else {
+            this.findShops();
+        }     
+    }
+
+    /* 
+    This function requests the users information
+    */
     async getUserInfo() {
         this.setState({isLoading:true});
         const token = await getAuthToken();
@@ -170,6 +220,9 @@ class HomeScreen extends Component{
             })
     }
 
+    /* 
+    This function requests the shop data
+    */
     async findShops() {
         this.setState({isLoading: true});
         const { results } = this.state;
@@ -189,12 +242,18 @@ class HomeScreen extends Component{
             })     
         }
 
+    /* 
+    This function will navigate the users to the selected shop
+    */
     openShop(locationId, favourite) {
         const { navigation } = this.props;
         this.setState({currentSearch:'', currentFilter: null})
         navigation.navigate('shopScreen', {locationId, favourite})
     }
 
+    /* 
+    Returns the card which will display the shop data for each shop.
+    */
     renderLocation(location){
         const { favLocations, devLocation } = this.state;
 
@@ -232,6 +291,7 @@ class HomeScreen extends Component{
                 ) : (
                     <>
                         {isLoading && (<Spinner />)}
+                        {/* If no results are return a message will be rendered. */}
                         {!isLoading && !locations.length ? (
                             <View style={styles.resultView}>
                                 <H3>No matching results</H3>

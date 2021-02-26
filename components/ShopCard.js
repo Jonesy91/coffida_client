@@ -9,10 +9,17 @@ import StarRating from 'react-native-star-rating';
 import styles from '../style/components/ShopCardStyle';
 import { calculateDistance } from '../utilities/location/LocationUtility';
 
+/* 
+The ShopCard component renders the display data for a coffee shop.
+*/
 export default function ShopCard({location, favourite, devLocation}) {
   const [distance, setDistance] = useState(0);
   const [bookmarkType, setBookmarkType] = useState('md-bookmark-outline');
   
+  /* 
+  When the component renders the useEffect hook is used to calculate the shops
+  distance from the users current location
+  */
   useEffect(() => {
     const resultDistance = calculateDistance(
       {latitude:devLocation.latitude, longitude:devLocation.longitude},
@@ -23,11 +30,11 @@ export default function ShopCard({location, favourite, devLocation}) {
     if (favourite === true) {
       setBookmarkType('md-bookmark');
     }
-
-    
   },[]);
 
-  
+  /* 
+  getImage checks if a photo for the shop exists, if not a default one is used.
+  */
   const getImage = () => {
     let { photo_path = '' } = location;
     if(photo_path === ''){

@@ -8,6 +8,10 @@ import { getUserId, getAuthToken } from '../utilities/asyncstorage/AsyncStorageU
 import styles from '../style/screens/ReviewScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+/* 
+The write review screen provides users with the ability to write a new review. Users can leaves ratings,
+comments and upload a photo.
+*/
 class WriteReviewScreen extends Component{
     constructor(props){
         super(props)
@@ -20,6 +24,10 @@ class WriteReviewScreen extends Component{
         }
     }
 
+    /* 
+    This function will handle th requests to upload a new review. On success the 
+    function will navigate to the previous screen which will be the shop screen.
+    */
     async handleSubmit() {
         try{
             const body = {
@@ -53,6 +61,10 @@ class WriteReviewScreen extends Component{
 
     }
 
+    /* 
+    The function gets the reviewd id of the new review once it has been uploaded. This id 
+    will then be used to make the request to upload a photo.
+    */
     async getReviewId(){
         const { route } = this.props;
         const userId = await getUserId();

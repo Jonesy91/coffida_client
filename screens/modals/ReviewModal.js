@@ -6,10 +6,18 @@ import { getAuthToken } from '../../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../../style/screens/ReviewModalStyle';
 import displayMessage from '../../utilities/error/errorHandler';
 
+/* 
+The ReviewModal is used to display ways for users to interact with 
+their reviews.
+*/
 export default function ReviewModal({ route, navigation }){
     const { review }  = route.params;
     const { locationId } = route.params;
 
+    /* 
+    This function makes the api calls to delete the photo of a review 
+    and the review itself when the user selects the delete review button.
+    */
     const deleteAReview = async () => {
         const token = await getAuthToken();
         try{
@@ -36,6 +44,7 @@ export default function ReviewModal({ route, navigation }){
     return(
         <Content contentContainerStyle={styles.content}>
             <View style={styles.actionView}>
+                {/* navigates the user to the sceen to update the review */}
                 <Button block onPress={() => navigation.navigate('updateReview', {review,locationId})} style={styles.updatebutton}>
                     <Text>Update Review</Text>
                 </Button>
@@ -44,6 +53,7 @@ export default function ReviewModal({ route, navigation }){
                 </Button>
             </View>
             <View>
+                {/* navigatios the user to the previous screen */}
                 <Button block onPress={() => navigation.goBack()} style={styles.button}>
                     <Text>Close</Text>
                 </Button>

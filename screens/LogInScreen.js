@@ -1,30 +1,40 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
-import { Item, Input, Button, Text, View, Content, Spinner } from 'native-base';
+import { Item, Input, Button, Text, View, Content, Spinner, H1 } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import { signIn } from '../utilities/auth/AuthService';
 import styles from '../style/screens/LogInScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+/* 
+The log in screen provides user with an interface to log into the application.
+*/
 const LogInScreen = ({ navigation }) => {
     const dispatch = useAuthDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
+    /* 
+    Checks the users input meets the email and password reaquirements
+    */
     const validateInput = (inEmail, inPassword) => {
         if(inEmail.includes('@')){
             if(inPassword.length >= 6) {
                 return true;
-            } else {
-                displayMessage('Minimum password length is 6 characters');
             }
+            displayMessage('Minimum password length is 6 characters');
         } else {
             displayMessage('Please enter a valid email');
         }
         return false;
     }
+
+    /* 
+    requestLogin will validate the users input, if succesful it will make the request 
+    to log in the user.
+    */
     const requestLogIn = async () => {
         const data = {email, password};
         if(validateInput(email,password)){
@@ -50,6 +60,7 @@ const LogInScreen = ({ navigation }) => {
                 <Spinner />
             ) : (
                 <>
+                <H1>CoffiDa</H1>
                 <Item style={styles.item}>
                 <Input 
                     placeholder='Email' 

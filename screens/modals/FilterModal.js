@@ -4,6 +4,10 @@ import {Button, Content,H1,  H3, Grid, Row, Text  ,View} from 'native-base';
 import Slider from '@react-native-community/slider';
 import styles from '../../style/screens/FilterModalStyle';
 
+/* 
+The FilterModal is a modal screen which allows the users to select
+which filters to apply 
+*/
 class FilterModal extends Component{
     constructor(props){
         super(props)
@@ -15,6 +19,10 @@ class FilterModal extends Component{
         }
     }
 
+    /* 
+    When the component mounts the route.params is check to see if there are
+    any filters in place to display to the user.
+    */
     componentDidMount(){
         const { route } = this.props;
         if(route.params.currentFilter !== null){
@@ -27,6 +35,11 @@ class FilterModal extends Component{
         }
     }
 
+    /* 
+    applyFilters checks which filters have been set and builds the uri parameters
+    to be probided to the api call. This function will also navigate back to the screen
+    the users was viewing previously (Home or favourites);
+    */
     applyFilters(){
         const { overall, price, quality, clenliness } = this.state;
         const { navigation, route } = this.props;
@@ -65,6 +78,9 @@ class FilterModal extends Component{
         })
     }
 
+    /* 
+    Clears the filters but setting their states to 0
+    */
     clear(){
         this.setState({
             overall:0,

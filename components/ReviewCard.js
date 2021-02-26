@@ -9,6 +9,9 @@ import { like, unLike } from '../utilities/api/APIUtility';
 import { getAuthToken } from '../utilities/asyncstorage/AsyncStorageUtil';
 import styles from '../style/components/ReviewCardStyle';
 
+/*
+The review card component renders the details of a users review.
+*/
 class ReviewCard extends Component {
   constructor(props) {
     super(props);
@@ -27,24 +30,33 @@ class ReviewCard extends Component {
     };
   }
 
+  /*
+  likeReview is triggered when the user presses the like icon.
+  This function with either trigger the POST or DELETE api call
+  to like or unlike a review.
+  */
   async likeReview() {
     const { isLiked, locationId, reviewId, likes } = this.state;
     const token = await getAuthToken();
       if (isLiked === false) {
         like(locationId, reviewId, token )
-        .then((response) => {
+        .then(() => {
             this.setState({ isLiked: true });
             this.setState({likes: likes + 1})
         });
       } else {
         unLike(locationId, reviewId, token )
-        .then((response) => {
+        .then(() => {
             this.setState({ isLiked: false });
             this.setState({likes: likes - 1})
         });
       }
   }
 
+  /* 
+  isLiked checks if a review has been liked by the user
+  and sets the icon name to use for rendering.
+  */
   isLiked() {
     let iconName;
     const { isLiked } = this.state;

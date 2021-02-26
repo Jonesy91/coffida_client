@@ -11,6 +11,10 @@ import { getAuthToken, getUserId }from '../utilities/asyncstorage/AsyncStorageUt
 import styles from '../style/screens/AccountScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+/* 
+The AccountScreen allows the user to view and update their user details.
+Users can also log out from this screen.
+*/
 export default function AccountScreen(){
   const dispatch = useAuthDispatch();
   const [firstName, setFirstName] = useState('');
@@ -23,6 +27,9 @@ export default function AccountScreen(){
   const [newPassword, setNewPassword] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  /* 
+  requestAccount gets the users account details
+  */
   const requestAccount = async () => {
     setIsLoading(true);
     const token = await getAuthToken();
@@ -43,6 +50,9 @@ export default function AccountScreen(){
     setIsLoading(false);
   }
 
+  /* 
+  validatePassword checks the password length is correct
+  */
   const validatePassword = (inPassword) => {
     if(inPassword.length < 6) {
       displayMessage('Minimum password length is 6 characters');
@@ -51,6 +61,10 @@ export default function AccountScreen(){
     return true; 
   }
 
+  /* 
+  changePassword is triggered when the user clicks the change password button.
+  The function will check the password is valid before making the request to change it.
+  */
   const changePassword = async () => {
     const body = { password:newPassword };
     const token = await getAuthToken();
@@ -73,6 +87,10 @@ export default function AccountScreen(){
     }
   }
 
+  /* 
+  validateDetails checks the users details that are being changed meet the APIs requirements,
+  e.g. a valid email address.
+  */
   const validateDetails = (inBody) => {
     const {first_name = null, last_name = null, email = null} = inBody;
     if(first_name !== null){
@@ -96,6 +114,11 @@ export default function AccountScreen(){
     return true;
   }
 
+  /* 
+  The changeDetails function is triggered when the user presses the 
+  update details button. This function triggers the requests to validate the 
+  data and the api request to update the user details.
+  */
   const changeDetails = async () => {
     const body = {};
     if (newFirstName !== null) {
@@ -127,10 +150,16 @@ export default function AccountScreen(){
     }
   }
 
+  /* 
+  useEffect triggered on render and requests the users account details.
+  */
   React.useEffect(() => {
     requestAccount();
   },[]);
 
+  /* 
+  logOut logs out the user when the user pressed the log out button
+  */
   const logOut = async () => {
     await signOut()
       .then(() => dispatch({ type: 'SIGN_OUT' })
@@ -171,6 +200,7 @@ export default function AccountScreen(){
               />
             </Item>
           </Form>
+          {/* if none of the users details have been updated, the update details button is disabled */}
           {newFirstName === null && newSurname === null && newEmail === null ? (
             <Button 
               block
@@ -197,6 +227,7 @@ export default function AccountScreen(){
               onChangeText={(inPassword) => setNewPassword(inPassword)}
             />
           </Item>
+          {/* if the password field is null, the update password button is disabled */}
           {newPassword === null ? (
             <Button 
             disabled

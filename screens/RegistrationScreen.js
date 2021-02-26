@@ -6,6 +6,9 @@ import { useAuthDispatch } from '../utilities/auth/AuthContext';
 import styles from '../style/screens/RegistrationScreenStyle';
 import { displayMessage } from '../utilities/error/errorHandler';
 
+/*
+The registration screen provides and interface for the user to create a new account.
+*/
 const RegistrationScreen = ({ navigation }) => {
     const [firstName, setFirstName] = useState('');
     const [surname, setSurname] = useState('');
@@ -14,15 +17,18 @@ const RegistrationScreen = ({ navigation }) => {
     const [signUpLoading, setSignUpLoading] = useState(false);
     const dispatch = useAuthDispatch();
 
+    /* 
+    This function will validate the users input to make sure all fields are filled,
+    and the password and email meet the requirements.
+    */
     const validateInput = (inFirstName,inSurname,inEmail,inPassword) => {
         if(inFirstName !== '') {
             if(inSurname !== '') {
                 if(inEmail.includes('@')){
                     if(inPassword.length >= 6) {
                         return true;
-                    } else {
-                        displayMessage('Minimum password length is 6 characters');
                     }
+                    displayMessage('Minimum password length is 6 characters');
                 } else {
                     displayMessage('Please enter a valid email');
                 }
@@ -35,6 +41,10 @@ const RegistrationScreen = ({ navigation }) => {
         return false
     }
 
+    /* 
+    This function will attempt to create a new account for the user if 
+    their inputs pass validation.
+    */
     const register = async () => {
         if(validateInput(firstName,surname,email,password)){
             setSignUpLoading(true);
